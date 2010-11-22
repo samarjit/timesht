@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition  xmlns:p="urn:jbpm.org:jpdl-3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:jbpm.org:jpdl-3.2 urn:jbpm.org:jpdl-3.2 ">
+   <start-state name="start" >
+      	<description>
+			/pages/welcome.jsp
+		</description>
+		<transition name="to_state" to="first">
+         <action name="action" class="com.sample.action.MessageActionHandler">
+            <message>Going to the first state!</message>
+         </action> 
+      </transition>
+		<event type="after-signal">
+			<action name="sam" class="businesslogic.LoginBL"></action>
+		</event>
+   </start-state>
+   <state name="first" >
+   		
+		<transition to="decision1"></transition>
+		<transition to="fork1" name="to fork1"></transition>
+		
+   </state>
+
+	<node name="node1">
+		<transition to="join1"></transition>
+	</node>
+
+	<join name="join1">
+	<description>
+			/login.jsp
+		</description>
+		<transition to="end"></transition>
+	</join>
+
+	<decision name="decision1">
+		<description>
+			/decision.jsp
+		</description>
+		<handler class="some.class"></handler>
+		<event type="transition">
+			<action name="sam" class="businesslogic.LoginBL"></action>
+			<action expression="nice expression"></action>
+		</event>
+		<transition to="node1" name="to node1"></transition>
+		<transition to="task-node1" name="to task-node1"></transition>
+	</decision>
+
+	<task-node name="task-node1">
+		<task name="sometask">
+			<description>
+				new task
+			</description>
+			<assignment class=""></assignment>
+		</task>
+		<event type="before-signal">
+			<action></action>
+		</event>
+		<transition to="join1"></transition>
+	</task-node>
+
+	<fork name="fork1">
+		<transition to="task-node1"></transition>
+		<transition to="node1" name="to node1"></transition>
+	</fork>
+   <end-state name="end"></end-state>
+</process-definition>

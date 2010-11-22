@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition  xmlns:p="urn:jbpm.org:jpdl-3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:jbpm.org:jpdl-3.2 urn:jbpm.org:jpdl-3.2 " name="">
+   <start-state name="CaptureRequest">
+      	<description>
+			/template1.action?screenName=frmRequestList
+		</description>
+		<transition to="mail-node1"></transition>
+		<event type="after-signal">
+			<action name="sam" class="businesslogic.LoginBL"></action>
+		</event>
+   </start-state>
+   <decision name="Approve" >
+		<transition to="end" name="rejected"></transition>
+		<transition to="Allocate" name="approved"></transition>
+	</decision>
+
+	<task-node name="Allocate">
+		<task>
+			<assignment expression="hello expression"></assignment>
+		</task>
+		<event type="before-signal">
+			<mail></mail>
+			<script></script>
+		</event>
+		<transition to="end"></transition>
+	</task-node>
+
+	<mail-node name="mail-node1" template="requestNotification" async="true" to="asd">
+		<subject>
+			asd
+		</subject>
+		<text>
+			sdf
+		</text>
+		<event type="task-start">
+			
+			<action name="asdAction" expression="some expression"></action>
+		</event>
+		<transition to="Approve">
+
+		</transition>
+		
+	</mail-node>
+
+
+	<end-state name="end"></end-state>
+</process-definition>
