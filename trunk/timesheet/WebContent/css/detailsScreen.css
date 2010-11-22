@@ -1,0 +1,43 @@
+.button {
+width:100%;
+padding:0 6px 0 6px;
+}
+
+.panelfields{
+border:1px solid #618c04;
+border-bottom-width:0px;
+border-spacing:0px;
+padding:0px;
+margin:0px;
+}
+
+.panelfields  TD{
+	border:0px;
+width:150px;
+}
+
+.panelfieldsStatus{
+border:1px solid #618c04;
+border-top-width:0px;
+border-spacing:0px;
+padding:0px;
+margin:0px;
+}
+
+.panelfieldsStatus  TD{
+	border:0px;
+width:150px;
+}
+
+#retreivedetailsdiv TABLE{
+border:1px solid #618c04;
+border-collapse: collapse;
+border-spacing:0px;
+width:600px;
+margin:10px;
+}
+
+#retreivedetailsdiv TABLE TR TD{
+border:1px solid #618c04;
+border-collapse: collapse;
+}

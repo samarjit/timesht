@@ -1,0 +1,17 @@
+.requestType
+{
+display:none;
+border:1px solid #618c04;
+	border-spacing:0px;
+	margin:0px;
+	
+}
+
+.requestType TD
+{
+  border:0px solid #618c04;
+  border-collapse: collapse;
+  margin:0px;
+  padding:0px;
+  
+}

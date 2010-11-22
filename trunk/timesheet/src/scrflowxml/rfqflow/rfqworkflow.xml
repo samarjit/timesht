@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition  xmlns:p="urn:jbpm.org:jpdl-3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:jbpm.org:jpdl-3.2 urn:jbpm.org:jpdl-3.2 ">
+
+
+
+	<start-state name="RFQCreate">
+		<transition to="mail-node1"></transition>
+	</start-state>
+
+
+	<task-node name="CreateRRF">
+		<transition to="RRFMail"></transition>
+	</task-node>
+
+	<task-node name="CreatePO">
+		<transition to="POMail"></transition>
+	</task-node>
+
+	<task-node name="CreateDN">
+		<transition to="End"></transition>
+	</task-node>
+
+	<decision name="RRFApproval">
+		<handler></handler>
+		<event type="">
+			<script name="RRFApprovalEmail">
+				pojo.CreateMailFromTemplate cm = new pojo.CreateMailFromTemplate();
+HashMap hm = new HashMap();
+		hm.put(&amp;quot;empid&amp;quot;, &amp;quot;dav&amp;quot;);
+		hm.put(&amp;quot;empname&amp;quot;, &amp;quot;value2&amp;quot;);
+		 
+		try {
+			 cm.createEmail(&amp;quot;employeenotification&amp;quot;,hm);
+			 System.out.println(cm);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+actionclass.SendMailAC smAC = new actionclass.SendMailAC();
+		smAC.setSendto(cm.getSendto());
+		smAC.setFrom(cm.getFrom());
+		smAC.setSubject(cm.getSubject());
+		smAC.setMsgbody(cm.getMsgbody()+&amp;quot;This email is to tell you that  your rrf request has been approved. Please login to ams system for details.&amp;quot;);
+		smAC.sendJavaMail();
+System.out.println(&amp;quot;This is executed from script&amp;quot;);
+			</script>
+		</event>
+		<transition to="CreatePO" name="approved"></transition>
+		<transition to="End" name="rejected"></transition>
+	</decision>
+
+	<mail-node name="RRFMail" template="rrfapproval">
+		<transition to="RRFApproval"></transition>
+	</mail-node>
+
+	<mail-node name="POMail" template="sendpo">
+		<transition to="CreateDN"></transition>
+	</mail-node>
+
+	<mail-node name="mail-node1" template="test">
+		<transition to="CreateRRF"></transition>
+	</mail-node>
+
+
+	<end-state name="End"></end-state>
+
+
+</process-definition>
