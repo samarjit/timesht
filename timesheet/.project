@@ -4,7 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>amsisslib</project>
-		<project>timesheet</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

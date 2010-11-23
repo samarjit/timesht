@@ -8,7 +8,7 @@
 </head>
 <body>
 <div id="logo">    
-<h1 >Asset Management System</h1>
+<h1 >Timesheet Management System</h1>
 
 <script>
 function fnCreateActivity(ac) { 
