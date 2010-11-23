@@ -96,12 +96,6 @@
         <dependent-module archiveName="struts2-dojo-plugin-2.1.8.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/struts2-dojo-plugin-2.1.8.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/con/org.eclipse.jdt.USER_LIBRARY/oracle">
-            <dependency-type>consumes</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/con/org.eclipse.jdt.USER_LIBRARY/amsiss">
-            <dependency-type>consumes</dependency-type>
-        </dependent-module>
         <property name="context-root" value="timesheet"/>
         <property name="java-output-path" value="/timesheet/build/classes"/>
     </wb-module>
