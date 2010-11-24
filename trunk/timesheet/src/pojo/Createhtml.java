@@ -46,7 +46,7 @@ public class Createhtml {
 	
 
 	private void debug( int priority,String s){
-		if(priority > 1)
+		if(priority > 0)
 		System.out.println("Createhtml:"+s);
 	}
 	
