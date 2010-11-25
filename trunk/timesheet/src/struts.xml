@@ -157,4 +157,14 @@
 			</result>
 		</action>	
 	</package>
+
+	<package name="createscreen" namespace="/" extends="struts-default">
+		<action name="createscreen" class="actionclass.CreateScreenAC">
+			<result name="success">pages/createscreen.jsp</result>
+			<result name="returnajax" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+	</package>
 </struts>
