@@ -225,25 +225,31 @@ public class CrudDAO {
 	        		String dbcol = crs.getString("dbcol");
 	        		String datatype = crs.getString("datatype");
 	        		
-	        		if(null != datatype && !"".equalsIgnoreCase(datatype)){
-	        			if("DATE".equalsIgnoreCase(datatype)){
-	        				//MySQL????
-	        				//Oracle 
-	        				
-	        			}
-	        		}
 	        		if(!"".equals(strWhereQuery)){
 	        			joiner = " AND ";
 	        		}
 	        		
-	        		if(exactMatch) {
-	        			if(!val.equalsIgnoreCase(""))
-	        			strWhereQuery +=joiner+dbcol+" like '"+val+"'";
+	        		if(null != datatype && !"".equalsIgnoreCase(datatype) && "DATE".equalsIgnoreCase(datatype)){
+	        			 
+	        				//MySQL????
+	        				//Oracle 
+	        				System.out.println("CRUD DAO processing date:"+dbcol+" val"+val);
+	        				val = val.toUpperCase();
+	        				strWhereQuery +=joiner+" "+dbcol+" = TO_DATE('"+val+"','dd/mm/yyyy')";
+		        			joiner = " AND ";
+	        			 
+	        		}else{
+	        		
+		        		
+		        		if(exactMatch) {
+		        			if(!val.equalsIgnoreCase(""))
+		        			strWhereQuery +=joiner+dbcol+" like '"+val+"'";
+		        		}
+		        		else{
+		        			if(!val.equalsIgnoreCase(""))
+		        			strWhereQuery +=joiner+dbcol+" like '%"+val+"%'";
+		        		}//if crs.next()
 	        		}
-	        		else{
-	        			if(!val.equalsIgnoreCase(""))
-	        			strWhereQuery +=joiner+dbcol+" like '%"+val+"%'";
-	        		}//if crs.next()
 	        	crs.close();
 			}} catch (SQLException e) {
 				e.printStackTrace();
@@ -416,6 +422,7 @@ public class CrudDAO {
 	 */
 
 	public HashMap createInsertQueryPart1(HashMap metadata, String scrname, String panelName,HashMap insertClause) {
+		debug(5, "inside cRUODDDDD");
 			DBConnector db = new DBConnector();
 			String strQuery="";
 			HashMap inesrtqryPart = new HashMap();
@@ -427,7 +434,7 @@ public class CrudDAO {
 			debug(0,insertClause.toString());
 			String SQL2 = 
 				"select lblname,fname,idname,dbcol,datatype,classname,prkey,strquery from panel_fields where  scr_name='"+scrname+"' and panel_name='"+panelName+"'";
-			debug(1,"createInsertQueryPart1:"+SQL2); 
+			debug(5,"createInsertQueryPart1:"+SQL2); 
 			 try {
 					 crs = db.executeQuery(SQL2);
 				
@@ -448,6 +455,7 @@ public class CrudDAO {
 						if(insertClause.get(fname.toLowerCase())!= null)
 							{
 							dbcolStr +=crs.getString("dbcol")+",";
+							debug(5,datatype+" "+fname);
 							if("DATE".equals(datatype)){
 								valueStr += "TO_DATE('"+insertClause.get(fname.toLowerCase())+"','dd/mm/yyyy') ,";
 							}else{

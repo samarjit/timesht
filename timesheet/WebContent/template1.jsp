@@ -68,7 +68,7 @@ var ctxpath = "<%= ctxpath %>";
 <%@ include file="pages/header.jsp" %>
 <div id="screen_title">${screenTitle }</div>
 <div id="page">
-
+<div id="screenMode">Mode: <span id="screenMode"><script>document.write(screenMode);</script></span></div>
 <div id="errormsgdiv" class="ui-state-error ui-corner-all"  class="ui-state-error ui-corner-all"  style="display:none;padding: 0pt 0.7em;">
 
 </div>

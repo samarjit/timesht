@@ -336,7 +336,7 @@ public class Createhtml {
 				e.printStackTrace();
 			}
 			tablestr = (String)htable.toString();
-			tablestr  += "<div id=\"rule\">"+rulesall.toString()+"</div>";
+		//	tablestr  += "<div id=\"rule\" style=\"display:none\">"+rulesall.toString()+"</div>";
 			 debug(1,tablestr);
 			
 		} catch (SQLException e) {

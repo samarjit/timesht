@@ -18,7 +18,7 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class GenerateHtmlAC extends ActionSupport{
 	private void debug( int priority,String s){
-		if(priority > 0)
+		if(priority > -1)
 		System.out.println("GenerateHtml:"+s);
 	}
 
@@ -246,7 +246,7 @@ public void setRedirectjspname(String redirectjsp) {
 		 // setLeftPanel(leftPanel);
 		// setTopPanel(topPanel);
 		// setBottomPanel(bottomPanel);
-		 
+		  debug(0,"Template name:"+templateName);
 		 
 		if(templateName.equalsIgnoreCase("")){
 			setErrorMessage("The template was not found for this page!");
