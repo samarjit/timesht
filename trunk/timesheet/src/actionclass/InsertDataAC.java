@@ -155,7 +155,8 @@ public class InsertDataAC extends ActionSupport implements ServletRequestAware{
 		    	JSONObject jobj = new JSONObject();
 		    	
 		    	  try {
-					autogenId =insert.getNewAppId();
+		    		  if(insertKeyValue.contains("AUTOGEN_SEQUENCE_ID"))
+		    			  autogenId =insert.getNewAppId();
 					if(insertKeyValue != null || (!"".equals(insertKeyValue)))
 						 insertresult    = insert.doInsert(screenName, insertKeyValue, autogenId);
 				} catch (Exception e) {

@@ -26,6 +26,8 @@ function fnCreateActivity(ac) {
 		  url =url+ "screenName=frmAllocation&activityname=CRALOC&create=true&screenMode=create";	
 	}else if(ac=='CDN'){
 	  url =url+ "screenName=frmDeliveryNote&activityname=CDN&create=true&screenMode=create";
+	}else if(ac=='CRTASK'){
+		  url =url+ "screenName=frmTask&activityname=CRTASK&create=true&screenMode=create";
 	}
 //	alert(url);
 //document.getElementById("frmmenu").action = url;

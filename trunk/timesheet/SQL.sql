@@ -21,6 +21,10 @@ CREATE TABLE  TS_TASKMASTER
     CONSTRAINT "TS_TASKMASTER_PK" PRIMARY KEY ("TSKID") USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645 PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT) TABLESPACE "SYSTEM" ENABLE
   );
   
+create sequence seqappid 
+increament by 1
+start with 1 
+maximum 999999 ;
 
 INSERT INTO SCREEN (SCR_NAME, TEMPLATE_NAME, JSNAME, CSSNAME, SCREEN_TITLE) VALUES ('frmTSheet', 'template', 'jquery.js,json2.js,jquery-ui-1.7.2.custom.min.js,frmTSheet.js', 'button.css,detailsScreen.css,frmRequest.css', 'Timesheet Details');
 UPDATE   SCREEN SET JSNAME = 'jquery.js,json2.js,jquery-ui-1.7.2.custom.min.js,frmTSheetList.js' WHERE ROWID = 'AAAFz8AABAAAM/KAAQ' AND ORA_ROWSCN = '3385700';
@@ -54,7 +58,7 @@ INSERT INTO PANEL_FIELDS (SCR_NAME, PANEL_NAME, ORDERNO, LBLNAME, FNAME, IDNAME,
 
 
 
-REM INSERTING into PANEL_FIELDS
+
 Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmPO','ItemDetails','1','Quotation ID','qid','qid','VARCHAR',null,null,null,'0','0',null,'TEXTBOX',null,null,null,null,null,null,null);
 Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmPO','ItemDetails','2','Item Quantity','itemquantity','itemquantity','VARCHAR',null,null,null,'0','1',null,'TEXTBOX',null,null,null,null,null,null,null);
 Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmPO','ItemDetails','3','Unit Price','unitprice','unitprice','VARCHAR',null,null,null,'1','0',null,'TEXTBOX',null,null,null,null,null,null,null);
@@ -63,4 +67,47 @@ Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATAT
 Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmPO','ItemDetails','6','Item ID','itemid','itemid','VARCHAR',null,null,null,'2','1',null,'TEXTBOX',null,null,null,null,null,null,null);
 Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmPO','ItemDetails','7','Vendor ID','vendorid','vendorid','VARCHAR',null,null,null,'3','0',null,'TEXTBOX',null,null,null,null,null,null,null);
 Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmPO','ItemDetails','8','Quotation Ref','qref','qref','VARCHAR',null,null,null,'3','1',null,'TEXTBOX',null,null,null,null,null,null,null);
+
+
+
+Insert into SCREEN (SCR_NAME,TEMPLATE_NAME,JSNAME,CSSNAME,SPLWHERECLAUSE,RELATEDPANEL,BUSINESSLOGIC,SCREEN_TITLE) values ('frmTaskList','template2','jquery.js,json2.js,jquery-ui-1.7.2.custom.min.js,frmTSheetList.js','frmTSheetList.css',null,null,null,'Timesheet');
+
+
+Insert into SCREEN_PANEL (SCR_NAME,PANEL_NAME,TABLE_NAME,PK_NAME,SORTORDER,PANELTYPE,SPLWHERECLAUSE,SELQUERY,CSS_CLASS,RW_FLG,RELATEDPANEL) values ('frmTaskList','searchPanel',null,null,'1','2',null,null,'paneltable',null,'panelFields');
+Insert into SCREEN_PANEL (SCR_NAME,PANEL_NAME,TABLE_NAME,PK_NAME,SORTORDER,PANELTYPE,SPLWHERECLAUSE,SELQUERY,CSS_CLASS,RW_FLG,RELATEDPANEL) values ('frmTaskList','buttonPanel',null,null,'1','2',null,null,'buttonpanel',null,'panelFields');
+Insert into SCREEN_PANEL (SCR_NAME,PANEL_NAME,TABLE_NAME,PK_NAME,SORTORDER,PANELTYPE,SPLWHERECLAUSE,SELQUERY,CSS_CLASS,RW_FLG,RELATEDPANEL) values ('frmTaskList','panelFields','TS_TASKMASTER','TSID','3','2',null,null,null,null,null);
+
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTaskList','buttonPanel','3','Search','search','search',null,null,'onclick=''search();''',null,'0','0',null,'BUTTON',null,null,null,null,null,null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTaskList','panelFields','1','Timesheet ID','tsid','tsid','VARCHAR','TSID',null,null,'0','0',null,'TEXTBOX','Y','Y',null,null,'25',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTaskList','searchPanel','1','Timesheet ID','tsid','tsid','VARCHAR','TSID',null,null,'0','0',null,'TEXTBOX','Y','Y',null,null,'25',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTaskList','panelFields','2','Employee Name','empname','empname','VARCHAR','EMPNAME',null,null,'0','1',null,'TEXTBOX','Y','Y',null,null,'25',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTaskList','searchPanel','2','Employee Name','empname','empname','VARCHAR','EMPNAME',null,null,'0','1',null,'TEXTBOX','Y','Y',null,null,'25',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTaskList','buttonPanel','2','View Details','viewdetails','viewdetails',null,null,'onclick=''return viewdetails();''',null,'1','0',null,'BUTTON',null,null,null,null,null,null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTaskList','buttonPanel','2','Create Asset','createasset','createasset',null,null,'onclick=''clearWhereClause();fnCreateActivity("CRAST");''',null,'1','0',null,'BUTTON',null,null,null,null,null,null,null);
+
+
+INSERT INTO SCREEN (SCR_NAME, TEMPLATE_NAME, JSNAME, CSSNAME, SCREEN_TITLE) VALUES ('frmTask', 'template', 'jquery.js,json2.js,jquery-ui-1.7.2.custom.min.js,frmTSheet.js', 'button.css,detailsScreen.css,frmRequest.css', 'Task Details');
+
+Insert into SCREEN_PANEL (SCR_NAME,PANEL_NAME,TABLE_NAME,PK_NAME,SORTORDER,PANELTYPE,SPLWHERECLAUSE,SELQUERY,CSS_CLASS,RW_FLG,RELATEDPANEL) values ('frmTask','statusFields','USER_WFLID_APPID',null,'3','2','APPID=(select qt_rfq_id from ams_quotation where qt_id = (select rrf_qt_id from ams_rrf where rrf_id = ( select po_rrf_id from ams_po where po_id=''{panelFields.poid}''))) AND STATUS=''S''',null,'requestType','R',null);
+Insert into SCREEN_PANEL (SCR_NAME,PANEL_NAME,TABLE_NAME,PK_NAME,SORTORDER,PANELTYPE,SPLWHERECLAUSE,SELQUERY,CSS_CLASS,RW_FLG,RELATEDPANEL) values ('frmTask','buttonPanel',null,null,'2','1',null,null,'buttonpanel',null,null);
+Insert into SCREEN_PANEL (SCR_NAME,PANEL_NAME,TABLE_NAME,PK_NAME,SORTORDER,PANELTYPE,SPLWHERECLAUSE,SELQUERY,CSS_CLASS,RW_FLG,RELATEDPANEL) values ('frmTask','taskDetails','TS_TASKMASTER',null,'4','2','r.RRF_ID = {panelFields.porrfid} and q.QT_ID = r.RRF_QT_ID','select QT_REF qref,QT_RFQ_VENDOR_ID vendorid,QT_ID qid, QT_ITEM_ID itemid, QT_ITEM_QTY itemquantity,QT_UNIT_PRICE unitprice,QT_DISCOUNT discount,QT_TOTAL_AMT totalprice from AMS_QUOTATION q,AMS_PO p,AMS_RRF  r','panelfields','R',null);
+Insert into SCREEN_PANEL (SCR_NAME,PANEL_NAME,TABLE_NAME,PK_NAME,SORTORDER,PANELTYPE,SPLWHERECLAUSE,SELQUERY,CSS_CLASS,RW_FLG,RELATEDPANEL) values ('frmTask','panelFields','TS_EMP_TIMESHEET','TSID','1','2',null,null,'panelfields','RW',null);
+
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','panelFields','1','Timesheet ID','tsid','tsid','VARCHAR','TSID',null,null,'0','0',null,'TEXTBOX',null,'Y',null,null,'8',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','panelFields','2','Employee ID','empid','empid','VARCHAR','EMPID',null,null,'0','1',null,'TEXTBOX',null,null,null,null,'9',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','panelFields','3','Timesheet Date','tsdate','tsdate','DATE','TDDATE',null,null,'1','0',null,'TEXTBOX',null,null,null,null,'7',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','panelFields','4','Timesheet Hours','tshours','tshours','VARCHAR','TSHOURS',null,null,'1','1',null,'TEXTBOX',null,null,null,null,'10',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','panelFields','5','Task ID','tskid','tskid','VARCHAR','TSKID',null,null,'2','0',null,'TEXTAREA',null,null,null,null,'40',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','buttonPanel','2','View Timesheet','viewts','viewts',null,null,'onclick=''viewPO();''',null,'1','0',null,'BUTTON',null,null,null,null,null,null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','buttonPanel','4','Modify','modify','modify',null,null,'onclick=''enable_fields();''',null,'3','0',null,'BUTTON',null,null,null,null,null,null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','buttonPanel','5','Save','save','save',null,null,'onclick=''posave();''',null,'4','0',null,'BUTTON',null,null,null,'disabled=''disabled''',null,null,null);
+INSERT INTO PANEL_FIELDS (SCR_NAME, PANEL_NAME, ORDERNO, LBLNAME, FNAME, IDNAME, DATATYPE, DBCOL, VALIDATION, STRQUERY, NROW, NCOL, HTMLELM) VALUES ('frmTask', 'buttonPanel', '4', 'Delete', 'btnDelete', 'btnDelete', ' ', ' ', 'onclick=''deleteData();''', ' ', '3', '0', 'BUTTON');
+
+
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','statusFields','1','Status','Status','Status','VARCHAR','STATUS',null,null,'0','0',null,'TEXTBOX',null,'Y',null,null,'20',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','statusFields','2','Wfl ActionDesc','wflactiondesc','wflactiondesc','VARCHAR','WFLACTIONDESC',null,null,'0','1',null,'TEXTBOX',null,'Y',null,null,'20',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','statusFields','3','Wfl App ID','wflappid','wflappid','VARCHAR','APPID',null,null,'1','0',null,'TEXTBOX',null,'Y',null,null,'20',null,null);
+Insert into PANEL_FIELDS (SCR_NAME,PANEL_NAME,ORDERNO,LBLNAME,FNAME,IDNAME,DATATYPE,DBCOL,VALIDATION,STRQUERY,NROW,NCOL,CLASSNAME,HTMLELM,STORE_FLG,PRKEY,AUTOGEN,ELEM_ATTRIB,DBCOL_SIZ,VALID_RULE,VALID_MSG) values ('frmTask','statusFields','4','Wfl ID','wflid','wflid','VARCHAR','WFLID',null,null,'1','1',null,'TEXTBOX',null,'Y',null,null,'20',null,null);
+
+
 

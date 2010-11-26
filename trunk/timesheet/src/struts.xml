@@ -167,4 +167,13 @@
 			</result>
 		</action>
 	</package>
+	<package name="timesheet" namespace="/" extends="struts-default">
+		<action name="timesheet" class="actionclass.TimesheetAC">
+			<result name="success">pages/timesheet.jsp</result>
+			<result name="returnajax" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+	</package>	
 </struts>

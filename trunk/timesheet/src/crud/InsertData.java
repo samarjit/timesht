@@ -108,6 +108,7 @@ public class InsertData {
 		HashMap insertMap = null;
 		try {
 			HashMap<String, HashMap<String,String>> keyvvaltemp = Utility.extractKeyValPair(insertClause);
+			debug(1,"insert keyvvaltemp:"+keyvvaltemp);
 			if(keyvvaltemp.containsKey(panelName))
 				insertMap = keyvvaltemp.get(panelName);
 			else

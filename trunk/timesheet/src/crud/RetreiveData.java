@@ -30,7 +30,7 @@ import dbconn.DBConnector;
 public class RetreiveData  {
 	
 	private void debug(int priotiry, String s){
-		if(priotiry > 0)
+		if(priotiry > -1)
 			System.out.println("RetreiveData:"+s);
 	}
 	

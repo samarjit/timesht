@@ -141,7 +141,16 @@ public class SearchList {
 				if(colquery !=null && colquery.length() > 1){
 					searchQuery +="("+colquery+") "+crs.getString("fname")+",";
 				}else{
-				    searchQuery +=crs.getString("dbcol")+" "+crs.getString("idname")+",";
+					String datatype = crs.getString("datatype");
+					if("DATE".equalsIgnoreCase(datatype)){
+        				//MySQL????
+        				//Oracle 
+        				searchQuery += " TO_CHAR("+crs.getString("dbcol")+",'dd/mm/yyyy')  "+crs.getString("idname")+",";
+	        			joiner = " AND ";
+        			 
+					}else{
+						searchQuery +=crs.getString("dbcol")+" "+crs.getString("idname")+",";						
+					}
 				}
 				colquery = "";
 			}

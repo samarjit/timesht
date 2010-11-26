@@ -56,9 +56,9 @@ public class Utility {
 			while(itjobj.hasNext()){
 				//System.out.println(injsonobj.get(itjobj.next().toString()) instanceof JSONObject);
 				HashMap<String, String> valueKey = new HashMap<String, String>();
-				panleName = injsonobj.get(itjobj.next().toString()).toString();
+				panleName = injsonobj.get(itjobj.next().toString()).toString(); //name of panel
 				//System.out.println(panleName);
-				JSONArray innerjson = (JSONArray) injsonobj.get(itjobj.next().toString());
+				JSONArray innerjson = (JSONArray) injsonobj.get(itjobj.next().toString()); //valuesar
 				for(int j = 0; j< innerjson.length(); j++ ){
 					innerjsonobj = (JSONObject) innerjson.get(j);
 					Iterator itinjobj = innerjsonobj.keys();
@@ -90,13 +90,13 @@ public class Utility {
 		
 		return whereClause;
 	}
-	/*
+	
 	public static void main(String args[]){
-		String jsontest ="{\"json\":[{\"key\":\"mgrid\",\"value\":\"1\"},{\"key\":\"empid\",\"value\":\"2\"},{\"key\":\"reqid\",\"value\":\"1812\"}]}";
+		String jsontest ="{\"json\":[{\"name\":\"panelFields\",\"valuesar\":[{\"key\":\"tsid\",\"value\":\"1\"},{\"key\":\"tskhours\",\"value\":\"120\"},{\"key\":\"tskpercentcpl\",\"value\":\"0\"},{\"key\":\"TSKSTARTDATE\",\"value\":\"12/11/2010\"},{\"key\":\"TSKENDDATE\",\"value\":\"\"}]},{\"name\":\"statusFields\",\"valuesar\":[]}]}";
 		try {
-			System.out.println(Utility.extractWhereClause(jsontest));
+			System.out.println(Utility.extractKeyValPair(jsontest));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-	} */
+	} 
 }
