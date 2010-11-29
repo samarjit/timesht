@@ -45,6 +45,7 @@ String roleId = "";
  }else{
 	 userId = userDTO.getUserid(); 
 	 roleId = userDTO.getRoleid();
+	  
  }
 %>
 <script>

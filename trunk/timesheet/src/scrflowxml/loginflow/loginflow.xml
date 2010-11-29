@@ -3,7 +3,7 @@
 <process-definition  xmlns:p="urn:jbpm.org:jpdl-3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:jbpm.org:jpdl-3.2 urn:jbpm.org:jpdl-3.2 ">
    <start-state name="start" >
       	<description>
-			/template1.action?screenName=frmRequestList
+			/pages/welcome.jsp
 		</description>
 		<transition name="to_state" to="first">
          <action name="action" class="com.sample.action.MessageActionHandler">
