@@ -18,7 +18,7 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class GenerateHtmlAC extends ActionSupport{
 	private void debug( int priority,String s){
-		if(priority > -1)
+		if(priority > 0)
 		System.out.println("GenerateHtml:"+s);
 	}
 

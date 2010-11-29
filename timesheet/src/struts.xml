@@ -175,5 +175,11 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
+		<action name="timesheetajax" class="actionclass.TimesheetAC">
+			<result name="success" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
 	</package>	
 </struts>
