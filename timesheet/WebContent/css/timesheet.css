@@ -1,0 +1,26 @@
+ #page .list TABLE{
+  cursor:pointer;
+  background-color:#E7FFBF;
+  border-collapse:collapse;
+  color:#395552;
+ } 
+ 
+ #page .list TR{
+ border-collapse:collapse;
+ }
+#page .list TD{
+  cursor:pointer;
+  border-collapse:collapse;
+  border:1px solid #ffffff;
+  padding: 0px 10px;
+  
+   
+ } 
+ #page .list TH{
+  cursor:pointer;
+  border-collapse:collapse;
+  border:1px solid #E7FFBF;
+   
+ } 
+ 
+ 

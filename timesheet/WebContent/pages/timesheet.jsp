@@ -11,11 +11,12 @@
 <script language="JavaScript" src="../js/jquery.js"></script>
 <script language="JavaScript" src="../js/json2.js"></script>
 <script language="JavaScript" src="../js/jquery-ui-1.7.2.custom.min.js"></script> 
+<script language="JavaScript" src="../js/timesheet.js"></script>
 
 <style>
+@import "<%=ctxstr %>/css/timesheet.css"; 
 @import "<%=ctxstr %>/css/button.css";
 @import "<%=ctxstr %>/css/header.css"; 
-
 .panelfields {
 	border:1px solid #618c04;
 	border-width:1px 1px 0px;
@@ -31,14 +32,20 @@
 </style>
 <script>
 var formName = "frmTaskMaster";	
+var ctxstr = "<%=ctxstr %>";
 var tasklist= {};
 function populate(){
 	var today = new Date();
-	var  todayStr = today.getDay()+"/"+today.getMonth()+"/"+today.getFullYear();
+	var todayStr = today.getDay() + "/" + today.getMonth() + "/" + today.getFullYear();
 	//prpopulate
 	$("#searchFields input[id='tskstartdate']").val(todayStr);
 	$("#panelFields input[id='tsdate']").val(todayStr);
 	
+	filter();
+	
+}
+
+function filter(){	
 var sqlstring1 =  "select tskid,tskhours,tskstartdate,tskenddate,taskdesc from TS_taskmaster ";
 var  filterjson = {
 		project: $("#searchFields input[id='project']").val() ,
@@ -60,7 +67,7 @@ if (filterjson.taskdesc != "") {
 	joiner = " AND ";
 } 
 
- sqlstring1 = escape(sqlstring1); alert(sqlstring1)
+ sqlstring1 = escape(sqlstring1);  
 var strURL= "<%=ctxstr %>/timesheetajax.action?returnajax=true&command=query&data="+JSON.stringify(filterjson, replacer,"")+"&sqlstring="+sqlstring1;
 jQuery.ajax({
 		   type: "GET",
@@ -114,9 +121,9 @@ function reviver (args) {
 	return args;
 }
 function callbaktasklist (args) {
-	 alert(args);
+ 
 	 //	var args = '[{TSKID:"1",TSKHOURS:"2"} ] ]';
-		 tasklist = eval(args);	
+		 tasklist = JSON.parse(args);	
 		  $("#panelFields select[id='tskid'] option").remove();
 		  $("#panelFields select[id='tskid']").append( $('<option></option>').val("").html("--select--"));
 	$.each(tasklist,function(index,val){  
@@ -138,10 +145,18 @@ $(document).ready(function (){
 $("#panelFields select[id='tskid']").bind("change",function(event){
 	var today = new Date();
 	var seltaskid = $(this).val();
+	$("#panelFields input[id='tshoursrem']").val("0");
 	$.each(tasklist,function(index,val){ 
 		if (seltaskid == val.TSKID) {
-			$("#panelFields input[id='tsid']").val(today.getFullYear()+""+today.getMonth()+""+today.getDay()+"_"+val.TSKID);
-			$("#panelFields input[id='tshoursrem']").val(val.TSKHOURS);
+			$("#panelFields input[id='tsid']").val(today.getFullYear()+""+today.getMonth()+""+today.getDay()+"_${userSessionData.userid }"+val.TSKID);
+			$("#panelFields input[id='tshouralloc']").val(val.TSKHOURS);
+			var sqlstring1 = "select sum(tshrs) tshrs from ts_emp_timesheet where tskid= '"+val.TSKID+"'"; 
+			var strURL = "<%=ctxstr %>/timesheetajax.action?returnajax=true&command=query&data=&sqlstring="+sqlstring1;
+			$.ajax( {
+				type: "GET",
+				url: strURL,
+				success: callbakseltask
+			});
 		//	debugger;
 		}
 	});
@@ -149,6 +164,15 @@ $("#panelFields select[id='tskid']").bind("change",function(event){
 fnAdjustTableWidth() ;
 });
 
+
+function callbakseltask (args) {
+	 
+	var json = JSON.parse(args);
+	if(json[0].TSHRS =="null")json[0].TSHRS = 0;
+	 
+	var hrsRemaining = $("#panelFields input[id='tshouralloc']").val() - json[0].TSHRS;
+	$("#panelFields input[id='tshoursrem']").val(hrsRemaining);
+}
 
 </script>
 
@@ -245,22 +269,29 @@ fnAdjustTableWidth() ;
 							<option value="">--select--</option>
 							</select>
 						</td>
+					<td>Task hours Allocated</td>
+					<td><input type="text"  name="tshouralloc" id="tshouralloc"
+						class="null" /></td>
+				</tr>
+				<tr>			
 					<td>Task hours Remaining</td>
 					<td><input type="text"  name="tshoursrem" id="tshoursrem"
 						class="null" /></td>
-				</tr>
-				<tr>
+				
 					<td style="width: 150px;">Timesheet ID</td>
 					<td style="width: 185px;"><input 
 						name="tsid" id="tsid" value="" class="null" type="text"></td>
+				</tr>
+				<tr>
 					<td style="width: 150px;">Employee ID</td>
 					<td style="width: 150px;"><input 
 						name="empid" id="empid" value="${userSessionData.userid }" class="null" type="text"></td>
-				</tr>
-				<tr>
+				
 					<td>Timesheet Date</td>
 					<td><input  name="tsdate" id="tsdate"
 						value="" class="null" type="text"></td>
+				</tr>
+				<tr>
 					<td>Timesheet Hours</td>
 					<td><input  name="tshours" id="tshours"
 						value="" class="null" type="text"></td>
@@ -324,15 +355,18 @@ fnAdjustTableWidth() ;
         <td>
             <div id="buttonPanel">
             	 <table>
-                <tr><td><input type="submit" value="Search" class="button" onclick="populate()"/></td></tr>
-				<tr><td><button onclick="" class="button"> New Timesheet </button></td></tr>
-				<tr><td><button onclick="" class="button"> Delete </button></td></tr>
+                <tr><td><input type="submit" value="Filter Task" class="button" onclick="filter()"/></td></tr>
+				<tr><td><input type="submit" value="Search" class="button" onclick="searchTimesheet()"/></td></tr>
+				<tr><td><button onclick="deleteTs()" class="button"> Delete </button></td></tr>
+				<tr><td><button onclick="update()" class="button"> Update </button></td></tr>
+				<tr><td><button onclick="addTs()" class="button"> Add </button></td></tr>
+				<tr><td><button onclick="selectAll()" class="button"> Select All </button></td></tr>
 				</table>
             </div>
         </td>
     </tr>
 </table>
-<div id="list">
+<div id="list" class="list">
 	
 	
 </div>
