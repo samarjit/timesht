@@ -34,144 +34,17 @@
 var formName = "frmTaskMaster";	
 var ctxstr = "<%=ctxstr %>";
 var tasklist= {};
+var userSessiondata_userid = "${userSessionData.userid }";
 function populate(){
 	var today = new Date();
-	var todayStr = today.getDay() + "/" + today.getMonth() + "/" + today.getFullYear();
+	var todayStr = today.getDate() + "/" + (parseInt(today.getMonth())+1) + "/" + today.getFullYear();
+
 	//prpopulate
 	$("#searchFields input[id='tskstartdate']").val(todayStr);
 	$("#panelFields input[id='tsdate']").val(todayStr);
-	
+	$("#searchFields input[id='tskdate']").val(todayStr);
 	filter();
 	
-}
-
-function filter(){	
-var sqlstring1 =  "select tskid,tskhours,tskstartdate,tskenddate,taskdesc from TS_taskmaster ";
-var  filterjson = {
-		project: $("#searchFields input[id='project']").val() ,
-		tskstartdate: $("#searchFields input[id='tskstartdate']").val(),
-		taskdesc:  $("#searchFields input[id='taskdesc']").val(),
-		sqlstring:sqlstring1
-	};
-var joiner =" WHERE ";	
-if (filterjson.project != "") {
-	sqlstring1 += joiner +" project = '" + filterjson.project+"'";
-	joiner = " AND ";
-} 
-if (filterjson.tskstartdate != "") {
-	sqlstring1 += joiner +" tskstartdate >= to_date('" + filterjson.tskstartdate+"', 'dd/mm/yyyy')";
-	joiner = " AND ";
-} 
-if (filterjson.taskdesc != "") {
-	sqlstring1 += joiner + " taskdesc like '%" + filterjson.taskdesc+ "%'" ;
-	joiner = " AND ";
-} 
-
- sqlstring1 = escape(sqlstring1);  
-var strURL= "<%=ctxstr %>/timesheetajax.action?returnajax=true&command=query&data="+JSON.stringify(filterjson, replacer,"")+"&sqlstring="+sqlstring1;
-jQuery.ajax({
-		   type: "GET",
-		   url: strURL,
-		   success:  callbaktasklist
-
-		 });
- 
-	
-}
-
-function fnAdjustTableWidth(){
-	var tdwidthar = new Array();
-	jQuery.each(jQuery("#panelsdiv  table"), function(idx, elem){
-	
-		var query = jQuery(elem).eq(0).find("tr").eq(0).find("td ");
-		jQuery.each(query, function(index, item){
-			//	alert(elem.id+" tdwidthar["+index+"]"+tdwidthar[index] + " "+jQuery(item).width());
-			if (!tdwidthar[index]) 
-				tdwidthar[index] = jQuery(item).width();
-			else 
-				if (tdwidthar[index] < jQuery(item).width()) {
-					tdwidthar[index] = jQuery(item).width();
-				}
-			
-			
-		});
-	});
-	var j = 0;
-	var maxtd = tdwidthar.length;
-	
-	
-	var tblar = document.getElementById("panelsdiv").getElementsByTagName("table");
-	for (var i = 0; i < tblar.length; i++) {
-		query = jQuery(tblar[i]).find("tr").eq(0).find("td");
-		elem = jQuery(query);
-		
-		jQuery.each(query, function(index, item){
-			jQuery(item).width(tdwidthar[j]);
-			j++;
-			if (maxtd == j) 
-				j = 0;
-			
-		});
-		
-	}
-}
-	
-function reviver (args) {
-	alert("args"+args);
-	return args;
-}
-function callbaktasklist (args) {
- 
-	 //	var args = '[{TSKID:"1",TSKHOURS:"2"} ] ]';
-		 tasklist = JSON.parse(args);	
-		  $("#panelFields select[id='tskid'] option").remove();
-		  $("#panelFields select[id='tskid']").append( $('<option></option>').val("").html("--select--"));
-	$.each(tasklist,function(index,val){  
-		$("#panelFields select[id='tskid']").append( $('<option></option>').val(val.TSKID).html(val.TASKDESC+"#"+val.TSKID ));
-	} );	
-
-}
-
-function replacer(key, value) {
-	if (typeof value === 'number' && !isFinite(value)) {
-		return String(value);
-	}
-	return value;
-}
-
-
-$(document).ready(function (){
-
-$("#panelFields select[id='tskid']").bind("change",function(event){
-	var today = new Date();
-	var seltaskid = $(this).val();
-	$("#panelFields input[id='tshoursrem']").val("0");
-	$.each(tasklist,function(index,val){ 
-		if (seltaskid == val.TSKID) {
-			$("#panelFields input[id='tsid']").val(today.getFullYear()+""+today.getMonth()+""+today.getDay()+"_${userSessionData.userid }"+val.TSKID);
-			$("#panelFields input[id='tshouralloc']").val(val.TSKHOURS);
-			var sqlstring1 = "select sum(tshrs) tshrs from ts_emp_timesheet where tskid= '"+val.TSKID+"'"; 
-			var strURL = "<%=ctxstr %>/timesheetajax.action?returnajax=true&command=query&data=&sqlstring="+sqlstring1;
-			$.ajax( {
-				type: "GET",
-				url: strURL,
-				success: callbakseltask
-			});
-		//	debugger;
-		}
-	});
-});
-fnAdjustTableWidth() ;
-});
-
-
-function callbakseltask (args) {
-	 
-	var json = JSON.parse(args);
-	if(json[0].TSHRS =="null")json[0].TSHRS = 0;
-	 
-	var hrsRemaining = $("#panelFields input[id='tshouralloc']").val() - json[0].TSHRS;
-	$("#panelFields input[id='tshoursrem']").val(hrsRemaining);
 }
 
 </script>
@@ -240,11 +113,11 @@ function callbakseltask (args) {
                         <td>
                             <input  name="tskenddate" id="tskenddate" value="" class="null" type="text">
                         </td>
-                        <td>
-                            &nbsp;
+                         <td>
+                            Task Date
                         </td>
                         <td>
-                            &nbsp;
+                            <input  name="tskdate" id="tskdate" value="" class="null" type="text">
                         </td>
                     </tr>
                 </tbody>
@@ -366,6 +239,12 @@ function callbakseltask (args) {
         </td>
     </tr>
 </table>
+
+<div id="weekview">
+<table class="list"><tr><th>Task</th><th>Date</th><th>Date</th><th>Date</th><th>Date</th><th>Date</th><th>Date</th><th>Date</th></tr>
+
+</table> 
+</div>
 <div id="list" class="list">
 	
 	
