@@ -23,4 +23,18 @@
    
  } 
  
- 
+ #weekview   table{
+ 	border-spacing:0px;
+	border-collapse:collapse;
+ }
+ #weekview .list th{
+ 	border: 1px #428422 solid;
+	
+	border-spacing:0px;
+ }
+
+ #weekview .list td{
+ 	border: 1px #428422 solid;
+		
+		border-spacing:0px;
+ }

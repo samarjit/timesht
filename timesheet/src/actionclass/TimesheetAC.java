@@ -130,8 +130,9 @@ public class TimesheetAC extends ActionSupport {
 			int res =0;
 			try {
 				res = dbconn.executeUpdate(sqlstring);
-				resXML = "{\"result\":"+res+" }"; 
+				resXML = "{\"result\":\""+res+"\" }"; 
 			} catch (Exception e) {
+				resXML = "{\"result\":\"ERROR "+e.getMessage()+"\" }"; 
 				e.printStackTrace();
 			}finally{
 				 
