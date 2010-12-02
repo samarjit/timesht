@@ -1,0 +1,26 @@
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="timesheet">
+        <provider>
+            org.hibernate.ejb.HibernatePersistence
+        </provider>
+ 		<class>pojo.entity.FwMenu.java          </class>
+		<class>pojo.entity.PanelField.java      </class>
+		<class>pojo.entity.Screen.java          </class>
+		<class>pojo.entity.ScreenPanel.java     </class>
+		<class>pojo.entity.TsEmpTimesheet.java  </class>
+		<class>pojo.entity.TsProduct.java       </class>
+		<class>pojo.entity.TsTaskmaster.java    </class>
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle9Dialect"/>
+            <property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.connection.username" value="timesheet"/>
+            <property name="hibernate.connection.password" value="timesheet"/>
+            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+            <property name="hibernate.max_fetch_depth" value="3"/>
+            
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
+             <!--  property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.BTMTransactionManagerLookup"/-->
+        </properties>
+    </persistence-unit>
+</persistence>
