@@ -3,13 +3,7 @@
         <provider>
             org.hibernate.ejb.HibernatePersistence
         </provider>
- 		<class>pojo.entity.FwMenu.java          </class>
-		<class>pojo.entity.PanelField.java      </class>
-		<class>pojo.entity.Screen.java          </class>
-		<class>pojo.entity.ScreenPanel.java     </class>
-		<class>pojo.entity.TsEmpTimesheet.java  </class>
-		<class>pojo.entity.TsProduct.java       </class>
-		<class>pojo.entity.TsTaskmaster.java    </class>
+
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle9Dialect"/>
             <property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver"/>
@@ -19,7 +13,7 @@
             <property name="hibernate.connection.url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
             <property name="hibernate.max_fetch_depth" value="3"/>
             
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
              <!--  property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.BTMTransactionManagerLookup"/-->
         </properties>
     </persistence-unit>
