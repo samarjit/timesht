@@ -17,6 +17,8 @@ public class FwMenu implements Serializable {
 	@Column(name="MENU_ACTION")
 	private String menuAction;
 
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="MENU_ID")
 	private BigDecimal menuId;
 
@@ -60,5 +62,19 @@ public class FwMenu implements Serializable {
 	public void setMenuRoleId(String menuRoleId) {
 		this.menuRoleId = menuRoleId;
 	}
-
+	
+	public String toString(){
+		return "<tr><td>"+menuId+"</td><td>"+menuName+"</td><td>"+menuRoleId+"</td><td>"+menuAction+"</td></tr>";
+	}
+	
+	public String getHeaderNames(){
+		return "<tr><td class='menuId'>Menu Id</td><td class='menuName'>Menu Name</td><td class='menuRoleId'>Menu Role Id</td><td class='menuAction'>Menu Action</td></tr>";
+	}
+	
+	public String getListAttr(){
+		return "menuId,menuName,menuRoleId,menuAction";
+	}
+	public String getPrimaryKeys(){
+		return "menuId";
+	}
 }
