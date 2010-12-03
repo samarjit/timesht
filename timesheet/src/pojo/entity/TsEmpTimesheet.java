@@ -27,7 +27,8 @@ public class TsEmpTimesheet implements Serializable {
 	private String tskid;
 
 	//bi-directional many-to-one association to TsTaskmaster
-    @ManyToOne
+	@Id
+	@ManyToOne
 	@JoinColumn(name="TSID")
 	private TsTaskmaster tsTaskmaster;
 

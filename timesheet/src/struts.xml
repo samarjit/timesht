@@ -181,5 +181,21 @@
 				<param name="inputName">inputStream</param>
 			</result>
 		</action>
+	</package>
+	
+	<package name="engine" namespace="/" extends="struts-default" >
+		<action name="engine" class="engine.ac.EngineAC" method="execute">
+			<result name="success">pages/enginemenu.jsp</result>
+			<result name="returnajax" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		<action name="engineajax" class="engine.ac.EngineAC" method="executeAjax">
+			<result name="success" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
 	</package>	
 </struts>

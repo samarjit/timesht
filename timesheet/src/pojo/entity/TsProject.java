@@ -2,24 +2,43 @@ package pojo.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
 import java.util.List;
 
 
 /**
- * The persistent class for the TS_PRODUCT database table.
+ * The persistent class for the TS_PROJECT database table.
  * 
  */
 @Entity
-@Table(name="TS_PRODUCT")
-public class TsProduct implements Serializable {
+@Table(name="TS_PROJECT")
+public class TsProject implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Id 
+	@Column(name="PROJECT")
+	private String project;
+	
 	//bi-directional many-to-one association to TsTaskmaster
-	@OneToMany(mappedBy="tsProduct")
+	@OneToMany(mappedBy="tsProject")
 	private List<TsTaskmaster> tsTaskmasters;
 
-    public TsProduct() {
+    public TsProject() {
     }
+    
+    
+    
+	public String getProject() {
+		return project;
+	}
+
+
+
+	public void setProject(String project) {
+		this.project = project;
+	}
+
+
 
 	public List<TsTaskmaster> getTsTaskmasters() {
 		return this.tsTaskmasters;

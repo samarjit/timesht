@@ -35,10 +35,10 @@ public class TsTaskmaster implements Serializable {
 	@OneToMany(mappedBy="tsTaskmaster")
 	private List<TsEmpTimesheet> tsEmpTimesheets;
 
-	//bi-directional many-to-one association to TsProduct
-    @ManyToOne
-	@JoinColumn(name="PROJECT", referencedColumnName="PRODUCT")
-	private TsProduct tsProduct;
+	//bi-directional many-to-one association to TsProject
+	@ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name="PROJECT", referencedColumnName="PROJECT")
+	private TsProject tsProject;
 
     public TsTaskmaster() {
     }
@@ -99,12 +99,12 @@ public class TsTaskmaster implements Serializable {
 		this.tsEmpTimesheets = tsEmpTimesheets;
 	}
 	
-	public TsProduct getTsProduct() {
-		return this.tsProduct;
+	public TsProject getTsProject() {
+		return this.tsProject;
 	}
 
-	public void setTsProduct(TsProduct tsProduct) {
-		this.tsProduct = tsProduct;
+	public void setTsProject(TsProject tsProject) {
+		this.tsProject = tsProject;
 	}
 	
 }
