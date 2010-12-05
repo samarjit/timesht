@@ -18,13 +18,7 @@
         <dependent-module archiveName="smtp.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/smtp.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="jta-1.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/jta-1.1.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="mysql-connector-java-3.0.11-stable-bin.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/mysql-connector-java-3.0.11-stable-bin.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="hibernate-core-3.3.2.GA.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/hibernate-core-3.3.2.GA.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="pop3.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/pop3.jar">
@@ -63,49 +57,22 @@
         <dependent-module archiveName="commons-fileupload-1.2.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/commons-fileupload-1.2.1.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="antlr-2.7.6.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/antlr-2.7.6.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="persistence-api-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/persistence-api-1.0.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="commons-io-1.3.2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/commons-io-1.3.2.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="junit-4.7.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/junit-4.7.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="hibernate-entitymanager-3.4.0.GA.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/hibernate-entitymanager-3.4.0.GA.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="dsn.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/dsn.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="javassist-3.4.GA.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/javassist-3.4.GA.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="bsf.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/bsf.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="log4j-1.2.16.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/log4j-1.2.16.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="xwork-core-2.1.6.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/xwork-core-2.1.6.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="ejb3-persistence-1.0.2.GA.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/ejb3-persistence-1.0.2.GA.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="ojdbc14_g.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/ojdbc14_g.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="commons-collections-3.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/commons-collections-3.1.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="slf4j-api-1.6.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/slf4j-api-1.6.1.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="dom4j-1.6.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/dom4j-1.6.1.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="struts2-core-2.1.8.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/struts2-core-2.1.8.jar">
@@ -117,31 +84,16 @@
         <dependent-module archiveName="bsh-1.2b7.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/bsh-1.2b7.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="hibernate-commons-annotations-3.1.0.GA.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/hibernate-commons-annotations-3.1.0.GA.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="json.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/json.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="osworkflow-2.8.0.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/osworkflow-2.8.0.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="ojdbc-14.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/ojdbc-14.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="slf4j-log4j12-1.6.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/slf4j-log4j12-1.6.1.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="oscore-2.2.5.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/oscore-2.2.5.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="hibernate-annotations-3.4.0.GA.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/hibernate-annotations-3.4.0.GA.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="struts2-dojo-plugin-2.1.8.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/amsisslib/struts2-dojo-plugin-2.1.8.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="xml-apis-1.0.b2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/work/lib/java/JPAHibernate/xml-apis-1.0.b2.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="timesheet"/>

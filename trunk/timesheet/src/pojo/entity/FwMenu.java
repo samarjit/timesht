@@ -1,8 +1,16 @@
 package pojo.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.json.JSONObject;
 
 
 /**
@@ -19,8 +27,8 @@ public class FwMenu implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="MENU_ID")
-	private BigDecimal menuId;
+	@Column(name="MENU_ID", unique=true)
+	private int menuId;
 
 	@Column(name="MENU_NAME")
 	private String menuName;
@@ -31,6 +39,19 @@ public class FwMenu implements Serializable {
     public FwMenu() {
     }
 
+	public FwMenu(JSONObject json) {
+		 try {
+			 String id = (String) json.get("menuId");
+			 if(id!=null && !"".equals(id))
+			 menuId =   Integer.parseInt( id);
+			 menuAction = (String) json.get("menuAction");
+			 menuName = (String) json.get("menuName");
+			 menuRoleId = (String) json.get("menuRoleId");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public String getMenuAction() {
 		return this.menuAction;
 	}
@@ -39,11 +60,11 @@ public class FwMenu implements Serializable {
 		this.menuAction = menuAction;
 	}
 
-	public BigDecimal getMenuId() {
+	public int getMenuId() {
 		return this.menuId;
 	}
 
-	public void setMenuId(BigDecimal menuId) {
+	public void setMenuId(int menuId) {
 		this.menuId = menuId;
 	}
 
