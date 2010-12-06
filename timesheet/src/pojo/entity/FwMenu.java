@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.json.JSONObject;
 
 
@@ -26,7 +27,8 @@ public class FwMenu implements Serializable {
 	private String menuAction;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GenericGenerator(name = "mygen1", strategy = "increment") 
+	@GeneratedValue(generator = "mygen1")
 	@Column(name="MENU_ID", unique=true)
 	private int menuId;
 

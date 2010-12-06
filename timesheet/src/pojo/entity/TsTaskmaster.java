@@ -32,7 +32,7 @@ public class TsTaskmaster implements Serializable {
 	private Date tskstartdate;
 
 	//bi-directional many-to-one association to TsEmpTimesheet
-	@OneToMany(mappedBy="tsTaskmaster")
+	@OneToMany(mappedBy="tsTaskmaster1")
 	private List<TsEmpTimesheet> tsEmpTimesheets;
 
 	//bi-directional many-to-one association to TsProject

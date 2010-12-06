@@ -19,26 +19,53 @@
 
 <script>
 var ctxstr = "<%=ctxstr %>";
-function getMenuList() {
-	var strURL= ctxstr+"/engineajax.action?command=selectallmenu";
-			
+
+function replacer(key, value) {
+	if (typeof value === 'number' && !isFinite(value)) {
+		return String(value);
+	}
+	return value;
+}
+
+function getMenuList(paramElm) {
+	var data={};
+	data.pageno = $('#'+paramElm+' .pageno').val();
+	data.pagesize = $('#'+paramElm+' .pagesize').val();
+	var strURL= ctxstr+"/engineajax.action?command=selectall"+paramElm+"&data="+JSON.stringify(data, replacer,"");;
+			alert(strURL);
 $.ajax({type:"GET", url: strURL, success:  function (val){
 var json  = JSON.parse(val);
-$('#menu_list table').html(json.listtabledata);
-$('#menu_list .idlist').text(json.listattrs);
-$('#menu_list .pklist').text(json.primarykeys);
-addSelectEvents("menu_list");
+$('#'+paramElm+' .page').html(json.paging);
+$('#'+paramElm+' table').html(json.listtabledata);
+$('#'+paramElm+' .idlist').text(json.listattrs);
+$('#'+paramElm+' .pklist').text(json.primarykeys);
+addSelectEvents(paramElm);
 } });	
 }
 
-function add(){
+function add(paramElm){
 	var json = '{"subcmd":"add","entitydata":{';
-	$("#panelFieldsmenu_list" ).find("input").each(function(){
+	$("#panelFields"+paramElm ).find("input").each(function(){
 		json +='"'+$(this).attr("name")+'":"'+ this.value+'",';
 	});
 	json.substring(json.length -1);
 	json +='}}';
-	var strURL= ctxstr+"/engineajax.action?command=menucrud&data="+json;
+	var strURL= ctxstr+"/engineajax.action?command="+paramElm+"crud&data="+json;
+	alert(strURL);
+	$.ajax({type:"GET", url: strURL, success:  function (val){
+			alert("add result:"+val)
+		}
+	});
+}
+
+function deleteRec(paramElm){
+	var json = '{"subcmd":"delete","entitydata":{';
+	$("#panelFields"+paramElm ).find("input").each(function(){
+		json +='"'+$(this).attr("name")+'":"'+ this.value+'",';
+	});
+	json.substring(json.length -1);
+	json +='}}';
+	var strURL= ctxstr+"/engineajax.action?command="+paramElm+"crud&data="+json;
 	alert(strURL);
 	$.ajax({type:"GET", url: strURL, success:  function (val){
 			alert("add result:"+val)
@@ -53,7 +80,7 @@ function copyToFields(paramElm, selIdx) {
 	var tableelm = $("#"+paramElm+" table").get(0);
 	$.each(tableelm.rows[selIdx].cells,function (index, val){
 		 
-		$("#panelFieldsmenu_list" ).find("input[name="+idlist[index]+"]").val($(val).text());
+		$("#panelFields"+paramElm ).find("input[name="+idlist[index]+"]").val($(val).text());
 	});
 	
 }
@@ -98,11 +125,11 @@ function cleanUp(obj) {
 
 <div id="page">
 Engine
-<input type="button" value="getList" onclick="getMenuList()" />
-<input type="button" value="add" onclick="add()" />
+<input type="button" value="getList" onclick="getMenuList('menu_list')" />
+<input type="button" value="add" onclick="add('menu_list')" />
 <input type="button" value="save" onclick="save()" />
 <input type="button" value="update" onclick="update()" />
-<input type="button" value="delete" onclick="delete()" />
+<input type="button" value="delete" onclick="deleteRec('menu_list')" />
 
 <div id="panelFieldsmenu_list">
 <form action="">
@@ -112,7 +139,32 @@ Menu Role Id <input name="menuRoleId"/><br/>
 Menu Action <input name="menuAction"/><br/>
 </form>
 </div>
-<div id="menu_list" class="list"><div   class="idlist"></div><div class="pklist"></div> <table></table></div>
+<div id="menu_list" class="list"><div   class="idlist"></div><div class="pklist"></div> 
+<div class="page"><input class='pagesize' style="width:18px" value="10"><select class='pageno'><option selected>0</option></select></div>
+<table></table></div>
+
+
+<input type="button" value="getList" onclick="getMenuList('screen_list')" />
+<input type="button" value="add" onclick="add('screen_list')" />
+<input type="button" value="save" onclick="save()" />
+<input type="button" value="update" onclick="update()" />
+<input type="button" value="delete" onclick="deleteRec('screen_list')" />
+<div id="panelFieldsscreen_list">
+<form action="">
+Screen Name <input name="scrName"/><br/>
+Businesslogic <input name="businesslogic"/><br/>
+cssname <input name="cssname"/><br/>
+JSname <input name="jsname"/><br/>
+Relatedpanel <input name="relatedpanel"/><br/>
+ScreenTitle <input name="screenTitle"/><br/>
+SplWhereclause <input name="splwhereclause"/><br/>
+templateName <input name="templateName"/><br/>
+</form>
 </div>
+<div id="screen_list" class="list"><div   class="idlist"></div><div class="pklist"></div>
+<div class="page"><input class='pagesize' style="width:18px" value="10"><select class='pageno'><option selected>0</option></select></div>
+<table></table></div>
+</div>
+
 </body>
 </html>
