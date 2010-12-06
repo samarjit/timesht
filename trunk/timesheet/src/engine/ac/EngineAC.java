@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -18,13 +17,15 @@ import javassist.bytecode.annotation.Annotation;
 
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.Table;
 
 import org.json.JSONObject;
 
 import pojo.entity.FwMenu;
-import pojo.entity.TsProject;
+import pojo.entity.Screen;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -35,8 +36,8 @@ public class EngineAC extends ActionSupport {
 	private InputStream inputStream;
 	private String data;
 	static{
-		//EntityManagerFactory emf =    		Persistence.createEntityManagerFactory("timesheet");
-    	//em = emf.createEntityManager();	
+		EntityManagerFactory emf =    		Persistence.createEntityManagerFactory("timesheet");
+    	em = emf.createEntityManager();	
 	}
 	public EngineAC() {
 		
@@ -50,7 +51,7 @@ public class EngineAC extends ActionSupport {
     	Query q = em.createQuery("select new map(x) from FwMenu x");
     	List<HashMap>  lc = q.getResultList();
     	for (HashMap objects : lc) {
-    		//FwMenu fw = (FwMenu) objects.get("0");
+    		//FwMenu fw = (FwMenu) objects.get("0"); //efectively this invokes the toString()
  			System.out.println(objects.get("0")+"| ");
  		}
 		
@@ -60,51 +61,206 @@ public class EngineAC extends ActionSupport {
 		return SUCCESS;
 	}
 	
-	
+	public String executeAjax(){
+		String resXML = "";
+		System.out.println("Execute Ajax");
+		
+		
+		if("selectallmenu_list".equals(command)){
+			resXML = getMenuList();
+		}else if("menu_listcrud".equals(command)){
+			resXML = menuCRUD();
+		} 
+		if("selectallscreen_list".equals(command)){
+			resXML = getScreenList();
+		}else if("screen_listcrud".equals(command)){
+			resXML = screenCRUD();
+		} 
+		
+		
+		System.out.println("Returned XML:"+command+":"+resXML);
+        inputStream = new StringBufferInputStream(resXML);
+        
+		return SUCCESS;
+	}
 
 	public String getMenuList(){
+		int pageNo =0;
+		int pagesize = 0;
 		String retStr = "";
-		Query q = em.createQuery("select new map(x) from FwMenu x");
-    	List<HashMap>  lc = q.getResultList();
+		String paging = "";
+		try {
+			JSONObject jobj = new JSONObject(data);
+			pageNo = Integer.parseInt((String)jobj.get("pageno"));
+			pagesize = Integer.parseInt((String)jobj.get("pagesize"));
+			System.out.println("pageNo:"+pageNo);
+		
+		String queryStr = "select new map(x) from FwMenu x order by x.menuId";
+		Query count =   (Query) em.createQuery(queryStr 
+                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(menuId) FROM")
+                .replaceFirst("(?i)ORDER BY .*", ""));
+		long ct = (Long)count.getSingleResult();
+		System.out.println("Total count:"+ct);
+		int pages = (int) Math.ceil((double)ct/pagesize);
+		System.out.println("pages :pages"+pages);
+		paging +=  "Page Size:<input class='pagesize' style='width:14px' value='"+pagesize+"' ><select class='pageno'>";
+		for(int i=0 ; i < pages; i++){
+			if(i== pageNo){
+				paging +="<option selected>"+i+"</option>";
+			}else{
+				paging +="<option>"+i+"</option>";
+			}
+		}
+		paging +="</select>";
+		
+		Query q = em.createQuery(queryStr);
+		q.setFirstResult(pagesize*pageNo);
+		q.setMaxResults(pagesize);
     	FwMenu fw = new FwMenu(); 
     	retStr = "{\"primarykeys\":\""+fw.getPrimaryKeys()+"\",";
     	retStr += "\"listattrs\":\""+fw.getListAttr()+"\",";
+    	retStr += "\"paging\":\""+paging+"\",";
     	retStr += "\"listtabledata\":\""+fw.getHeaderNames()+"\n";
+    	List<HashMap> lc = q.getResultList();
     	for (HashMap objects : lc) {
     		 
     		retStr +=(objects.get("0")+"");
  		}
     	
     	retStr += "\"}";
-    	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return retStr;
 	}
 	public String menuCRUD(){
 		System.out.println("data:"+data);
 		try {
 			JSONObject jobj = new JSONObject(data);
-			System.out.println(jobj.get("subcmd"));
+			String subcmd = (String) jobj.get("subcmd");
+			System.out.println(subcmd);
 			FwMenu fw = new FwMenu(jobj.getJSONObject("entitydata"));
 			System.out.println(fw);
 			JSONObject entitydataobj = jobj.getJSONObject("entitydata");
 			 String [] star = jobj.getNames(jobj.getJSONObject("entitydata"));
 			 System.out.println(star.length);
-			 for (String string : star) {
-				System.out.println(string);
-				System.out.println(entitydataobj.get(string));
-			}
+			 
+//			 Class fwClass  = Class.forName("pojo.entity.FwMenu");
+//			 Class[] types = new Class[] {};
+//			 Constructor cons = fwClass.getConstructor(types);
+//			 Object fw =  cons.newInstance();
+//			 for (String prop : star) {
+//				System.out.println(prop);
+//				String methodname = "set"+Character.toUpperCase(prop.charAt(0))+prop.substring(1);
+//				Method meth = fwClass.getMethod(methodname, types);
+//				meth.invoke(fw, new Object[]{entitydataobj.get(prop)});
+//				System.out.println(entitydataobj.get(prop));
+//			 }
 			 em.getTransaction().begin();
-			FwMenu fw2 = new FwMenu();
-			fw2 = em.merge(fw);
-			
-			// em.persist(fw);		    	
-		    em.getTransaction().commit();
+			 if("delete".equals(subcmd)){
+				 System.err.println("Inside delete..");
+//				 Query q = em.createQuery("delete from FwMenu x where x.menuId =:name");
+//				 q.setParameter("name", fw.getMenuId());
+//				 int deleted = q.executeUpdate();
+				 FwMenu fw2 = em.find(FwMenu.class, fw.getMenuId());
+				 em.remove(fw2);
+			 }else{
+				 System.err.println("Inside general subcmd...");
+				 em.merge(fw);			 
+			 }		    	
+		    
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally{
+			 em.getTransaction().commit();
 		}
 		return "";
 	}
 	
+	
+	///Screen
+	public String getScreenList(){
+		int pageNo =0;
+		int pagesize = 0;
+		String retStr = "";
+		String paging = "";
+		try {
+			JSONObject jobj = new JSONObject(data);
+			pageNo = Integer.parseInt((String)jobj.get("pageno"));
+			pagesize = Integer.parseInt((String)jobj.get("pagesize"));
+			System.out.println("pageNo:"+pageNo);
+		
+		String queryStr = "select new map(x) from Screen x order by x.scrName";
+		Query count =   (Query) em.createQuery(queryStr 
+                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(scrName) FROM")
+                .replaceFirst("(?i)ORDER BY .*", ""));
+		long ct = (Long)count.getSingleResult();
+		System.out.println("Total count:"+ct);
+		int pages = (int) Math.ceil((double)ct/pagesize);
+		System.out.println("pages :pages"+pages);
+		paging +=  "Page Size:<input class='pagesize' style='width:14px' value='"+pagesize+"' ><select class='pageno'>";
+		for(int i=0 ; i < pages; i++){
+			if(i== pageNo){
+				paging +="<option selected>"+i+"</option>";
+			}else{
+				paging +="<option>"+i+"</option>";
+			}
+		}
+		paging +="</select>";
+		
+		Query q = em.createQuery(queryStr);
+		q.setFirstResult(pagesize*pageNo);
+		q.setMaxResults(pagesize);
+    	Screen fw = new Screen(); 
+    	retStr = "{\"primarykeys\":\""+fw.getPrimaryKeys()+"\",";
+    	retStr += "\"listattrs\":\""+fw.getListAttr()+"\",";
+    	retStr += "\"paging\":\""+paging+"\",";
+    	retStr += "\"listtabledata\":\""+fw.getHeaderNames()+"\n";
+    	List<HashMap> lc = q.getResultList();
+    	for (HashMap objects : lc) {
+    		 
+    		retStr +=(objects.get("0")+"");
+ 		}
+    	
+    	retStr += "\"}";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return retStr;
+	}
+	public String screenCRUD(){
+		System.out.println("data:"+data);
+		try {
+			JSONObject jobj = new JSONObject(data);
+			String subcmd = (String) jobj.get("subcmd");
+			System.out.println(subcmd);
+			Screen fw = new Screen(jobj.getJSONObject("entitydata"));
+			System.out.println(fw);
+			JSONObject entitydataobj = jobj.getJSONObject("entitydata");
+			 String [] star = jobj.getNames(jobj.getJSONObject("entitydata"));
+			 System.out.println(star.length);
+
+			 em.getTransaction().begin();
+			 if("delete".equals(subcmd)){
+				 System.err.println("Inside delete..");
+//				 Query q = em.createQuery("delete from Screen x where x.menuId =:name");
+//				 q.setParameter("name", fw.getMenuId());
+//				 int deleted = q.executeUpdate();
+				 Screen fw2 = em.find(Screen.class, fw.getScrName());
+				 em.remove(fw2);
+			 }else{
+				 System.err.println("Inside general subcmd...");
+				 em.merge(fw);			 
+			 }		    	
+		    
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			 em.getTransaction().commit();
+		}
+		return "";
+	}
+	//////Screen
 	public static void persist( Object o )
 	  {
 	    try
@@ -124,13 +280,13 @@ public class EngineAC extends ActionSupport {
 	      System.out.println( "Table name: " + table.name() );
 
 	      // Access the column class so that we can extract it from our get methods
-	      Class columnClass = Class.forName( "javax.persistence.Column" );
+	      Class columnClass = Class.forName( "javax.persistence.Column" ); 
 	      Field[] f =o.getClass().getDeclaredFields();
 	      for (Field field : f) {
 			Column c = field.getAnnotation(columnClass);
 			if(c != null)
 			System.out.println(field.getName()+" "+c.name());
-		}
+	      }
 	      
 	    }
 	    catch( Exception e )
@@ -139,24 +295,7 @@ public class EngineAC extends ActionSupport {
 	    }
 	  }
 	
-	public String executeAjax(){
-		String resXML = "";
-		System.out.println("Execute Ajax");
-		
-		
-		if("selectallmenu".equals(command)){
-			resXML = getMenuList();
-		}else if("menucrud".equals(command)){
-			resXML = menuCRUD();
-		}
-		
-		
-		
-		System.out.println("Returned XML:"+command+":"+resXML);
-        inputStream = new StringBufferInputStream(resXML);
-        
-		return SUCCESS;
-	}
+	
 	
 	
 	public String getData() {
@@ -207,7 +346,7 @@ public class EngineAC extends ActionSupport {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		FwMenu fw = new FwMenu();
-		new EngineAC().persist(fw);
+		new EngineAC().execute();
 	}
 
 }
