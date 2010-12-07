@@ -1,5 +1,6 @@
 package pojo.entity;
 
+
 import java.util.AbstractList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +56,40 @@ public class LazyList extends AbstractList {
         this.query = query;
         this.pageSize = pageSize;
         this.numResults = numResults;
+    }
+    
+    /**
+     * Create a LazyList backed by the given query, using pageSize results
+     * per page. The number of results expected is calculated by
+     * reconstructing and executing an equivalent COUNT query when the list 
+     * is created.
+     */
+    public LazyList(Query query, int pageSize) {
+        this();
+        this.query = query;
+        this.pageSize = pageSize;
+        
+        /* create a query to see how many results there are */
+        OpenJPAQuery jpaQuery = (OpenJPAQuery) query;
+        EntityManager em = jpaQuery.getEntityManager();
+        String queryStr = jpaQuery.getQueryString();
+        Query count = em.createQuery(queryStr
+                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT($1) FROM")
+                .replaceFirst("(?i)ORDER BY .*", ""));
+        
+        /* reset all the parameters */
+        if (jpaQuery.hasPositionalParameters()) {
+            Object[] posParams = jpaQuery.getPositionalParameters();
+            for (int i = 0; i < posParams.length; i++) {
+                if (posParams[i] != null) {
+                    count.setParameter(i + 1, posParams[i]);
+                }
+            }
+        } else {
+            ((OpenJPAQuery) count).setParameters(jpaQuery.getNamedParameters());
+        }
+        
+        this.numResults = (Long) count.getSingleResult();
     }
     
     /**

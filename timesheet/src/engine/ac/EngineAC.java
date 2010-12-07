@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
@@ -18,10 +19,12 @@ import javassist.bytecode.annotation.Annotation;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Parameter;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.Table;
 
+import org.apache.openjpa.persistence.OpenJPAQuery;
 import org.json.JSONObject;
 
 import pojo.entity.FwMenu;
@@ -48,11 +51,19 @@ public class EngineAC extends ActionSupport {
 //    	em.getTransaction().begin();
 //    	em.persist(newCustomer);
 //    	em.getTransaction().commit();
-    	Query q = em.createQuery("select new map(x) from FwMenu x");
-    	List<HashMap>  lc = q.getResultList();
-    	for (HashMap objects : lc) {
+    	Query q = em.createQuery("SELECT COUNT(x.menuId) FROM pojo.entity.FwMenu x where x.menuId= :name").setParameter("name", 18);
+    	OpenJPAQuery jpaQuery = (OpenJPAQuery) q;
+		System.out.println("HasPositional Parameters:"+jpaQuery.hasPositionalParameters());
+		 Set<Parameter<?>> param = jpaQuery.getParameters();
+		 
+		 for (Parameter<?> parameter : param) {
+			System.out.println(parameter.getPosition()+" "+parameter.getName()+" "+parameter.getParameterType());
+		}
+		 
+    	List<FwMenu>  lc = q.getResultList();
+    	for (FwMenu objects : lc) {
     		//FwMenu fw = (FwMenu) objects.get("0"); //efectively this invokes the toString()
- 			System.out.println(objects.get("0")+"| ");
+ 			System.out.println(objects+"| ");
  		}
 		
 		
@@ -95,9 +106,9 @@ public class EngineAC extends ActionSupport {
 			pagesize = Integer.parseInt((String)jobj.get("pagesize"));
 			System.out.println("pageNo:"+pageNo);
 		
-		String queryStr = "select new map(x) from FwMenu x order by x.menuId";
+		String queryStr = "select  x from FwMenu x order by x.menuId";
 		Query count =   (Query) em.createQuery(queryStr 
-                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(menuId) FROM")
+                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(x.menuId) FROM")
                 .replaceFirst("(?i)ORDER BY .*", ""));
 		long ct = (Long)count.getSingleResult();
 		System.out.println("Total count:"+ct);
@@ -121,10 +132,10 @@ public class EngineAC extends ActionSupport {
     	retStr += "\"listattrs\":\""+fw.getListAttr()+"\",";
     	retStr += "\"paging\":\""+paging+"\",";
     	retStr += "\"listtabledata\":\""+fw.getHeaderNames()+"\n";
-    	List<HashMap> lc = q.getResultList();
-    	for (HashMap objects : lc) {
+    	List<FwMenu> lc = q.getResultList();
+    	for (FwMenu objects : lc) {
     		 
-    		retStr +=(objects.get("0")+"");
+    		retStr +=(objects+"");
  		}
     	
     	retStr += "\"}";
@@ -190,10 +201,13 @@ public class EngineAC extends ActionSupport {
 			pagesize = Integer.parseInt((String)jobj.get("pagesize"));
 			System.out.println("pageNo:"+pageNo);
 		
-		String queryStr = "select new map(x) from Screen x order by x.scrName";
+		String queryStr = "select x from Screen x order by x.scrName";
 		Query count =   (Query) em.createQuery(queryStr 
-                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(scrName) FROM")
+                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(x.scrName) FROM")
                 .replaceFirst("(?i)ORDER BY .*", ""));
+		
+	
+		
 		long ct = (Long)count.getSingleResult();
 		System.out.println("Total count:"+ct);
 		int pages = (int) Math.ceil((double)ct/pagesize);
@@ -216,10 +230,10 @@ public class EngineAC extends ActionSupport {
     	retStr += "\"listattrs\":\""+fw.getListAttr()+"\",";
     	retStr += "\"paging\":\""+paging+"\",";
     	retStr += "\"listtabledata\":\""+fw.getHeaderNames()+"\n";
-    	List<HashMap> lc = q.getResultList();
-    	for (HashMap objects : lc) {
+    	List<Screen> lc = q.getResultList();
+    	for (Screen objects : lc) {
     		 
-    		retStr +=(objects.get("0")+"");
+    		retStr +=(objects+"");
  		}
     	
     	retStr += "\"}";
