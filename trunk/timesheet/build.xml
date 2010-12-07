@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hellojpa" default="enhance">
+			<path id="jpa.enhancement.classpath">
+            <pathelement location="build/classes"/>
+
+            <!-- lib contains all of the jars that came with the OpenJPA binary download -->
+            <fileset dir="./WebContent/WEB-INF/lib">
+                <include name="**/*.jar"/>
+            </fileset>
+        </path>
+
+
+        <target name="enhance"  >
+        <!-- This is a bit of a hack, but I needed to copy the persistence.xml file from my src dir
+            to the build dir when we run enhancement -->
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src" excludes="**/*.launch, **/*.java"/>
+        </copy>
+
+
+        <!-- define the openjpac task -->
+        <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask">
+            <classpath refid="jpa.enhancement.classpath"/>
+        </taskdef>
+            
+        <!-- invoke enhancer the enhancer -->
+        <openjpac>
+            <classpath refid="jpa.enhancement.classpath"/>
+        </openjpac>
+        <echo message="Enhancing complete."/>
+    </target>
+	
+</project>	
