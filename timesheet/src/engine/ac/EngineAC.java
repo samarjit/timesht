@@ -106,6 +106,7 @@ public class EngineAC extends ActionSupport {
 		String joiner = " WHERE ";
 		try {
 			JSONObject jobj = new JSONObject(data);
+			System.out.println("Input data:"+data);
 			pageNo = Integer.parseInt((String)jobj.get("pageno"));
 			pagesize = Integer.parseInt((String)jobj.get("pagesize"));
 			System.out.println("pageNo:"+pageNo);
