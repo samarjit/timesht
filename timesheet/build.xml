@@ -13,7 +13,7 @@
         <target name="enhance"  >
         <!-- This is a bit of a hack, but I needed to copy the persistence.xml file from my src dir
             to the build dir when we run enhancement -->
-        <copy includeemptydirs="false" todir="bin">
+        <copy includeemptydirs="false" todir="build/classes">
             <fileset dir="src" excludes="**/*.launch, **/*.java"/>
         </copy>
 
@@ -24,6 +24,8 @@
         </taskdef>
             
         <!-- invoke enhancer the enhancer -->
+		<property name="myclasspath" refid="jpa.enhancement.classpath"/>
+		<echo message="${myclasspath}" />
         <openjpac>
             <classpath refid="jpa.enhancement.classpath"/>
         </openjpac>

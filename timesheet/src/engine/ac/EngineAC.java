@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.StringBufferInputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +29,10 @@ import org.json.JSONObject;
 import pojo.entity.FwMenu;
 import pojo.entity.Screen;
 
+import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionSupport;
+
+
 
 public class EngineAC extends ActionSupport {
 
@@ -100,16 +102,38 @@ public class EngineAC extends ActionSupport {
 		int pagesize = 0;
 		String retStr = "";
 		String paging = "";
+		String whereclause="";
+		String joiner = " WHERE ";
 		try {
 			JSONObject jobj = new JSONObject(data);
 			pageNo = Integer.parseInt((String)jobj.get("pageno"));
 			pagesize = Integer.parseInt((String)jobj.get("pagesize"));
 			System.out.println("pageNo:"+pageNo);
-		
-		String queryStr = "select  x from FwMenu x order by x.menuId";
+		//whereclause
+			JSONObject whereobj = null;
+			String wherepropar[] = new String[0];
+			 
+			if (jobj.has("whereclause")) {
+				whereobj = jobj.getJSONObject("whereclause");
+				wherepropar = JSONObject.getNames(whereobj);
+
+				for (String whereprop : wherepropar) {
+					whereclause += joiner + "x." + whereprop + " like :" + whereprop + " ";
+					joiner = " AND ";
+				}
+			}
+  
+		System.out.println("where clause:"+whereclause);	
+		String queryStr = "select  x from FwMenu x "+whereclause+"  order by x.menuId";
+		//pagination
 		Query count =   (Query) em.createQuery(queryStr 
                 .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(x.menuId) FROM")
                 .replaceFirst("(?i)ORDER BY .*", ""));
+		//where replacement
+		for (String whereprop : wherepropar) {
+			count.setParameter(whereprop, whereobj.get(whereprop));
+		}
+		
 		long ct = (Long)count.getSingleResult();
 		System.out.println("Total count:"+ct);
 		int pages = (int) Math.ceil((double)ct/pagesize);
@@ -123,8 +147,15 @@ public class EngineAC extends ActionSupport {
 			}
 		}
 		paging +="</select>";
+		//pagination
 		
 		Query q = em.createQuery(queryStr);
+		//where replacement
+		for (String whereprop : wherepropar) {
+			q.setParameter(whereprop, whereobj.get(whereprop));
+		}
+		
+		
 		q.setFirstResult(pagesize*pageNo);
 		q.setMaxResults(pagesize);
     	FwMenu fw = new FwMenu(); 
@@ -150,11 +181,14 @@ public class EngineAC extends ActionSupport {
 			JSONObject jobj = new JSONObject(data);
 			String subcmd = (String) jobj.get("subcmd");
 			System.out.println(subcmd);
+			
+			JSONObject entitydataobj = jobj.getJSONObject("entitydata");
+			Gson gson = new Gson();
+			//FwMenu fw = gson.fromJson(entitydataobj.toString(), FwMenu.class);
 			FwMenu fw = new FwMenu(jobj.getJSONObject("entitydata"));
 			System.out.println(fw);
-			JSONObject entitydataobj = jobj.getJSONObject("entitydata");
-			 String [] star = jobj.getNames(jobj.getJSONObject("entitydata"));
-			 System.out.println(star.length);
+			String [] star = jobj.getNames(jobj.getJSONObject("entitydata"));
+			System.out.println(star.length);
 			 
 //			 Class fwClass  = Class.forName("pojo.entity.FwMenu");
 //			 Class[] types = new Class[] {};
@@ -183,6 +217,7 @@ public class EngineAC extends ActionSupport {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
+			if(em.getTransaction().isActive())
 			 em.getTransaction().commit();
 		}
 		return "";
@@ -195,18 +230,37 @@ public class EngineAC extends ActionSupport {
 		int pagesize = 0;
 		String retStr = "";
 		String paging = "";
+		String whereclause="";
+		String joiner = " WHERE ";
 		try {
 			JSONObject jobj = new JSONObject(data);
 			pageNo = Integer.parseInt((String)jobj.get("pageno"));
 			pagesize = Integer.parseInt((String)jobj.get("pagesize"));
 			System.out.println("pageNo:"+pageNo);
-		
-		String queryStr = "select x from Screen x order by x.scrName";
+			//whereclause
+			JSONObject whereobj = null;
+			String wherepropar[] = new String[0];
+			 
+			if (jobj.has("whereclause")) {
+				whereobj = jobj.getJSONObject("whereclause");
+				wherepropar = JSONObject.getNames(whereobj);
+
+				for (String whereprop : wherepropar) {
+					whereclause += joiner + "x." + whereprop + " like :" + whereprop + " ";
+					joiner = " AND ";
+				}
+			}
+  
+		System.out.println("where clause:"+whereclause);
+		String queryStr = "select x from Screen x "+whereclause+" order by x.scrName";
 		Query count =   (Query) em.createQuery(queryStr 
                 .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(x.scrName) FROM")
                 .replaceFirst("(?i)ORDER BY .*", ""));
 		
-	
+		//where replacement
+		for (String whereprop : wherepropar) {
+			count.setParameter(whereprop, whereobj.get(whereprop));
+		}
 		
 		long ct = (Long)count.getSingleResult();
 		System.out.println("Total count:"+ct);
@@ -223,6 +277,12 @@ public class EngineAC extends ActionSupport {
 		paging +="</select>";
 		
 		Query q = em.createQuery(queryStr);
+		
+		//where replacement
+		for (String whereprop : wherepropar) {
+			q.setParameter(whereprop, whereobj.get(whereprop));
+		}
+		
 		q.setFirstResult(pagesize*pageNo);
 		q.setMaxResults(pagesize);
     	Screen fw = new Screen(); 
@@ -270,6 +330,7 @@ public class EngineAC extends ActionSupport {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
+			if(em.getTransaction().isActive())
 			 em.getTransaction().commit();
 		}
 		return "";

@@ -1,6 +1,7 @@
 package pojo.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,7 +30,7 @@ public class FwMenu implements Serializable {
 	//@GeneratedValue(generator = "mygen1")
 	@GeneratedValue(strategy= GenerationType.AUTO)
 	@Column(name="MENU_ID", unique=true)
-	private int menuId;
+	private BigDecimal menuId;
 
 	@Column(name="MENU_NAME")
 	private String menuName;
@@ -44,7 +45,7 @@ public class FwMenu implements Serializable {
 		 try {
 			 String id = (String) json.get("menuId");
 			 if(id!=null && !"".equals(id))
-			 menuId =   Integer.parseInt( id);
+			 menuId =   new BigDecimal( id);
 			 menuAction = (String) json.get("menuAction");
 			 menuName = (String) json.get("menuName");
 			 menuRoleId = (String) json.get("menuRoleId");
@@ -61,11 +62,13 @@ public class FwMenu implements Serializable {
 		this.menuAction = menuAction;
 	}
 
-	public int getMenuId() {
-		return this.menuId;
+	 
+
+	public BigDecimal getMenuId() {
+		return menuId;
 	}
 
-	public void setMenuId(int menuId) {
+	public void setMenuId(BigDecimal menuId) {
 		this.menuId = menuId;
 	}
 
