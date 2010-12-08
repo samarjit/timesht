@@ -18,23 +18,23 @@ public class Screen implements Serializable {
 
 	@Id
 	@Column(name="SCR_NAME")
-	private String scrName;
+	private String scrName="";
 
-	private String businesslogic;
+	private String businesslogic="";
 
-	private String cssname;
+	private String cssname="";
 
-	private String jsname;
+	private String jsname="";
 
-	private String relatedpanel;
+	private String relatedpanel="";
 
 	@Column(name="SCREEN_TITLE")
-	private String screenTitle;
+	private String screenTitle="";
 
-	private String splwhereclause;
+	private String splwhereclause="";
 
 	@Column(name="TEMPLATE_NAME")
-	private String templateName;
+	private String templateName="";
 
 	//bi-directional many-to-one association to PanelField
 	@OneToMany(mappedBy="screen")
@@ -63,6 +63,15 @@ public class Screen implements Serializable {
 	}
 
 	public String toString(){
+		if(scrName ==null)scrName="";
+		if(businesslogic ==null)businesslogic="";
+		if(cssname ==null)cssname="";
+		if(jsname ==null)jsname="";
+		if(relatedpanel ==null)relatedpanel="";
+		if(screenTitle ==null)screenTitle="";
+		if(splwhereclause ==null)splwhereclause="";
+		if(templateName ==null)templateName="";
+		
 		return "<tr><td>"+scrName+"</td><td>"+businesslogic+"</td><td>"+cssname+"</td><td>"+jsname+"</td><td>"+relatedpanel+"</td><td>"+screenTitle+"</td><td>"+splwhereclause+"</td><td>"+templateName+"</td></tr>";
 	}
 	

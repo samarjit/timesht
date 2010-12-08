@@ -5,9 +5,18 @@
             org.apache.openjpa.persistence.PersistenceProviderImpl
 			 
         </provider>
-<class>pojo.entity.FwMenu</class>
+<class>pojo.entity.FwMenu         </class>
+<class>pojo.entity.PanelField     </class>
+<class>pojo.entity.Screen         </class>
+<class>pojo.entity.ScreenPanel    </class>
+<class>pojo.entity.ScreenPanelPK  </class>
+<class>pojo.entity.TsEmpTimesheet </class>
+<class>pojo.entity.TsProject      </class>
+<class>pojo.entity.TsTaskmaster   </class>
+
         <properties>
-      <property name="openjpa.MetaDataFactory" value="jpa(Types=pojo.entity.FwMenu)"/>
+      <!--property name="openjpa.MetaDataFactory" value="jpa(Types=pojo.entity.FwMenu)"/-->
+	  <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/> 
 			<property name="openjpa.jdbc.DBDictionary" value="oracle(DriverVendor=oracle)"/>
 			<property name="openjpa.Log" value="DefaultLevel=INFO,SQL=TRACE"/>
 			<property name="openjpa.ConnectionURL" value=" jdbc:oracle:thin:@localhost:1521:XE"/>

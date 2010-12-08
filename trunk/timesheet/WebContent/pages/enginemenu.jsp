@@ -19,6 +19,7 @@
 
 <script>
 var ctxstr = "<%=ctxstr %>";
+var screenMode = "insert";
 
 function replacer(key, value) {
 	if (typeof value === 'number' && !isFinite(value)) {
@@ -43,12 +44,48 @@ addSelectEvents(paramElm);
 } });	
 }
 
+function searchList(paramElm) {
+	 
+	var data={};
+	data.pageno = $('#'+paramElm+' .pageno').val();
+	data.pagesize = $('#'+paramElm+' .pagesize').val();
+	 var whereclauseStr="";
+	 var whereclause = {}
+	 $("#panelFields"+paramElm ).find(" form :input").each(function(){
+			var elmname = $(this).attr("name");
+			var elmval = this.value;
+			if(elmval != null && elmval != ""){
+				whereclauseStr = '"'+elmname+'":"'+escape(elmval)+'",';
+			} 
+		});
+	 
+	 if(whereclauseStr!=null || whereclauseStr != "")
+	 whereclauseStr = whereclauseStr.substring(0,whereclauseStr.length -1);
+	 if(whereclauseStr.length > 0)whereclauseStr = "{"+whereclauseStr;
+	 whereclauseStr +="}";
+	 
+	 whereclause = JSON.parse(whereclauseStr);
+	 data.whereclause = whereclause;
+	 
+	var strURL= ctxstr+"/engineajax.action?command=selectall"+paramElm+"&data="+JSON.stringify(data, replacer,"");;
+			alert(strURL);
+$.ajax({type:"GET", url: strURL, success:  function (val){
+		var json  = JSON.parse(val);
+		$('#'+paramElm+' .page').html(json.paging);
+		$('#'+paramElm+' table').html(json.listtabledata);
+		$('#'+paramElm+' .idlist').text(json.listattrs);
+		$('#'+paramElm+' .pklist').text(json.primarykeys);
+		addSelectEvents(paramElm);
+		} 
+	});	
+}
+
 function add(paramElm){
 	var json = '{"subcmd":"add","entitydata":{';
 	$("#panelFields"+paramElm ).find("input").each(function(){
 		json +='"'+$(this).attr("name")+'":"'+ this.value+'",';
 	});
-	json.substring(json.length -1);
+	json = json.substring(0,json.length -1);
 	json +='}}';
 	var strURL= ctxstr+"/engineajax.action?command="+paramElm+"crud&data="+json;
 	alert(strURL);
@@ -63,7 +100,7 @@ function deleteRec(paramElm){
 	$("#panelFields"+paramElm ).find("input").each(function(){
 		json +='"'+$(this).attr("name")+'":"'+ this.value+'",';
 	});
-	json.substring(json.length -1);
+	json = json.substring(0,json.length -1);
 	json +='}}';
 	var strURL= ctxstr+"/engineajax.action?command="+paramElm+"crud&data="+json;
 	alert(strURL);
@@ -126,6 +163,7 @@ function cleanUp(obj) {
 <div id="page">
 Engine
 <input type="button" value="getList" onclick="getMenuList('menu_list')" />
+<input type="button" value="search" onclick="searchList('menu_list')" />
 <input type="button" value="add" onclick="add('menu_list')" />
 <input type="button" value="save" onclick="save()" />
 <input type="button" value="update" onclick="update()" />
@@ -145,10 +183,12 @@ Menu Action <input name="menuAction"/><br/>
 
 
 <input type="button" value="getList" onclick="getMenuList('screen_list')" />
+<input type="button" value="search" onclick="searchList('screen_list')" />
 <input type="button" value="add" onclick="add('screen_list')" />
 <input type="button" value="save" onclick="save()" />
 <input type="button" value="update" onclick="update()" />
 <input type="button" value="delete" onclick="deleteRec('screen_list')" />
+<input type="button" value="reset" onclick="$('#panelFieldsscreen_list form').get(0).reset()" />
 <div id="panelFieldsscreen_list">
 <form action="">
 Screen Name <input name="scrName"/><br/>
