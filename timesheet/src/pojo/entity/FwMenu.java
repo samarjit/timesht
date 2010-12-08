@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.json.JSONObject;
 
@@ -28,7 +29,10 @@ public class FwMenu implements Serializable {
 	@Id
 	 //GenericGenerator(name = "mygen1", strategy = "increment") 
 	//@GeneratedValue(generator = "mygen1")
-	@GeneratedValue(strategy= GenerationType.AUTO)
+	//@GeneratedValue(strategy= GenerationType.AUTO) JPA
+	@GeneratedValue(strategy=GenerationType.TABLE, generator="EMP_SEQ")
+    @TableGenerator(name="EMP_SEQ", table="SEQUENCE_TABLE", pkColumnName="SEQ_NAME",
+        valueColumnName="SEQ_COUNT", pkColumnValue="EMP_SEQ")
 	@Column(name="MENU_ID", unique=true)
 	private BigDecimal menuId;
 
