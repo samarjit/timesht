@@ -1,0 +1,201 @@
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" 
+"http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+<constant name="struts.devMode" value="true"></constant>
+ 
+	<package name="login" namespace="/" extends="struts-default">
+		<action name="login" class="actionclass.LoginAC">
+			<result name="success">/pages/dashboard.jsp</result>
+			<result name="error">/pages/error.jsp</result>
+	
+		</action>
+		<action name="logout" class="actionclass.LoginAC" method="logout">
+			<result name="success">/pages/login.jsp</result>
+			<result name="error">/pages/error.jsp</result>
+	
+		</action>
+	</package>
+	
+	<package name="workflow" namespace="/" extends="struts-default">
+		<action name="workflow" class="workflow.WorkflowAC">
+			<result name="success">/pages/workflowcompleted.jsp</result>
+			<result  name="template1" type="redirectAction">
+							<param name="actionName">template1</param> 
+			                <param name="screenName">${screenName}</param>
+			            </result>
+			<result name="flowcontroller" type="redirect">
+							<param name="location">${redirecturl}</param>
+						</result>
+			<result name="ajaxwflsuccess" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		<action name="scrworkflow" class="workflow.WorkflowAC" method="executeScrflow">
+			<result name="success">/pages/workflowcompleted.jsp</result>
+			<result  name="template1" type="redirectAction">
+							<param name="actionName">template1</param> 
+			                <param name="screenName">${screenName}</param>
+			            </result>
+			<result name="flowcontroller" type="redirect">
+							<param name="location">${redirecturl}</param>
+						</result>
+			<result name="ajaxwflsuccess" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>			
+		</action>
+		<action name="workflowview" class="workflow.WorkflowViewAC" >
+			<result type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="default2" namespace="/" extends="struts-default">
+		<action name="dynamic" class="actionclass.GenerateHtmlAC">
+			<result  name="success">/index.jsp</result>
+		</action>
+	</package>
+	<package name="template1" namespace="/" extends="struts-default">
+		<action name="template1" class="actionclass.GenerateHtmlAC">
+			<result name="success">/login.jsp</result>
+			<result name="template1">/template1.jsp</result>
+			<result name="template2">/template2.jsp</result>
+			<result name="templateAllocation">/pages/templateAllocation.jsp</result>
+			<result name="failure">/pages/unknownerror.jsp</result>
+			<result name="populate" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+			<result name="redirecttojsp" type="redirect">
+				<param name="location">${redirectjspname}</param>
+			</result>
+		</action>
+
+	</package>
+
+	<package name="actionTag" namespace="/" extends="struts-default">
+
+		 
+
+		<action name="searchlist" class="actionclass.SearchListAC">
+			<result type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+	
+		<action name="retreivedetails" class="actionclass.RetreiveDetailsAC">
+			<result type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+	
+		
+		<action name="insertdata" class="actionclass.InsertDataAC">
+		 <result name="workflow" type="redirect">${redirectUrl}</result>
+			<result type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="updatedata" class="actionclass.UpdateDataAC">
+			<result type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="deletedata" class="actionclass.DeleteDataAC">
+			<result type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+	</package>
+	<package name="vendor" namespace="/" extends="struts-default">
+		<action name="vendormap" class="actionclass.VendorMapAC">
+			<result type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+	</package>
+	<package name="rfq" namespace="/" extends="struts-default">
+		<action name="rfqsendemail" class="actionclass.RFQDispatcherAC" method="sendemailrfqAction">
+			<result name="success">pages/rfqemail.jsp
+				 
+			</result>
+		</action>	
+		<action name="rfqsendprint" class="actionclass.RFQDispatcherAC" method="printrfqAction">
+			<result name="success">pages/rfqprint.jsp
+			 
+			</result>
+		
+		</action>
+	</package>
+	<package name="rpc" namespace="/" extends="struts-default">
+		<action name="jsrpc" class="actionclass.JavascriptRpcAC" >
+			<result type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>	
+	</package>
+	<package name="email" namespace="/" extends="struts-default">
+		<action name="sendmail" class="actionclass.SendMailAC" >
+			<result type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>	
+	</package>
+
+	<package name="createscreen" namespace="/" extends="struts-default">
+		<action name="createscreen" class="actionclass.CreateScreenAC">
+			<result name="success">pages/createscreen.jsp</result>
+			<result name="returnajax" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+	</package>
+	<package name="timesheet" namespace="/" extends="struts-default">
+		<action name="timesheet" class="actionclass.TimesheetAC">
+			<result name="success">pages/timesheet.jsp</result>
+			<result name="returnajax" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		<action name="timesheetajax" class="actionclass.TimesheetAC">
+			<result name="success" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="engine" namespace="/" extends="struts-default" >
+		<action name="engine" class="engine.ac.EngineAC" method="execute">
+			<result name="success">pages/enginemenu.jsp</result>
+			<result name="returnajax" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		<action name="engineajax" class="engine.ac.EngineAC" method="executeAjax">
+			<result name="success" type="stream">
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+	</package>	
+</struts>
