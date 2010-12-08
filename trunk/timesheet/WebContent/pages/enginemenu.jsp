@@ -55,7 +55,7 @@ function searchList(paramElm) {
 			var elmname = $(this).attr("name");
 			var elmval = this.value;
 			if(elmval != null && elmval != ""){
-				whereclauseStr = '"'+elmname+'":"'+escape(elmval)+'",';
+				whereclauseStr += '"'+elmname+'":"'+escape(elmval)+'",';
 			} 
 		});
 	 
