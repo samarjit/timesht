@@ -1,6 +1,8 @@
 package pojo.entity;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -11,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.apache.el.util.ReflectionUtil;
 import org.json.JSONObject;
 
 
@@ -23,8 +26,7 @@ import org.json.JSONObject;
 public class FwMenu implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="MENU_ACTION")
-	private String menuAction;
+
 
 	@Id
 	 //GenericGenerator(name = "mygen1", strategy = "increment") 
@@ -36,6 +38,9 @@ public class FwMenu implements Serializable {
 	@Column(name="MENU_ID", unique=true)
 	private BigDecimal menuId;
 
+	@Column(name="MENU_ACTION")
+	private String menuAction;
+	
 	@Column(name="MENU_NAME")
 	private String menuName;
 
@@ -105,5 +110,62 @@ public class FwMenu implements Serializable {
 	}
 	public String getPrimaryKeys(){
 		return "menuId";
+	}
+	
+	
+
+	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		 Class clazz  = Class.forName("pojo.entity.PanelField");
+		 Field[] fld  = clazz.getDeclaredFields();
+		 String toString  = "\"<tr>";
+		 String headerStr = "\"<tr>";
+		 String listArray = "\"";
+		 String primaryKeys = "\"";
+		 
+		 Object obj = clazz.newInstance();
+		 Class columnClass = Class.forName( "javax.persistence.Id" ); 
+		 for (Field field : fld) {
+			 String fieldName = field.getName();
+			 String camelcasefldname = Character.toUpperCase(fieldName.charAt(0))+fieldName.substring(1);
+			 String camelcasefldnameSpc = camelcasefldname.replaceAll("([a-z]+)([A-Z])", "$1 $2");
+			 
+			 Class[] types = new Class[] {};
+			 Method method;
+			 try{ 
+				// System.out.println("get"+camelcasefldname);
+				method = ReflectionUtil.getMethod(obj, "get"+camelcasefldname, types);
+				 
+				  
+			 }catch(Exception e){
+				 method = null;
+			 }
+			 //System.out.println("method:"+method);
+			 if(method == null )continue;
+			 Id  id = field.getAnnotation(columnClass);
+				if(id != null){
+					//System.out.println(field.getName()+" ID ");
+					primaryKeys +=field.getName()+",";
+				}
+				
+			 toString +="<td>\"+"+fieldName+"+\"</td>";
+			 listArray +=fieldName+",";
+			 headerStr +="<td class='"+fieldName+"'>"+camelcasefldnameSpc+"</td>";
+			// System.out.println(fieldName+":"+camelcasefldname);
+			 //System.out.println(field.getType());
+			 
+		 }
+		 
+		 if(primaryKeys.length() > 0){
+			 primaryKeys=  primaryKeys.substring(0,primaryKeys.length()-1);
+		 }
+		 primaryKeys +="\"";
+		 listArray = listArray.substring(0,listArray.length()-1);
+		 listArray +="\"";
+		 toString +="</tr>\"";
+		 headerStr +="</tr>\"";
+		 System.out.println("primaryKeys:"+primaryKeys);
+		 System.out.println("headerStr:"+headerStr);
+		 System.out.println("toString:"+toString);
+		 System.out.println("listArray:"+listArray);
 	}
 }
