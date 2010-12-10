@@ -1,19 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE struts PUBLIC
 "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" 
 "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
-<constant name="struts.devMode" value="true"></constant>
+<constant name="struts.devMode" value="true"/>
  
 	
 	
-	<package name="engine" namespace="/" extends="struts-default" >
+	<package name="engine"   extends="struts-default" >
+		   <!--interceptors>
+            <interceptor-stack name="appDefault">
+                <interceptor-ref name="defaultStack">
+                    <param name="exception.logEnabled">
+                        true
+                    </param>
+                    <param name="exception.logLevel">
+                        DEBUG
+                    </param>
+                </interceptor-ref>
+            </interceptor-stack>
+        </interceptors>
+        
+        <default-interceptor-ref name="appDefault"/-->
+		
+		<action name="index">
+            <result>
+                /index.jsp
+            </result>
+        </action>
+		
 		<action name="engine" class="actionclass.TestactionAC" method="execute">
-			<result name="success">pages/logintpl.html</result>
+			<result name="success">pages/logintpl.jsp</result>
 			<result name="returnajax" type="stream">
 				<param name="contentType">text/html</param>
 				<param name="inputName">inputStream</param>
 			</result>
+		</action>
+		<action name="testftl" class="actionclass.TestactionAC">
+		    <result name="success" type="freemarker">pages/test-success.ftl</result>
+		</action>
+		<action name="templatetest" class="actionclass.TestactionAC">
+		    <result name="success"  >pages/templatetest.jsp</result>
 		</action>
 	</package>	
 </struts>
