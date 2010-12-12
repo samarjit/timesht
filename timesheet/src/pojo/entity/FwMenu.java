@@ -36,7 +36,7 @@ public class FwMenu implements Serializable {
     @TableGenerator(name="EMP_SEQ", table="SEQUENCE_TABLE", pkColumnName="SEQ_NAME",
         valueColumnName="SEQ_COUNT", pkColumnValue="EMP_SEQ")
 	@Column(name="MENU_ID", unique=true)
-	private BigDecimal menuId;
+	private Long menuId;
 
 	@Column(name="MENU_ACTION")
 	private String menuAction;
@@ -54,7 +54,7 @@ public class FwMenu implements Serializable {
 		 try {
 			 String id = (String) json.get("menuId");
 			 if(id!=null && !"".equals(id))
-			 menuId =   new BigDecimal( id);
+			 menuId =     Long.parseLong( id);
 			 menuAction = (String) json.get("menuAction");
 			 menuName = (String) json.get("menuName");
 			 menuRoleId = (String) json.get("menuRoleId");
@@ -73,11 +73,11 @@ public class FwMenu implements Serializable {
 
 	 
 
-	public BigDecimal getMenuId() {
+	public Long getMenuId() {
 		return menuId;
 	}
 
-	public void setMenuId(BigDecimal menuId) {
+	public void setMenuId(Long menuId) {
 		this.menuId = menuId;
 	}
 
@@ -121,6 +121,8 @@ public class FwMenu implements Serializable {
 		 String headerStr = "\"<tr>";
 		 String listArray = "\"";
 		 String primaryKeys = "\"";
+		 String formField = "";
+		 String json="";
 		 
 		 Object obj = clazz.newInstance();
 		 Class columnClass = Class.forName( "javax.persistence.Id" ); 
@@ -150,7 +152,9 @@ public class FwMenu implements Serializable {
 			 toString +="<td>\"+"+fieldName+"+\"</td>";
 			 listArray +=fieldName+",";
 			 headerStr +="<td class='"+fieldName+"'>"+camelcasefldnameSpc+"</td>";
-			// System.out.println(fieldName+":"+camelcasefldname);
+			 formField+=camelcasefldnameSpc+ " <input name='"+fieldName+"'/>\n";
+			 json += fieldName+" = (String)json.get(\""+fieldName+"\");\n";
+			 // System.out.println(fieldName+":"+camelcasefldname);
 			 //System.out.println(field.getType());
 			 
 		 }
@@ -167,5 +171,7 @@ public class FwMenu implements Serializable {
 		 System.out.println("headerStr:"+headerStr);
 		 System.out.println("toString:"+toString);
 		 System.out.println("listArray:"+listArray);
+		 System.out.println("formField:"+formField);
+		 System.out.println("json:"+json);
 	}
 }

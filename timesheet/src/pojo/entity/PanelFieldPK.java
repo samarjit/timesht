@@ -4,11 +4,11 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 /**
- * The primary key class for the SCREEN_PANEL database table.
+ * The primary key class for the PANEL_FIELDS database table.
  * 
  */
 @Embeddable
-public class ScreenPanelPK implements Serializable {
+public class PanelFieldPK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
@@ -18,7 +18,9 @@ public class ScreenPanelPK implements Serializable {
 	@Column(name="PANEL_NAME")
 	private String panelName;
 
-    public ScreenPanelPK() {
+	private String orderno;
+
+    public PanelFieldPK() {
     }
 	public String getScrName() {
 		return this.scrName;
@@ -32,18 +34,25 @@ public class ScreenPanelPK implements Serializable {
 	public void setPanelName(String panelName) {
 		this.panelName = panelName;
 	}
+	public String getOrderno() {
+		return this.orderno;
+	}
+	public void setOrderno(String orderno) {
+		this.orderno = orderno;
+	}
 
 	public boolean equals(Object other) {
 		if (this == other) {
 			return true;
 		}
-		if (!(other instanceof ScreenPanelPK)) {
+		if (!(other instanceof PanelFieldPK)) {
 			return false;
 		}
-		ScreenPanelPK castOther = (ScreenPanelPK)other;
+		PanelFieldPK castOther = (PanelFieldPK)other;
 		return 
 			this.scrName.equals(castOther.scrName)
-			&& this.panelName.equals(castOther.panelName);
+			&& this.panelName.equals(castOther.panelName)
+			&& this.orderno.equals(castOther.orderno);
 
     }
     
@@ -52,6 +61,7 @@ public class ScreenPanelPK implements Serializable {
 		int hash = 17;
 		hash = hash * prime + this.scrName.hashCode();
 		hash = hash * prime + this.panelName.hashCode();
+		hash = hash * prime + this.orderno.hashCode();
 		
 		return hash;
     }
