@@ -1,4 +1,4 @@
-#Thu Dec 02 18:05:37 SGT 2010
+#Sun Dec 12 16:47:10 SGT 2010
 eclipse.preferences.version=1
 org.eclipse.jpt.core.discoverAnnotatedClasses=true
-org.eclipse.jpt.core.platform=hibernate2_0
+org.eclipse.jpt.core.platform=generic2_0
