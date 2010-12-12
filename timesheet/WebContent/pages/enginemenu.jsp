@@ -204,7 +204,77 @@ templateName <input name="templateName"/><br/>
 <div id="screen_list" class="list"><div   class="idlist"></div><div class="pklist"></div>
 <div class="page"><input class='pagesize' style="width:18px" value="10"><select class='pageno'><option selected>0</option></select></div>
 <table></table></div>
+
+<input type="button" value="getList" onclick="getMenuList('scrpanel_list')" />
+<input type="button" value="search" onclick="searchList('scrpanel_list')" />
+<input type="button" value="add" onclick="add('scrpanel_list')" />
+<input type="button" value="save" onclick="save()" />
+<input type="button" value="update" onclick="update()" />
+<input type="button" value="delete" onclick="deleteRec('scrpanel_list')" />
+<input type="button" value="reset" onclick="$('#panelFieldsscrpanel_list form').get(0).reset()" />
+<div id="panelFieldsscrpanel_list">
+<form action="">
+Screen Name <input name='id_scrName'/>
+Panel Name <input name='id_panelName'/>
+Css Class <input name='cssClass'/>
+Paneltype <input name='paneltype'/>
+Pk Name <input name='pkName'/>
+Relatedpanel <input name='relatedpanel'/>
+Rw Flg <input name='rwFlg'/>
+Selquery <input name='selquery'/>
+Sortorder <input name='sortorder'/>
+Splwhereclause <input name='splwhereclause'/>
+Table Name <input name='tableName'/>
+
+
+</form>
 </div>
+<div id="scrpanel_list" class="list"><div   class="idlist"></div><div class="pklist"></div>
+<div class="page"><input class='pagesize' style="width:18px" value="10"><select class='pageno'><option selected>0</option></select></div>
+<table></table></div>
+
+
+
+<input type="button" value="getList" onclick="getMenuList('panelfield_list')" />
+<input type="button" value="search" onclick="searchList('panelfield_list')" />
+<input type="button" value="add" onclick="add('panelfield_list')" />
+<input type="button" value="save" onclick="save()" />
+<input type="button" value="update" onclick="update()" />
+<input type="button" value="delete" onclick="deleteRec('panelfield_list')" />
+<input type="button" value="reset" onclick="$('#panelFieldspanelfield_list form').get(0).reset()" />
+<div id="panelFieldspanelfield_list">
+<form action="">
+Screen Name <input name='id_scrName'/>
+Panel Name <input name='id_panelName'/>
+Order No <input name='id_orderno'/>
+Autogen <input name='autogen'/>
+Classname <input name='classname'/>
+Datatype <input name='datatype'/>
+Dbcol <input name='dbcol'/>
+Dbcol Siz <input name='dbcolSiz'/>
+Elem Attrib <input name='elemAttrib'/>
+Fname <input name='fname'/>
+Htmlelm <input name='htmlelm'/>
+Idname <input name='idname'/>
+Lblname <input name='lblname'/>
+Ncol <input name='ncol'/>
+Nrow <input name='nrow'/>
+Prkey <input name='prkey'/>
+Store Flg <input name='storeFlg'/>
+Strquery <input name='strquery'/>
+Valid Msg <input name='validMsg'/>
+Valid Rule <input name='validRule'/>
+Validation <input name='validation'/>
+
+
+
+</form>
+</div>
+<div id="panelfield_list" class="list"><div   class="idlist"></div><div class="pklist"></div>
+<div class="page"><input class='pagesize' style="width:18px" value="10"><select class='pageno'><option selected>0</option></select></div>
+<table></table></div>
+
+</div><!-- page -->
 
 </body>
 </html>
