@@ -36,14 +36,6 @@ public class Screen implements Serializable {
 	@Column(name="TEMPLATE_NAME")
 	private String templateName="";
 
-	//bi-directional many-to-one association to PanelField
-	@OneToMany(mappedBy="screen")
-	private List<PanelField> panelFields;
-
-	//bi-directional many-to-one association to ScreenPanel
-	@OneToMany(mappedBy="screen")
-	private List<ScreenPanel> screenPanels;
-
     public Screen() {
     }
 
@@ -153,22 +145,7 @@ public class Screen implements Serializable {
 		this.templateName = templateName;
 	}
 
-	public List<PanelField> getPanelFields() {
-		return this.panelFields;
-	}
-
-	public void setPanelFields(List<PanelField> panelFields) {
-		this.panelFields = panelFields;
-	}
-	
-	public List<ScreenPanel> getScreenPanels() {
-		return this.screenPanels;
-	}
-
-	public void setScreenPanels(List<ScreenPanel> screenPanels) {
-		this.screenPanels = screenPanels;
-	}
-	
-	
+ 
+ 
 	
 }

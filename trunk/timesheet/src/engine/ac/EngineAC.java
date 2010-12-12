@@ -9,7 +9,6 @@ import java.io.StringBufferInputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.List;
-import java.util.Set;
 
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
@@ -18,16 +17,17 @@ import javassist.bytecode.annotation.Annotation;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Parameter;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.Table;
 
-import org.apache.openjpa.persistence.OpenJPAQuery;
+import org.hibernate.Hibernate;
 import org.json.JSONObject;
 
 import pojo.entity.FwMenu;
+import pojo.entity.PanelField;
 import pojo.entity.Screen;
+import pojo.entity.ScreenPanel;
 
 import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionSupport;
@@ -41,7 +41,7 @@ public class EngineAC extends ActionSupport {
 	private InputStream inputStream;
 	private String data;
 	static{
-		EntityManagerFactory emf =    		Persistence.createEntityManagerFactory("timesheet");
+		EntityManagerFactory emf =    		Persistence.createEntityManagerFactory("timesheet_hibernate");
     	em = emf.createEntityManager();	
 	}
 	public EngineAC() {
@@ -53,17 +53,17 @@ public class EngineAC extends ActionSupport {
 //    	em.getTransaction().begin();
 //    	em.persist(newCustomer);
 //    	em.getTransaction().commit();
-    	Query q = em.createQuery("SELECT COUNT(x.menuId) FROM pojo.entity.FwMenu x where x.menuId= :name").setParameter("name", 18);
-    	OpenJPAQuery jpaQuery = (OpenJPAQuery) q;
-		System.out.println("HasPositional Parameters:"+jpaQuery.hasPositionalParameters());
-		 Set<Parameter<?>> param = jpaQuery.getParameters();
+    	Query q = em.createQuery("SELECT x FROM pojo.entity.ScreenPanel x where x.id.scrName = :name").setParameter("name", "frmTSheet");
+//    	OpenJPAQuery jpaQuery = (OpenJPAQuery) q;
+//		System.out.println("HasPositional Parameters:"+jpaQuery.hasPositionalParameters());
+//		 Set<Parameter<?>> param = jpaQuery.getParameters();
+//		 
+//		 for (Parameter<?> parameter : param) {
+//			System.out.println(parameter.getPosition()+" "+parameter.getName()+" "+parameter.getParameterType());
+//		}
 		 
-		 for (Parameter<?> parameter : param) {
-			System.out.println(parameter.getPosition()+" "+parameter.getName()+" "+parameter.getParameterType());
-		}
-		 
-    	List<FwMenu>  lc = q.getResultList();
-    	for (FwMenu objects : lc) {
+    	List   lc = q.getResultList();
+    	for (Object objects : lc) {
     		//FwMenu fw = (FwMenu) objects.get("0"); //efectively this invokes the toString()
  			System.out.println(objects+"| ");
  		}
@@ -89,8 +89,16 @@ public class EngineAC extends ActionSupport {
 		}else if("screen_listcrud".equals(command)){
 			resXML = screenCRUD();
 		} 
-		
-		
+		if("selectallscrpanel_list".equals(command)){
+			resXML = getScreenPanelList();
+		}else if("scrpanel_listcrud".equals(command)){
+			resXML = screenPanelCRUD();
+		}
+		if("selectallpanelfield_list".equals(command)){
+			resXML = getPanelFieldsList();
+		}else if("panelfield_listcrud".equals(command)){
+			resXML = panelFieldsCRUD();
+		}
 		System.out.println("Returned XML:"+command+":"+resXML);
         inputStream = new StringBufferInputStream(resXML);
         
@@ -128,7 +136,7 @@ public class EngineAC extends ActionSupport {
 		String queryStr = "select  x from FwMenu x "+whereclause+"  order by x.menuId";
 		//pagination
 		Query count =   (Query) em.createQuery(queryStr 
-                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(x.menuId) FROM")
+                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(x.menuName) FROM")
                 .replaceFirst("(?i)ORDER BY .*", ""));
 		//where replacement
 		for (String whereprop : wherepropar) {
@@ -153,7 +161,7 @@ public class EngineAC extends ActionSupport {
 		Query q = em.createQuery(queryStr);
 		//where replacement
 		for (String whereprop : wherepropar) {
-			q.setParameter(whereprop, whereobj.get(whereprop));
+			q.setParameter(whereprop,Long.parseLong((String)whereobj.get(whereprop)));
 		}
 		
 		
@@ -337,6 +345,241 @@ public class EngineAC extends ActionSupport {
 		return "";
 	}
 	//////Screen
+	
+	
+	
+	///ScreenPanel
+	public String getScreenPanelList(){
+		int pageNo =0;
+		int pagesize = 0;
+		String retStr = "";
+		String paging = "";
+		String whereclause="";
+		String joiner = " WHERE ";
+		try {
+			JSONObject jobj = new JSONObject(data);
+			pageNo = Integer.parseInt((String)jobj.get("pageno"));
+			pagesize = Integer.parseInt((String)jobj.get("pagesize"));
+			System.out.println("pageNo:"+pageNo);
+			//whereclause
+			JSONObject whereobj = null;
+			String wherepropar[] = new String[0];
+			 
+			if (jobj.has("whereclause")) {
+				whereobj = jobj.getJSONObject("whereclause");
+				wherepropar = JSONObject.getNames(whereobj);
+
+				for (String whereprop : wherepropar) {
+					String tempprop = whereprop.replaceAll("_", "\\."); 
+					whereclause += joiner + "x." + tempprop + " like :" + whereprop + " ";
+					joiner = " AND ";
+				}
+			}
+  
+		System.out.println("where clause:"+whereclause);
+		String queryStr = "select x from ScreenPanel x "+whereclause+" order by x.id";
+		Query count =   (Query) em.createQuery(queryStr 
+                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(x.sortorder) FROM")
+                .replaceFirst("(?i)ORDER BY .*", ""));
+		
+		//where replacement
+		for (String whereprop : wherepropar) {
+			count.setParameter(whereprop, whereobj.get(whereprop));
+		}
+		
+		long ct = (Long)count.getSingleResult();
+		System.out.println("Total count:"+ct);
+		int pages = (int) Math.ceil((double)ct/pagesize);
+		System.out.println("pages :pages"+pages);
+		paging +=  "Page Size:<input class='pagesize' style='width:14px' value='"+pagesize+"' ><select class='pageno'>";
+		for(int i=0 ; i < pages; i++){
+			if(i== pageNo){
+				paging +="<option selected>"+i+"</option>";
+			}else{
+				paging +="<option>"+i+"</option>";
+			}
+		}
+		paging +="</select>";
+		
+		Query q = em.createQuery(queryStr);
+		
+		//where replacement
+		for (String whereprop : wherepropar) {
+			q.setParameter(whereprop, whereobj.get(whereprop));
+		}
+		
+		q.setFirstResult(pagesize*pageNo);
+		q.setMaxResults(pagesize);
+    	ScreenPanel fw = new ScreenPanel(); 
+    	retStr = "{\"primarykeys\":\""+fw.getPrimaryKeys()+"\",";
+    	retStr += "\"listattrs\":\""+fw.getListAttr()+"\",";
+    	retStr += "\"paging\":\""+paging+"\",";
+    	retStr += "\"listtabledata\":\""+fw.getHeaderNames()+"\n";
+    	List<ScreenPanel> lc = q.getResultList();
+    	for (ScreenPanel objects : lc) {
+    		 
+    		retStr +=(objects+"");
+ 		}
+    	
+    	retStr += "\"}";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return retStr;
+	}
+	public String screenPanelCRUD(){
+		System.out.println("data:"+data);
+		try {
+			JSONObject jobj = new JSONObject(data);
+			String subcmd = (String) jobj.get("subcmd");
+			System.out.println(subcmd);
+			ScreenPanel fw = new ScreenPanel(jobj.getJSONObject("entitydata"));
+			System.out.println(fw);
+			JSONObject entitydataobj = jobj.getJSONObject("entitydata");
+			 String [] star = jobj.getNames(jobj.getJSONObject("entitydata"));
+			 System.out.println(star.length);
+
+			 em.getTransaction().begin();
+			 if("delete".equals(subcmd)){
+				 System.err.println("Inside delete..");
+//				 Query q = em.createQuery("delete from Screen x where x.menuId =:name");
+//				 q.setParameter("name", fw.getMenuId());
+//				 int deleted = q.executeUpdate();
+				 ScreenPanel fw2 = em.find(ScreenPanel.class, fw.getId());
+				 em.remove(fw2);
+			 }else{
+				 System.err.println("Inside general subcmd...");
+				 ScreenPanel fw2 = em.find(ScreenPanel.class, fw.getId());
+				 System.out.println("fw2 exists:"+fw2);
+				 em.merge(fw);			 
+			 }		    	
+		    
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if(em.getTransaction().isActive())
+			 em.getTransaction().commit();
+		}
+		return "";
+	}
+	//////Screen Panel
+	
+	///Panel Fields
+	public String getPanelFieldsList(){
+		int pageNo =0;
+		int pagesize = 0;
+		String retStr = "";
+		String paging = "";
+		String whereclause="";
+		String joiner = " WHERE ";
+		try {
+			JSONObject jobj = new JSONObject(data);
+			pageNo = Integer.parseInt((String)jobj.get("pageno"));
+			pagesize = Integer.parseInt((String)jobj.get("pagesize"));
+			System.out.println("pageNo:"+pageNo);
+			//whereclause
+			JSONObject whereobj = null;
+			String wherepropar[] = new String[0];
+			 
+			if (jobj.has("whereclause")) {
+				whereobj = jobj.getJSONObject("whereclause");
+				wherepropar = JSONObject.getNames(whereobj);
+
+				for (String whereprop : wherepropar) {
+					String tempprop = whereprop.replaceAll("_", "\\."); 
+					whereclause += joiner + "x." + tempprop + " like :" + whereprop + " ";
+					joiner = " AND ";
+				}
+			}
+  
+		System.out.println("where clause:"+whereclause);
+		String queryStr = "select x from PanelField x "+whereclause+" order by x.id";
+		Query count =   (Query) em.createQuery(queryStr 
+                .replaceFirst("(?i)SELECT (.*?) FROM", "SELECT COUNT(x.idname) FROM")
+                .replaceFirst("(?i)ORDER BY .*", ""));
+		
+		//where replacement
+		for (String whereprop : wherepropar) {
+			count.setParameter(whereprop, whereobj.get(whereprop));
+		}
+		
+		long ct = (Long)count.getSingleResult();
+		System.out.println("Total count:"+ct);
+		int pages = (int) Math.ceil((double)ct/pagesize);
+		System.out.println("pages :pages"+pages);
+		paging +=  "Page Size:<input class='pagesize' style='width:14px' value='"+pagesize+"' ><select class='pageno'>";
+		for(int i=0 ; i < pages; i++){
+			if(i== pageNo){
+				paging +="<option selected>"+i+"</option>";
+			}else{
+				paging +="<option>"+i+"</option>";
+			}
+		}
+		paging +="</select>";
+		
+		Query q = em.createQuery(queryStr);
+		
+		//where replacement
+		for (String whereprop : wherepropar) {
+			q.setParameter(whereprop, whereobj.get(whereprop));
+		}
+		
+		q.setFirstResult(pagesize*pageNo);
+		q.setMaxResults(pagesize);
+    	PanelField fw = new PanelField(); 
+    	retStr = "{\"primarykeys\":\""+fw.getPrimaryKeys()+"\",";
+    	retStr += "\"listattrs\":\""+fw.getListAttr()+"\",";
+    	retStr += "\"paging\":\""+paging+"\",";
+    	retStr += "\"listtabledata\":\""+fw.getHeaderNames()+"\n";
+    	List<PanelField> lc = q.getResultList();
+    	for (PanelField objects : lc) {
+    		 
+    		retStr +=(objects+"");
+ 		}
+    	
+    	retStr += "\"}";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return retStr;
+	}
+	public String panelFieldsCRUD(){
+		System.out.println("data:"+data);
+		try {
+			JSONObject jobj = new JSONObject(data);
+			String subcmd = (String) jobj.get("subcmd");
+			System.out.println(subcmd);
+			PanelField fw = new PanelField(jobj.getJSONObject("entitydata"));
+			System.out.println(fw);
+			JSONObject entitydataobj = jobj.getJSONObject("entitydata");
+			 String [] star = jobj.getNames(jobj.getJSONObject("entitydata"));
+			 System.out.println(star.length);
+
+			 em.getTransaction().begin();
+			 if("delete".equals(subcmd)){
+				 System.err.println("Inside delete..");
+//				 Query q = em.createQuery("delete from Screen x where x.menuId =:name");
+//				 q.setParameter("name", fw.getMenuId());
+//				 int deleted = q.executeUpdate();
+				 PanelField fw2 = em.find(PanelField.class, fw.getId());
+				 em.remove(fw2);
+			 }else{
+				 System.err.println("Inside general subcmd...");
+				 PanelField fw2 = em.find(PanelField.class, fw.getId());
+				 System.out.println("fw2 exists:"+fw2);
+				 
+				 em.merge(fw);			 
+			 }		    	
+		    
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if(em.getTransaction().isActive())
+			 em.getTransaction().commit();
+		}
+		return "";
+	}
+	//////Panel Fields
 	public static void persist( Object o )
 	  {
 	    try

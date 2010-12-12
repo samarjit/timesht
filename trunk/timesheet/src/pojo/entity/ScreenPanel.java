@@ -2,7 +2,8 @@ package pojo.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.util.List;
+
+import org.json.JSONObject;
 
 
 /**
@@ -39,17 +40,27 @@ public class ScreenPanel implements Serializable {
 	@Column(name="TABLE_NAME")
 	private String tableName;
 
-	//bi-directional many-to-one association to PanelField
-	@OneToMany(mappedBy="screenPanel")
-	private List<PanelField> panelFields;
-
-	//bi-directional many-to-one association to Screen
-	@ManyToOne
-	@JoinColumn(name="SCR_NAME",insertable=false, updatable=false)
-	private Screen screen;
-
     public ScreenPanel() {
     }
+
+	public ScreenPanel(JSONObject json) {
+		try {
+			if(id == null)id = new ScreenPanelPK();
+			id.setScrName((String)json.get("id_scrName"));
+			id.setPanelName((String)json.get("id_panelName"));
+		cssClass = (String)json.get("cssClass");
+		paneltype = (String)json.get("paneltype");
+		pkName = (String)json.get("pkName");
+		relatedpanel = (String)json.get("relatedpanel");
+		rwFlg = (String)json.get("rwFlg");
+		selquery = (String)json.get("selquery");
+		sortorder = (String)json.get("sortorder");
+		splwhereclause = (String)json.get("splwhereclause");
+		tableName = (String)json.get("tableName");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public ScreenPanelPK getId() {
 		return this.id;
@@ -130,21 +141,18 @@ public class ScreenPanel implements Serializable {
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
 	}
-
-	public List<PanelField> getPanelFields() {
-		return this.panelFields;
-	}
-
-	public void setPanelFields(List<PanelField> panelFields) {
-		this.panelFields = panelFields;
+	public String toString(){
+		return "<tr><td>"+id.getScrName()+"</td><td>"+id.getPanelName()+"</td><td>"+cssClass+"</td><td>"+paneltype+"</td><td>"+pkName+"</td><td>"+relatedpanel+"</td><td>"+rwFlg+"</td><td>"+selquery+"</td><td>"+sortorder+"</td><td>"+splwhereclause+"</td><td>"+tableName+"</td></tr>";
 	}
 	
-	public Screen getScreen() {
-		return this.screen;
-	}
-
-	public void setScreen(Screen screen) {
-		this.screen = screen;
+	public String getHeaderNames(){
+		return "<tr><td class='id_scrName'>Screen Name</td><td class='id_panelName'>Panel Name</td><td class='cssClass'>Css Class</td><td class='paneltype'>Paneltype</td><td class='pkName'>Pk Name</td><td class='relatedpanel'>Relatedpanel</td><td class='rwFlg'>Rw Flg</td><td class='selquery'>Selquery</td><td class='sortorder'>Sortorder</td><td class='splwhereclause'>Splwhereclause</td><td class='tableName'>Table Name</td></tr>";
 	}
 	
+	public String getListAttr(){
+		return "id_scrName, id_panelName,cssClass,paneltype,pkName,relatedpanel,rwFlg,selquery,sortorder,splwhereclause,tableName";
+	}
+	public String getPrimaryKeys(){
+		return "id";
+	}
 }

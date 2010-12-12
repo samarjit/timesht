@@ -13,6 +13,7 @@
 <class>pojo.entity.TsEmpTimesheet </class>
 <class>pojo.entity.TsProject      </class>
 <class>pojo.entity.TsTaskmaster   </class>
+<class>pojo.entity.PanelFieldPK</class>
 
         <properties>
       <!--property name="openjpa.MetaDataFactory" value="jpa(Types=pojo.entity.FwMenu)"/-->
@@ -26,5 +27,23 @@
 		</properties>
 
       
+    </persistence-unit>
+    <persistence-unit name="timesheet_hibernate">
+        <provider>       
+			org.hibernate.ejb.HibernatePersistence 
+        </provider>
+
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle9iDialect"/>
+            <property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.connection.username" value="timesheet"/>
+            <property name="hibernate.connection.password" value="timesheet"/>
+            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+            <property name="hibernate.max_fetch_depth" value="3"/>
+            
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+             <!--<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.BTMTransactionManagerLookup"/> 
+        --></properties>
     </persistence-unit>
 </persistence>
