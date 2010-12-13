@@ -23,6 +23,9 @@
         </interceptors>
         
         <default-interceptor-ref name="appDefault"/-->
+		<interceptors>
+			<interceptor name="decorator" class="actionclass.DecoratorInterceptor" />
+		</interceptors>
 		
 		<action name="index">
             <result>
@@ -31,6 +34,7 @@
         </action>
 		
 		<action name="engine" class="actionclass.TestactionAC" method="execute">
+			<interceptor-ref name="decorator"/>
 			<result name="success">pages/logintpl.jsp</result>
 			<result name="returnajax" type="stream">
 				<param name="contentType">text/html</param>

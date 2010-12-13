@@ -26,7 +26,7 @@ User Id: <input type="text" id="userid" name="userid" class="userid"/>
 Password: <input type="text" id="password" name="password" class="password" />
 <button onclick="submitform()" id="loginbutton">Login</button>
 	Hello test action
-<a href="engine.action" >engine.action</a>	
+<a href="engine.action?retrieveName=some name" >engine.action</a>	
 <a href="<s:url action="index" namespace="config-browser" />">Launch the configuration browser</a>
 <s:property value="name"/>
 
