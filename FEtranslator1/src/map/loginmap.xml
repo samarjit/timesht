@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <root>
 	<screen>
+		<htmltempalte>
+			
+		</htmltempalte>
+		<includedjsp>
+		
+		</includedjsp>
 		<scripts>
 			<![CDATA[
 				<script>
@@ -11,6 +17,16 @@
 				]]>
 			<script>json.js,jquery.js</script>
 		</scripts>
+		<stylesheets>
+			<![CDATA[
+				<style>	
+				.userid{
+				 text-decoration:underline;
+				 }
+				</style>
+			]]>	
+				<style>home.css</style>	
+		</stylesheets>
 	</screen>
 
 	<panels>

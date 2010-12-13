@@ -8,7 +8,7 @@
 <body>
 	Hello test action
 <a href="<%=ctxstr%>/engine.action" >engine.action</a>	
-<a href="<%=ctxstr%>/testftl.action" >testftl.action</a>	
+<a href="<%=ctxstr%>/testftl.action" >testftl.action</a>	<br/>
 <a href="<%=ctxstr%>/config-browser/actionNames.action?namespace=%2Fconfig-browser" >config browser</a>
 <a href="<%=ctxstr%>/engine.action?debug=browser" >debug browser</a>	
 
