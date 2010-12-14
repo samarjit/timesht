@@ -20,33 +20,39 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 
 public final class DecoratorFilter extends StrutsResultSupport implements Filter {
-
+	 private FilterConfig filterConfig = null;
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-		  HttpServletRequest request = (HttpServletRequest) req;
+		System.out.println("DecoratorFilter: called");
+		if (filterConfig == null)
+	         return;
+		 
+		HttpServletRequest request = (HttpServletRequest) req;
 	        HttpServletResponse response = (HttpServletResponse) res;
 		long startTime = System.currentTimeMillis();
-		System.out.println("Starting filter.."+request.getParameter("retrieveName"));
+		System.out.println("DecoratorFilter:Starting filter.."+request.getParameter("retrieveName"));
+		chain.doFilter(request, response);
 		
 		PrintWriter out = response.getWriter();
 		response.setContentType("text/html");
 		response.setContentLength(31);
-		out.print("<html><body>hello</body></html>");
+		
+		out.print("<html><body>hello from servlet</body></html>\n");
 		out.flush();
-		String finalLocation =  "/index.jsp";
+		String finalLocation =  "/second.jsp";
 		RequestDispatcher dispatcher = request.getRequestDispatcher(finalLocation);
 		if (  !response.isCommitted() && (request.getAttribute("javax.servlet.include.servlet_path") == null)) {
             request.setAttribute("struts.view_uri", finalLocation);
             request.setAttribute("struts.request_uri", request.getRequestURI());
-
+            System.out.println("DecoratorFilter:forward: ");
             dispatcher.forward(request, response);
         } else {
-            dispatcher.include(request, response);
+        	System.out.println("DecoratorFilter:include: ");
+        	dispatcher.include(request, response);
         }
 		
-		chain.doFilter(request, response);
 		long stopTime = System.currentTimeMillis();
-		System.out.println("Time to execute request: " + (stopTime - startTime) + " milliseconds");
-		System.out.println("Ending filter"+request.getParameter("retrieveName")+" "+request.getParameter("name"));
+		System.out.println("DecoratorFilter:Time to execute request: " + (stopTime - startTime) + " milliseconds");
+		System.out.println("DecoratorFilter:Ending filter"+request.getParameter("retrieveName")+" "+request.getParameter("name"));
 		 
 		
 		
@@ -70,14 +76,14 @@ public final class DecoratorFilter extends StrutsResultSupport implements Filter
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
+		 this.filterConfig = null;
 		
 	}
 
 
 	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
+	public void init(FilterConfig filterConfig) throws ServletException {
+		this.filterConfig = filterConfig;
 		
 	}
 }

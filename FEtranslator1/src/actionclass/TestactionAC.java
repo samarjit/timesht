@@ -5,13 +5,13 @@ import com.opensymphony.xwork2.ActionSupport;
 public class TestactionAC extends ActionSupport{
  private String name;
  private String retname;
- private String retrieveName;
+ private String retrievename;
  
  
 	public String execute(){
-		System.out.println("Inside Action..name="+name);
+		System.out.println("TestactionAC:Inside Action..name="+name);
 		name ="My name";
-		System.out.println("Inside Action class [retrieveName]:"+retrieveName);
+		System.out.println("TestactionAC:Inside Action class [retrievename]:"+retrievename);
 		return SUCCESS;
 	}
 	/**
@@ -33,11 +33,11 @@ public class TestactionAC extends ActionSupport{
 	public void setRetname(String retname) {
 		this.retname = retname;
 	}
-	public String getRetrieveName() {
-		return retrieveName;
+	public String getRetrievename() {
+		return retrievename;
 	}
-	public void setRetrieveName(String retrieveName) {
-		this.retrieveName = retrieveName;
+	public void setRetrievename(String retrievename) {
+		this.retrievename = retrievename;
 	}
 	 
 
