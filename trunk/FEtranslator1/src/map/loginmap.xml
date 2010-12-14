@@ -48,6 +48,16 @@
 					<query></query>
 				</input>
 			</field>
+			<field>
+				<customfield type="datepicker" class=" " forid="dateid" 
+					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
+					<!-- will need to experiment to see if dojo tags of struts2 say datepicker can be added? -->
+					<freemarker expression=""></freemarker>
+					<rule></rule>
+					<validation></validation>
+					<query></query>
+				</customfield>
+			</field>
 		</fields>
 		<button forid="loginbutton" onclick=""></button>
 		<button forid="reset" onclick=""></button>

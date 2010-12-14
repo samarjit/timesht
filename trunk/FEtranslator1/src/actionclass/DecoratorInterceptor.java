@@ -21,13 +21,16 @@ public class DecoratorInterceptor implements Interceptor {
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
-		System.out.print("Intercepted ... action is available now");
+		System.out.print("DecoratorInterceptor:Intercepted ... ");
 		
 		 TestactionAC action = (TestactionAC)invocation.getAction();
-		 System.out.println(action.getName());
-		 System.out.println(action.getRetrieveName());
+		 System.out.print(action.getName());
+		 System.out.println(action.getRetrievename());
 		 
-	       return invocation.invoke();
+		 String result =  invocation.invoke();
+		 System.out.println("DecoratorInterceptor:..ending interceptor "+ action.getName()+","+action.getRetrievename());
+		  
+		 return result;
 	}
 
 }

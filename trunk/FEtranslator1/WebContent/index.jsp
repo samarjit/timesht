@@ -6,10 +6,13 @@
 <%String ctxstr = request.getContextPath(); %>
 
 <body>
-	Hello test action
-<a href="<%=ctxstr%>/engine.action" >engine.action</a>	
-<a href="<%=ctxstr%>/testftl.action" >testftl.action</a>	<br/>
-<a href="<%=ctxstr%>/config-browser/actionNames.action?namespace=%2Fconfig-browser" >config browser</a>
+<h2>Index</h2><br/>
+<a href="<%=ctxstr%>/engine.action?retrievename=retrvnam" >engine.action</a>	<br/>
+<a href="<%=ctxstr%>/testftl.action" >testftl.action</a><br/>
+<a href="<%=ctxstr%>/templatetest.action" >embedded ftl test</a>	<br/>
+<a href="<%=ctxstr%>/third.jsp" >XSLT Filter</a>	<br/>
+<hr/>
+<a href="<%=ctxstr%>/config-browser/actionNames.action?namespace=%2Fconfig-browser" >config browser</a>|
 <a href="<%=ctxstr%>/engine.action?debug=browser" >debug browser</a>	
 
 </body>
