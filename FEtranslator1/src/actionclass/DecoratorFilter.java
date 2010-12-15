@@ -2,6 +2,7 @@ package actionclass;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -30,21 +31,29 @@ public final class DecoratorFilter extends StrutsResultSupport implements Filter
 	        HttpServletResponse response = (HttpServletResponse) res;
 		long startTime = System.currentTimeMillis();
 		System.out.println("DecoratorFilter:Starting filter.."+request.getParameter("retrieveName"));
-		chain.doFilter(request, response);
 		
+		MyResponseWrapper wrapper = new MyResponseWrapper(response);
+		chain.doFilter(request, wrapper); //If this line is commented only then out.println()/dispatcher.forward/include() will work.
 		PrintWriter out = response.getWriter();
+		 
 		response.setContentType("text/html");
 		response.setContentLength(31);
-		
-		out.print("<html><body>hello from servlet</body></html>\n");
-		out.flush();
+		System.out.println("DecoratorFilter: resultinghtml="+wrapper.toString());
+		StringBuffer strnw = new StringBuffer();
+		strnw.append(wrapper.toString());
+		 
+		strnw.append("<html><body><strong>hello from DecoratorFilter</strong></body></html>\n");
+		response.setContentLength(strnw.toString().length());
+		out.write(strnw.toString());
+		out.close();
+		//out.flush(); //do not flush or else dispatcher.forward/include() statements will fail
 		String finalLocation =  "/second.jsp";
 		RequestDispatcher dispatcher = request.getRequestDispatcher(finalLocation);
 		if (  !response.isCommitted() && (request.getAttribute("javax.servlet.include.servlet_path") == null)) {
             request.setAttribute("struts.view_uri", finalLocation);
             request.setAttribute("struts.request_uri", request.getRequestURI());
             System.out.println("DecoratorFilter:forward: ");
-            dispatcher.forward(request, response);
+            dispatcher.forward(request, response); //The out.println().. contents will be lost in this case
         } else {
         	System.out.println("DecoratorFilter:include: ");
         	dispatcher.include(request, response);
