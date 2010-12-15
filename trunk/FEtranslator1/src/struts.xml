@@ -51,7 +51,12 @@
 	
 	<package name="xslt-example"  
            extends="struts-default">
-     <action name="testxsl" class="actionclass.ExampleXSLTAction"
+           <result-types>
+			<result-type name="customJSON" class="actionclass.XMLResult">
+			</result-type>
+			</result-types>
+
+     <action name="testxsl1" class="actionclass.ExampleXSLTAction"
 	                 method="preview">
         <result name="preview" type="xslt">
            <param name="stylesheetLocation">
@@ -60,6 +65,16 @@
         </result>
         <result name="input">/xslinterceptorinp.jsp</result>
      </action>
+      <action name="testxsl" class="actionclass.ExampleXSLTAction"
+	                 method="preview">
+        <result name="preview" type="customJSON"  >
+           <param name="stylesheetLocation">
+	         testinterceptor.xsl
+	   		</param>
+        </result>
+        <result name="input">/xslinterceptorinp.jsp</result>
+     </action>
+     
   	</package>
   
 </struts>
