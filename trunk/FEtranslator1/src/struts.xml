@@ -34,8 +34,8 @@
         </action>
 		
 		<action name="engine" class="actionclass.TestactionAC" method="execute">
-			<interceptor-ref name="decorator"/>
-			<result name="success">pages/logintpl.jsp</result>
+			<!--<interceptor-ref name="decorator"/>
+			--><result name="success">pages/logintpl.jsp</result>
 			<result name="returnajax" type="stream">
 				<param name="contentType">text/html</param>
 				<param name="inputName">inputStream</param>
@@ -48,4 +48,18 @@
 		    <result name="success"  >pages/templatetest.jsp</result>
 		</action>
 	</package>	
+	
+	<package name="xslt-example"  
+           extends="struts-default">
+     <action name="testxsl" class="actionclass.ExampleXSLTAction"
+	                 method="preview">
+        <result name="preview" type="xslt">
+           <param name="stylesheetLocation">
+	         testinterceptor.xsl
+	   		</param>
+        </result>
+        <result name="input">/xslinterceptorinp.jsp</result>
+     </action>
+  	</package>
+  
 </struts>
