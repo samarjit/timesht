@@ -33,8 +33,8 @@ public final class DecoratorFilter extends StrutsResultSupport implements Filter
 		System.out.println("DecoratorFilter:Starting filter.."+request.getParameter("retrieveName"));
 		
 		MyResponseWrapper wrapper = new MyResponseWrapper(response);
-		chain.doFilter(request, wrapper); //If this line is commented only then out.println()/dispatcher.forward/include() will work.
 		PrintWriter out = response.getWriter();
+		chain.doFilter(request, wrapper); //If this line is commented only then out.println()/dispatcher.forward/include() will work.
 		 
 		response.setContentType("text/html");
 		response.setContentLength(31);
@@ -42,11 +42,19 @@ public final class DecoratorFilter extends StrutsResultSupport implements Filter
 		StringBuffer strnw = new StringBuffer();
 		strnw.append(wrapper.toString());
 		 
-		strnw.append("<html><body><strong>hello from DecoratorFilter</strong></body></html>\n");
+		strnw.append("<strong>hello from DecoratorFilter</strong>\n");
 		response.setContentLength(strnw.toString().length());
 		out.write(strnw.toString());
-		out.close();
-		//out.flush(); //do not flush or else dispatcher.forward/include() statements will fail
+		out.flush(); //do not flush or else dispatcher.forward/include() statements will fail
+//		out.close(); 
+		//1 if flush is not commented and close is commented and wrapper is sent then include is working fine & out.write also prints
+		//2 if both flush and close are commented and wrapper is sent then forward is working fine
+		//3 if flush is commented and close is not commented then include gets called but it doesn't work, out.write works
+		//4 if both flush and close are not commented then include gets called but does not work but out.write works
+		//result if either(flush, close) of them is done then response is committed to include is called
+		//result if the stream is flushed then include does not work
+		//result for include to work flush must be called, but if the stream is closed then include does not work
+		
 		String finalLocation =  "/second.jsp";
 		RequestDispatcher dispatcher = request.getRequestDispatcher(finalLocation);
 		if (  !response.isCommitted() && (request.getAttribute("javax.servlet.include.servlet_path") == null)) {
