@@ -12,17 +12,17 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.StrutsResultSupport;
 import org.apache.struts2.views.xslt.AdapterFactory;
 import org.apache.struts2.views.xslt.ServletURIResolver;
 import org.json.JSONObject;
 
 import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.Result;
 import com.opensymphony.xwork2.util.ValueStack;
 
 
 
-public class XMLResult implements Result {
+public class XMLResult extends StrutsResultSupport {
 	 private AdapterFactory adapterFactory;
 	    /** Indicates the ognl expression respresenting the bean which is to be exposed as xml. */
 	    private String exposedValue;
@@ -44,9 +44,8 @@ public class XMLResult implements Result {
         this.exposedValue = exposedValue;
     }
 
-	@Override
-	public void execute(ActionInvocation invocation) throws Exception {
-		System.out.println("XMLResult:");
+	public void execute1(ActionInvocation invocation) throws Exception {
+		System.out.println("XMLResult: started");
 		 HttpServletResponse response = ServletActionContext.getResponse();
 		 response.setContentType("text/html");
 
@@ -84,5 +83,12 @@ public class XMLResult implements Result {
 
 	protected void setAdapterFactory(AdapterFactory adapterFactory) {
 		this.adapterFactory = adapterFactory;
+	}
+
+	@Override
+	protected void doExecute(String finalLocation, ActionInvocation invocation) throws Exception {
+		System.out.println("finalLocation:"+finalLocation);
+		execute1(invocation);
+		
 	}
 }
