@@ -41,11 +41,10 @@ public class HitCounterFilter implements Filter {
 		System.out.println("HitCounterFilter: started");
 		chain.doFilter(request, wrapper);
 		 
-		
-		if(wrapper.getContentType().equals("text/html")) {
+		System.out.println("HitCounterFilter: content type"+wrapper.getContentType());
+		if(wrapper!= null && wrapper.getContentType()!=null && wrapper.getContentType().equals("text/html")) {
 		   CharArrayWriter caw = new CharArrayWriter();
-		   caw.write(wrapper.toString().substring(0,
-		      wrapper.toString().indexOf("</body>")-1));
+		   caw.write(wrapper.toString());
 		
 		caw.write("<p>\nYou are visitor number <font color='red'>" +12 + "</font>");
 		   caw.write("\n</body></html>");
@@ -53,7 +52,8 @@ public class HitCounterFilter implements Filter {
 		   out.write(caw.toString());
 		} else 
 		   out.write(wrapper.toString());
-		out.close();
+		out.flush();
+		//out.close();
 		System.out.println("HitCounterFilter: end");
 	}
 

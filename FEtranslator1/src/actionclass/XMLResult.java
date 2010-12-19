@@ -1,7 +1,11 @@
 package actionclass;
 
+import java.io.CharArrayWriter;
+import java.io.File;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -13,19 +17,39 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StrutsResultSupport;
+import org.apache.struts2.views.freemarker.FreemarkerManager;
+import org.apache.struts2.views.freemarker.FreemarkerResult;
 import org.apache.struts2.views.xslt.AdapterFactory;
 import org.apache.struts2.views.xslt.ServletURIResolver;
 import org.json.JSONObject;
 
 import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.util.ValueStack;
+
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.ObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
 
 
 
 public class XMLResult extends StrutsResultSupport {
-	 private AdapterFactory adapterFactory;
+    protected FreemarkerManager freemarkerManager;
+    
+    @Inject
+    public void setFreemarkerManager(FreemarkerManager mgr) {
+        this.freemarkerManager = mgr;
+    }
+    
+	private AdapterFactory adapterFactory;
 	    /** Indicates the ognl expression respresenting the bean which is to be exposed as xml. */
 	    private String exposedValue;
+		private ActionInvocation invocation;
+		private ObjectWrapper wrapper;
 	    
 	protected URIResolver getURIResolver() {
 		return new ServletURIResolver(ServletActionContext.getServletContext());
@@ -68,15 +92,38 @@ public class XMLResult extends StrutsResultSupport {
          StreamResult result1 = new StreamResult(writer);
         //DOMSource source = new DOMSource(xmlSource);
         System.out.println("xmlSource = " + xmlSource);
-         transformer.transform(xmlSource, result1);
+        // transformer.transform(xmlSource, result1);
          
+         //freemarker
+        this.invocation = invocation;
+      
+        Configuration cfg = new Configuration();
+        	cfg.setDirectoryForTemplateLoading(new File("F:/eclipse/workspace/charts/deployserver/wtpwebapps/FEtranslator1/WEB-INF/classes/map"));
+     		cfg.setObjectWrapper(new DefaultObjectWrapper()); 
+     		 wrapper = cfg.getObjectWrapper();
+         Template template = cfg.getTemplate("loginmap.xml");
+         TemplateModel model =  createModel();
+         
+         CharArrayWriter charArrayWriter = new CharArrayWriter();
+         try {
+             template.process(model, charArrayWriter);
+             charArrayWriter.flush();
+             charArrayWriter.writeTo(writer);
+         } finally {
+             if (charArrayWriter != null)
+                 charArrayWriter.close();
+         }
+         
+         //freemarker
          
          System.out.println(result1.getWriter().toString());
          writer.write("hello World from XMLResult.java");
          writer.flush(); 
          
 	}
-
+	protected Configuration getConfiguration() throws TemplateException {
+        return freemarkerManager.getConfiguration(ServletActionContext.getServletContext());
+    }
 	protected Source getDOMSourceForStack(Object value) throws IllegalAccessException, InstantiationException {
 		return new DOMSource(getAdapterFactory().adaptDocument("result", value));
 	}
@@ -85,6 +132,17 @@ public class XMLResult extends StrutsResultSupport {
 		this.adapterFactory = adapterFactory;
 	}
 
+	 protected TemplateModel createModel() throws TemplateModelException {
+	        ServletContext servletContext = ServletActionContext.getServletContext();
+	        HttpServletRequest request = ServletActionContext.getRequest();
+	        HttpServletResponse response = ServletActionContext.getResponse();
+	        ValueStack stack = ServletActionContext.getContext().getValueStack();
+
+	        Object action = null;
+	        if(invocation!= null ) action = invocation.getAction(); //Added for NullPointException
+	        return freemarkerManager.buildTemplateModel(stack, action, servletContext, request, response, wrapper);
+	    }
+	 
 	@Override
 	protected void doExecute(String finalLocation, ActionInvocation invocation) throws Exception {
 		System.out.println("finalLocation:"+finalLocation);

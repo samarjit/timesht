@@ -23,12 +23,12 @@ import com.opensymphony.xwork2.ActionInvocation;
 public final class DecoratorFilter extends StrutsResultSupport implements Filter {
 	 private FilterConfig filterConfig = null;
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-		System.out.println("DecoratorFilter: called");
+		HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletResponse response = (HttpServletResponse) res;
+		System.out.println("DecoratorFilter: called"+request.getQueryString());
 		if (filterConfig == null)
 	         return;
 		 
-		HttpServletRequest request = (HttpServletRequest) req;
-	        HttpServletResponse response = (HttpServletResponse) res;
 		long startTime = System.currentTimeMillis();
 		System.out.println("DecoratorFilter:Starting filter.."+request.getParameter("retrieveName"));
 		
@@ -42,7 +42,7 @@ public final class DecoratorFilter extends StrutsResultSupport implements Filter
 		StringBuffer strnw = new StringBuffer();
 		strnw.append(wrapper.toString());
 		 
-		strnw.append("<strong>hello from DecoratorFilter</strong>\n");
+		strnw.append("<strong>hello from DecoratorFilter</strong>\n<a href='index.jsp'>index.jsp</a>");
 		response.setContentLength(strnw.toString().length());
 		out.write(strnw.toString());
 		out.flush(); //do not flush or else dispatcher.forward/include() statements will fail

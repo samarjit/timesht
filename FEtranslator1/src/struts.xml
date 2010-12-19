@@ -29,7 +29,7 @@
 		</action>
 
 		<action name="engine" class="actionclass.TestactionAC" method="execute">
-			<interceptor-ref name="decorator"/> 
+			<!--interceptor-ref name="decorator"/--> 
 			<result name="success">pages/logintpl.jsp</result>
 			<result name="returnajax" type="stream">
 				<param name="contentType">text/html</param>
@@ -63,6 +63,7 @@
 				<param name="stylesheetLocation">
 					testinterceptor.xsl
 	   		</param>
+			<param name="finalLocation">third.jsp</param>
 			</result>
 			<result name="input">/xslinterceptorinp.jsp</result>
 		</action>
