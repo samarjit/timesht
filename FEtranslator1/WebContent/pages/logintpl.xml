@@ -1,0 +1,30 @@
+<html>
+
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Login</title>
+<style>
+<![CDATA[.userid{
+	color:#7e645a;
+	background-color:#a5ebeb;
+}
+.password{
+	color:#442b20;
+	background-color:#eeb0a2;;
+} ]]>	
+</style>
+
+</head>
+<body>
+User Id: <input type="text" id="userid" name="userid" class="userid"/>
+Password: <input type="text" id="password" name="password" class="password" />
+<button onclick="submitform()" id="loginbutton">Login</button>
+	Hello test action
+<a href="engine.action?retrievename=somename" >engine.action</a>	
+<a href="">Launch the configuration browser</a>
+
+
+
+</body>
+</html>
