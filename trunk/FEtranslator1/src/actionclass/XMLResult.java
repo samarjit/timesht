@@ -96,9 +96,10 @@ public class XMLResult extends StrutsResultSupport {
          
          //freemarker
         this.invocation = invocation;
-      
+        String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
+        System.out.println("tplpath="+tplpath);
         Configuration cfg = new Configuration();
-        	cfg.setDirectoryForTemplateLoading(new File("F:/eclipse/workspace/charts/deployserver/wtpwebapps/FEtranslator1/WEB-INF/classes/map"));
+        	cfg.setDirectoryForTemplateLoading(new File(tplpath));
      		cfg.setObjectWrapper(new DefaultObjectWrapper()); 
      		 wrapper = cfg.getObjectWrapper();
          Template template = cfg.getTemplate("loginmap.xml");
@@ -117,7 +118,7 @@ public class XMLResult extends StrutsResultSupport {
          //freemarker
          
          System.out.println(result1.getWriter().toString());
-         writer.write("hello World from XMLResult.java");
+         //writer.write("hello World from XMLResult.java");
          writer.flush(); 
          
 	}

@@ -38,7 +38,7 @@ public final class DecoratorFilter extends StrutsResultSupport implements Filter
 		 
 		response.setContentType("text/html");
 		response.setContentLength(31);
-		System.out.println("DecoratorFilter: resultinghtml="+wrapper.toString());
+		//System.out.println("DecoratorFilter: resultinghtml="+wrapper.toString());
 		StringBuffer strnw = new StringBuffer();
 		strnw.append(wrapper.toString());
 		 
