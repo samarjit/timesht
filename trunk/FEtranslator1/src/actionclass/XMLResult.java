@@ -146,7 +146,7 @@ public class XMLResult extends StrutsResultSupport {
 	 
 	@Override
 	protected void doExecute(String finalLocation, ActionInvocation invocation) throws Exception {
-		System.out.println("finalLocation:"+finalLocation);
+		System.out.println("XMLResult: finalLocation:"+finalLocation);
 		execute1(invocation);
 		
 	}

@@ -60,9 +60,7 @@
 			method="preview">
 			<interceptor-ref name="myCustomStack" />
 			<result name="preview" type="xslt">
-				<param name="stylesheetLocation">
-					testinterceptor.xsl
-	   		</param>
+				<param name="stylesheetLocation">testinterceptor.xsl</param>
 			<param name="finalLocation">third.jsp</param>
 			</result>
 			<result name="input">/xslinterceptorinp.jsp</result>
@@ -73,10 +71,17 @@
 			<interceptor-ref name="myCustomStack" />
 			<result name="preview" type="customJSON">
 				<param name="stylesheetLocation">testinterceptor.xsl</param>
+				<param name="finalLocation">third.jsp</param>
 			</result>
 			<result name="input">/xslinterceptorinp.jsp</result>
 		</action>
-
+		<action name="jspmap" class="actionclass.ExampleXSLTAction"
+			method="preview">
+			
+			<interceptor-ref name="myCustomStack" />
+			<result name="preview"  >/pages/loginmap.jsp</result>
+			<result name="input">/xslinterceptorinp.jsp</result>
+		</action>
 	</package>
 
 </struts>

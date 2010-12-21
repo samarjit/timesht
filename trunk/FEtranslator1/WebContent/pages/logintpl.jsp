@@ -15,7 +15,7 @@
 }
 .password{
 	color:#442b20;
-	background-color:#eeb0a2;;
+	background-color:green;
 }	
 </style>
 <s:head />
