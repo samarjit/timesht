@@ -14,6 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StrutsResultSupport;
 
@@ -21,16 +22,18 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 
 public final class DecoratorFilter extends StrutsResultSupport implements Filter {
-	 private FilterConfig filterConfig = null;
+	private Logger logger = Logger.getLogger(this.getClass());
+	
+	private FilterConfig filterConfig = null;
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
-		System.out.println("DecoratorFilter: called"+request.getQueryString());
+		logger.debug("DecoratorFilter: called"+request.getQueryString());
 		if (filterConfig == null)
 	         return;
 		 
 		long startTime = System.currentTimeMillis();
-		System.out.println("DecoratorFilter:Starting filter.."+request.getParameter("retrieveName"));
+		logger.debug("DecoratorFilter:Starting filter.."+request.getParameter("retrieveName"));
 		
 		MyResponseWrapper wrapper = new MyResponseWrapper(response);
 		PrintWriter out = response.getWriter();
@@ -38,7 +41,7 @@ public final class DecoratorFilter extends StrutsResultSupport implements Filter
 		 
 		response.setContentType("text/html");
 		response.setContentLength(31);
-		//System.out.println("DecoratorFilter: resultinghtml="+wrapper.toString());
+		//logger.debug("DecoratorFilter: resultinghtml="+wrapper.toString());
 		StringBuffer strnw = new StringBuffer();
 		strnw.append(wrapper.toString());
 		 
@@ -60,16 +63,16 @@ public final class DecoratorFilter extends StrutsResultSupport implements Filter
 		if (  !response.isCommitted() && (request.getAttribute("javax.servlet.include.servlet_path") == null)) {
             request.setAttribute("struts.view_uri", finalLocation);
             request.setAttribute("struts.request_uri", request.getRequestURI());
-            System.out.println("DecoratorFilter:forward: ");
+            logger.debug("DecoratorFilter:forward: ");
             dispatcher.forward(request, response); //The out.println().. contents will be lost in this case
         } else {
-        	System.out.println("DecoratorFilter:include: ");
+        	logger.debug("DecoratorFilter:include: ");
         	dispatcher.include(request, response);
         }
 		
 		long stopTime = System.currentTimeMillis();
-		System.out.println("DecoratorFilter:Time to execute request: " + (stopTime - startTime) + " milliseconds");
-		System.out.println("DecoratorFilter:Ending filter"+request.getParameter("retrieveName")+" "+request.getParameter("name"));
+		logger.debug("DecoratorFilter:Time to execute request: " + (stopTime - startTime) + " milliseconds");
+		logger.debug("DecoratorFilter:Ending filter"+request.getParameter("retrieveName")+" "+request.getParameter("name"));
 		 
 		
 		
@@ -82,7 +85,7 @@ public final class DecoratorFilter extends StrutsResultSupport implements Filter
 		ActionContext ctx = invocation.getInvocationContext();
         HttpServletRequest request = (HttpServletRequest) ctx.get(ServletActionContext.HTTP_REQUEST);
         HttpServletResponse response = (HttpServletResponse) ctx.get(ServletActionContext.HTTP_RESPONSE);
-        System.out.println("doing filter");
+        logger.debug("doing filter");
 		((HttpServletResponse) response).setStatus(200);
         ((HttpServletResponse) response).setHeader("Location", "somelocation");
         response.getWriter().write("somelocation");

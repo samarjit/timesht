@@ -11,7 +11,7 @@
 }
 .password{
 	color:#442b20;
-	background-color:#eeb0a2;;
+	background-color:#d0d0ff;
 } ]]>	
 </style>
 
@@ -20,7 +20,9 @@
 User Id: <input type="text" id="userid" name="userid" class="userid"/>
 Password: <input type="text" id="password" name="password" class="password" />
 <button onclick="submitform()" id="loginbutton">Login</button>
-	Hello test action
+<div id="dateid"></div>
+
+<br/>	Hello test action
 <a href="engine.action?retrievename=somename" >engine.action</a>	
 <a href="">Launch the configuration browser</a>
 

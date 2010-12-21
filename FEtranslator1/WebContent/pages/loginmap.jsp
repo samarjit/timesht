@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
+
 <root>
+<!-- <%@taglib uri="/struts-tags" prefix="s"%>
+ <%@taglib uri="/struts-dojo-tags" prefix="sx"%> -->
 	<screen>
 		<htmltempalte>
 			pages/logintpl.xml
@@ -8,14 +11,13 @@
 		
 		</includedjsp>
 		<scripts>
-			<![CDATA[    
-				<@s.head/>
-    			<@sx.head/>
+			<![CDATA[
 				<script>
 				function javaScriptFn(){
 				}
 				</script>
-				
+				<s:head/>
+    			<sx:head/>
 				]]>
 			<scriptinclude>json.js,jquery.js</scriptinclude>
 		</scripts>
@@ -27,13 +29,14 @@
 				 }
 				</style>
 			]]>	
-				<styleinclude>home.css</styleinclude>	
+				<styleinclude>home.css</styleinclude>
 		</stylesheets>
 	</screen>
 
 	<panels>
 		<fields>
 			<field>
+				
 				<input type="text" class="userid" forid="userid" value="${testHeader}"
 					column="USER_ID" rulemessage="" dbcolsize="" mask="" mandatory="" hidden="" >
 					<rule></rule>
@@ -54,7 +57,8 @@
 				<customfield type="datepicker" class=" " forid="dateid" 
 					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
 					<!-- will need to experiment to see if dojo tags of struts2 say datepicker can be added? -->
-					<text><![CDATA[<@sx.datetimepicker name="order.date" label="Order Date" displayFormat="dd-MMM-yyyy" />]]></text>
+					
+					<text ><![CDATA[<sx:datetimepicker name="order.date" label="Order Date" displayFormat="dd-MMM-yyyy" />]]></text>
 					<rule></rule>
 					<validation></validation>
 					<query></query>

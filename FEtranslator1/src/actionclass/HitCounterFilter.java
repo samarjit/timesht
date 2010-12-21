@@ -12,11 +12,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 /**
  * Servlet Filter implementation class HitCounterFilter
  */
 public class HitCounterFilter implements Filter {
-
+	private Logger logger = Logger.getLogger(this.getClass());
     /**
      * Default constructor. 
      */
@@ -38,10 +40,10 @@ public class HitCounterFilter implements Filter {
 		PrintWriter out = response.getWriter();
 		CharResponseWrapper wrapper = new CharResponseWrapper(
 		   (HttpServletResponse)response);
-		System.out.println("HitCounterFilter: started");
+		logger.debug("HitCounterFilter: started");
 		chain.doFilter(request, wrapper);
 		 
-		System.out.println("HitCounterFilter: content type"+wrapper.getContentType());
+		logger.debug("HitCounterFilter: content type"+wrapper.getContentType());
 		if(wrapper!= null && wrapper.getContentType()!=null && wrapper.getContentType().equals("text/html")) {
 		   CharArrayWriter caw = new CharArrayWriter();
 		   caw.write(wrapper.toString());
@@ -54,7 +56,7 @@ public class HitCounterFilter implements Filter {
 		   out.write(wrapper.toString());
 		out.flush();
 		//out.close();
-		System.out.println("HitCounterFilter: end");
+		logger.debug("HitCounterFilter: end");
 	}
 
 	/**

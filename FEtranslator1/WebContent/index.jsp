@@ -12,6 +12,7 @@
 <a href="<%=ctxstr%>/templatetest.action" >embedded ftl test</a>	<br/>
 <a href="<%=ctxstr%>/third.jsp" >XSLT Filter</a>	<br/>
 <a href="<%=ctxstr%>/testxsl1.action" >test xsl xml</a> <br/>
+<a href="<%=ctxstr%>/jspmap.action" >jspmap</a> <br/>
 <a href="<%=ctxstr%>/testxsl.action" >test xsl</a> <br/>
 <hr/>
 <a href="<%=ctxstr%>/config-browser/actionNames.action?namespace=%2Fconfig-browser" >config browser</a>|

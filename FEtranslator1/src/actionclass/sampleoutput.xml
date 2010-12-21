@@ -2,14 +2,38 @@
 <root>
 	<screen>
 		<htmltempalte>
-			pages/logintpl.html
+			pages/logintpl.xml
 		</htmltempalte>
 		<includedjsp>
 		
 		</includedjsp>
 		<scripts>
-			<![CDATA[
-				<script>
+			<![CDATA[    
+				<link rel="stylesheet" href="/FEtranslator1/struts/xhtml/styles.css" type="text/css"/>
+<script src="/FEtranslator1/struts/utils.js" type="text/javascript"></script><script language="JavaScript" type="text/javascript">
+    // Dojo configuration
+    djConfig = {
+        isDebug: false,
+        bindEncoding: "UTF-8"
+          ,baseRelativePath: "/FEtranslator1/struts/dojo/"
+          ,baseScriptUri: "/FEtranslator1/struts/dojo/"
+         ,parseWidgets : false
+        
+    };
+</script>
+
+
+
+  <script language="JavaScript" type="text/javascript"
+        src="/FEtranslator1/struts/dojo/struts_dojo.js"></script>
+
+<script language="JavaScript" type="text/javascript"
+        src="/FEtranslator1/struts/ajax/dojoRequire.js"></script>
+<link rel="stylesheet" href="/FEtranslator1/struts/xhtml/styles.css" type="text/css"/>
+
+<script language="JavaScript" src="/FEtranslator1/struts/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="/FEtranslator1/struts/xhtml/validation.js" type="text/javascript"></script>
+<script language="JavaScript" src="/FEtranslator1/struts/css_xhtml/validation.js" type="text/javascript"></script>				<script>
 				function javaScriptFn(){
 				}
 				</script>
@@ -52,7 +76,15 @@
 				<customfield type="datepicker" class=" " forid="dateid" 
 					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
 					<!-- will need to experiment to see if dojo tags of struts2 say datepicker can be added? -->
-					<freemarker expression=""></freemarker>
+					<text><![CDATA[<tr>
+    <td class="tdLabel"><label for="widget_1806721592" class="label">Order Date:</label></td>
+    <td
+><div
+     dojoType="struts:StrutsDatePicker"    id="widget_1806721592"    name="order.date"    inputName="dojo.order.date"    displayFormat="dd-MMM-yyyy"  saveFormat="rfc"></div>
+</td>
+</tr>
+<script language="JavaScript" type="text/javascript">djConfig.searchIds.push("widget_1806721592");</script>
+]]></text>
 					<rule></rule>
 					<validation></validation>
 					<query></query>
@@ -64,3 +96,4 @@
 		freemarker start header and footer  freenarker end
 	</panels>
 </root>
+ 
