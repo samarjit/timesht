@@ -5,14 +5,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 <title>Login</title>
 <style>
-<![CDATA[.userid{
+<![CDATA[
+.userid{
 	color:#7e645a;
 	background-color:#a5ebeb;
 }
 .password{
 	color:#442b20;
 	background-color:#d0d0ff;
-} ]]>	
+}
+]]>	
 </style>
 
 </head>
