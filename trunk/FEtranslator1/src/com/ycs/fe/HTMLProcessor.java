@@ -205,7 +205,7 @@ public class HTMLProcessor {
 		Node fragmentNode = docBuilder.parse(new InputSource(new StringReader("<root>"+fragment+"</root>"))).getDocumentElement();
 		NodeList nl = fragmentNode.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
-			Node n = nl.item(i);			
+			Node n = nl.item(i);		
 				Node node = doc.importNode(n, true);
 				parent.appendChild(node);
 		}
