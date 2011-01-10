@@ -14,9 +14,24 @@
 <a href="<%=ctxstr%>/testxsl1.action" >test xsl xml</a> <br/>
 <a href="<%=ctxstr%>/jspmap.action" >jspmap</a> <br/>
 <a href="<%=ctxstr%>/testxsl.action" >test xsl</a> <br/>
+
 <hr/>
+<a href="<%=ctxstr%>/logout.jsp">logout</a><br/>
 <a href="<%=ctxstr%>/config-browser/actionNames.action?namespace=%2Fconfig-browser" >config browser</a>|
 <a href="<%=ctxstr%>/engine.action?debug=browser" >debug browser</a>	
-
+<form method="post" action="testxsl.action">
+	<table>
+		<tr><td>Enter FirstName :</td>
+			<td><input type=text name="testHeader"
+			  /></td>
+		</tr>
+		<tr><td>Enter LastName :</td>
+			<td><input type=text name="testFooter"   /></td>
+		</tr>
+		<tr>
+			<td colspan="2"><input type=submit value="Register" /></td>
+		</tr>
+	</table>
+</form>
 </body>
 </html>

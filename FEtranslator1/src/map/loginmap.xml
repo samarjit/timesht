@@ -60,9 +60,19 @@
 					<query></query>
 				</customfield>
 			</field>
+			<field>
+			<select class="" forid="list" value="${list}"
+					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
+					<text><![CDATA[<select name="country" label="select the country"> </select>]]></text>
+					<rule></rule>
+					<validation></validation>
+					<query></query>
+			</select>
+			</field>
+			
 		</fields>
 		<button forid="loginbutton" onclick=""></button>
 		<button forid="reset" onclick=""></button>
-		freemarker start ${testHeader} and ${testFooter}  freenarker end
+		freemarker start ${testHeader} and ${testFooter}  freemarker end
 	</panels>
 </root>

@@ -58,17 +58,17 @@ public final class DecoratorFilter extends StrutsResultSupport implements Filter
 		//result if the stream is flushed then include does not work
 		//result for include to work flush must be called, but if the stream is closed then include does not work
 		
-		String finalLocation =  "/second.jsp";
-		RequestDispatcher dispatcher = request.getRequestDispatcher(finalLocation);
-		if (  !response.isCommitted() && (request.getAttribute("javax.servlet.include.servlet_path") == null)) {
-            request.setAttribute("struts.view_uri", finalLocation);
-            request.setAttribute("struts.request_uri", request.getRequestURI());
-            logger.debug("DecoratorFilter:forward: ");
-            dispatcher.forward(request, response); //The out.println().. contents will be lost in this case
-        } else {
-        	logger.debug("DecoratorFilter:include: ");
-        	dispatcher.include(request, response);
-        }
+//		String finalLocation =  "/second.jsp";
+//		RequestDispatcher dispatcher = request.getRequestDispatcher(finalLocation);
+//		if (  !response.isCommitted() && (request.getAttribute("javax.servlet.include.servlet_path") == null)) {
+//            request.setAttribute("struts.view_uri", finalLocation);
+//            request.setAttribute("struts.request_uri", request.getRequestURI());
+//            logger.debug("DecoratorFilter:forward: ");
+//            dispatcher.forward(request, response); //The out.println().. contents will be lost in this case
+//        } else {
+//        	logger.debug("DecoratorFilter:include: ");
+//        	dispatcher.include(request, response);
+//        }
 		
 		long stopTime = System.currentTimeMillis();
 		logger.debug("DecoratorFilter:Time to execute request: " + (stopTime - startTime) + " milliseconds");

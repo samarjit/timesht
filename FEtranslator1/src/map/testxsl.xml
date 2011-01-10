@@ -17,7 +17,7 @@
 				</script>
 				
 				]]>
-			<scriptinclude>json.js,jquery.js</scriptinclude>
+			<scriptinclude>js/test.js,js/jquery.js</scriptinclude>
 		</scripts>
 		<stylesheets>
 			<![CDATA[
@@ -27,41 +27,58 @@
 				 }
 				</style>
 			]]>	
-				<styleinclude>home.css</styleinclude>	
+				<styleinclude>css/home.css</styleinclude>	
 		</stylesheets>
 	</screen>
 
 	<panels>
 		<fields>
 			<field>
-				<input type="text" class="userid" forid="userid" value="${testHeader}"
-					column="USER_ID" rulemessage="" dbcolsize="" mask="" mandatory="" hidden="" >
+				<input type="text" class="userid" forid="userid" value="${testHeader}" name="firstname" id="firstname"
+					column="USER_ID" rulemessage="" dbcolsize="" mask="" mandatory="" hidden="" label="">
 					<rule></rule>
 					<validation></validation>
-					<query></query>
+					<query><![CDATA[<@s.text name="details.firstname" />]]></query>
 				</input>
 			</field>
 
 			<field>
-				<input type="text" class="password" forid="password"  value="${testFooter}"
+				<input type="text" class="password" forid="password"  value="${testFooter}" name="LastName" id="LastName"
 					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
 					<rule></rule>
 					<validation></validation>
 					<query></query>
 				</input>
+			</field>
+			<field>
+			<input class="radiobutton" forid="gender" value="${genderlist}" name="gender" type="radio" id="genderlist"
+					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
+					<rule></rule>
+					<validation></validation>
+					<query></query>
+			</input>
+			</field>
+			
+			<field>
+			<input class="check" forid="check" value="${checklist}" name="check" type="checkbox" id="checklist"
+					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
+					<rule></rule>
+					<validation></validation>
+					<query></query>
+			</input>
 			</field>
 			<field>
 				<customfield type="datepicker" class=" " forid="dateid" 
 					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
 					<!-- will need to experiment to see if dojo tags of struts2 say datepicker can be added? -->
-					<text><![CDATA[<@sx.datetimepicker name="order.date" label="Order Date" displayFormat="dd-MMM-yyyy" />]]></text>
+					<text><![CDATA[<@sx.datetimepicker name="orderdate"  displayFormat="dd-MMM-yyyy" />]]></text>
 					<rule></rule>
 					<validation></validation>
 					<query></query>
 				</customfield>
 			</field>
 			<field>
-			<select class="" forid="list" value="${list}"
+			<select class="" forid="list" value="${list}" 
 					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
 					<text><![CDATA[<select name="country"> </select>]]></text>
 					<rule></rule>
@@ -69,9 +86,11 @@
 					<query></query>
 			</select>
 			</field>
+			
+			
 		</fields>
 		<button forid="loginbutton" onclick=""></button>
 		<button forid="reset" onclick=""></button>
-		freemarker start ${testHeader} and ${testFooter}  freenarker end
+		freemarker start ${testHeader} and ${testFooter}  freemarker end
 	</panels>
 </root>
