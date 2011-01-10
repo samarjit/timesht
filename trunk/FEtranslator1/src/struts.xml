@@ -5,48 +5,9 @@
 
 <struts>
 	<constant name="struts.devMode" value="true" />
-
-
-
-	<package name="engine" extends="struts-default">
-		<!--<interceptors>
-			<interceptor-stack name="appDefault">
-				<interceptor-ref name="defaultStack">
-					<param name="exception.logEnabled"> true </param>
-					<param name="exception.logLevel"> DEBUG </param>
-				</interceptor-ref>
-			</interceptor-stack>
-		</interceptors>
-		<default-interceptor-ref name="appDefault" />-->
-		<interceptors>
-			<interceptor name="decorator" class="actionclass.DecoratorInterceptor" />
-		</interceptors>
-
-		<action name="index">
-			<result>
-				/index.jsp
-            </result>
-		</action>
-
-		<action name="engine" class="actionclass.TestactionAC" method="execute">
-			<!--interceptor-ref name="decorator"/--> 
-			<result name="success">pages/logintpl.jsp</result>
-			<result name="returnajax" type="stream">
-				<param name="contentType">text/html</param>
-				<param name="inputName">inputStream</param>
-			</result>
-		</action>
-		<action name="testftl" class="actionclass.TestactionAC">
-			<result name="success" type="freemarker">pages/test-success.ftl</result>
-		</action>
-		<action name="templatetest" class="actionclass.TestactionAC">
-			<result name="success">pages/templatetest.jsp</result>
-		</action>
-	</package>
-
-	<package name="xslt-example" extends="struts-default">
+	<package name="yidefaultPackage" extends="struts-default">
 		<result-types>
-			<result-type name="customJSON" class="actionclass.XMLResult">
+			<result-type name="customXMLRes" class="actionclass.XMLResult">
 			</result-type>
 		</result-types>
 		<interceptors>
@@ -56,32 +17,31 @@
 				<interceptor-ref name="decorator" />
 			</interceptor-stack>
 		</interceptors>
-		<action name="testxsl1" class="actionclass.ExampleXSLTAction"
-			method="preview">
-			<interceptor-ref name="myCustomStack" />
-			<result name="preview" type="xslt">
-				<param name="stylesheetLocation">testinterceptor.xsl</param>
-			<param name="finalLocation">third.jsp</param>
-			</result>
-			<result name="input">/xslinterceptorinp.jsp</result>
-		</action>
+	</package>
+
+
+	<package name="xslt-example" extends="yidefaultPackage">
+
 		<action name="testxsl" class="actionclass.ExampleXSLTAction"
 			method="preview">
-			
 			<interceptor-ref name="myCustomStack" />
-			<result name="preview" type="customJSON">
-				<param name="stylesheetLocation">testinterceptor.xsl</param>
-				<param name="finalLocation">third.jsp</param>
+			<result name="preview" type="customXMLRes">
+				<param name="resultxml">testxsl.xml</param>
 			</result>
-			<result name="input">/xslinterceptorinp.jsp</result>
+			<result name="input">/index.jsp</result>
 		</action>
-		<action name="jspmap" class="actionclass.ExampleXSLTAction"
-			method="preview">
-			
+		
+		<action name="details" class="actionclass.DetailsXSLTAction"
+			method="details">
 			<interceptor-ref name="myCustomStack" />
-			<result name="preview"  >/pages/loginmap.jsp</result>
-			<result name="input">/xslinterceptorinp.jsp</result>
+			<result name="resultinput" type="customXMLRes">
+				<param name="resultxml">details.xml</param>
+			</result>
+			<result name="result">/success.jsp
+				
+			</result>
 		</action>
+		
 	</package>
 
 </struts>

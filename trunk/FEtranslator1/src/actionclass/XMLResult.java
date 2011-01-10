@@ -3,6 +3,7 @@ package actionclass;
 import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,9 @@ import org.apache.struts2.views.xslt.ServletURIResolver;
 import org.json.JSONObject;
 
 import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.ActionProxy;
+import com.opensymphony.xwork2.config.entities.ActionConfig;
+import com.opensymphony.xwork2.config.entities.ResultConfig;
 import com.opensymphony.xwork2.inject.Inject;
 import com.opensymphony.xwork2.util.ValueStack;
 
@@ -74,6 +78,31 @@ public class XMLResult extends StrutsResultSupport {
 		 response.setContentType("text/html");
 
          Object result = invocation.getAction();
+         String actionName = invocation.getProxy().getActionName();
+         String xmlFileName = actionName+".xml";
+		 ///////Decide whether to process or not?////
+			ActionProxy proxy = invocation.getProxy();
+		 	 ActionConfig config = proxy.getConfig();
+		        Map<String, ResultConfig> results = config.getResults();
+
+		        ResultConfig resultConfig = null;
+
+		        try {
+		            resultConfig = results.get(invocation.getResultCode());
+		        } catch (NullPointerException e) {
+		            // swallow
+		        }
+		       System.out.println("Result classname = "+resultConfig.getClassName()); 
+		       Map<String, String> params = resultConfig.getParams();
+		       xmlFileName = params.get("resultxml");
+		       System.out.println("Now filename of tempalte is = "+xmlFileName);
+		       if (params != null) {
+	                for (Map.Entry<String, String> paramEntry : params.entrySet()) {
+	                	System.out.println("Result paramEntry:"+paramEntry);
+	                }
+	            }
+		 /////////////////////////////////////////////  
+         
          if (exposedValue != null) {
         	 System.out.println("XMLResult: exposedValue is not null");
              ValueStack stack = invocation.getStack();
@@ -84,11 +113,11 @@ public class XMLResult extends StrutsResultSupport {
          System.out.println("XMLResult:jobj="+jobj.toString());
          Source xmlSource = getDOMSourceForStack(result);
          
-         String stylepath = ServletActionContext.getServletContext().getRealPath("/xml/html.xsl");
-			System.out.println("XSLTFilter: transforming with XSL:"+stylepath);
-			Source styleSource = new StreamSource(stylepath);
-			
-         Transformer transformer = TransformerFactory.newInstance().newTransformer(styleSource);
+//         String stylepath = ServletActionContext.getServletContext().getRealPath("/xml/html.xsl");
+//			System.out.println("XSLTFilter: transforming with XSL:"+stylepath);
+//			Source styleSource = new StreamSource(stylepath);
+//			
+//         Transformer transformer = TransformerFactory.newInstance().newTransformer(styleSource);
          StreamResult result1 = new StreamResult(writer);
         //DOMSource source = new DOMSource(xmlSource);
         System.out.println("xmlSource = " + xmlSource);
@@ -102,7 +131,7 @@ public class XMLResult extends StrutsResultSupport {
         	cfg.setDirectoryForTemplateLoading(new File(tplpath));
      		cfg.setObjectWrapper(new DefaultObjectWrapper()); 
      		 wrapper = cfg.getObjectWrapper();
-         Template template = cfg.getTemplate("loginmap.xml");
+         Template template = cfg.getTemplate(xmlFileName);
          TemplateModel model =  createModel();
          
          CharArrayWriter charArrayWriter = new CharArrayWriter();

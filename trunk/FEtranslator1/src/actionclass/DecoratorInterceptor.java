@@ -2,6 +2,7 @@ package actionclass;
 
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +12,9 @@ import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.ActionProxy;
+import com.opensymphony.xwork2.config.entities.ActionConfig;
+import com.opensymphony.xwork2.config.entities.ResultConfig;
 import com.opensymphony.xwork2.interceptor.Interceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.ycs.fe.HTMLProcessor;
@@ -46,21 +50,26 @@ public class DecoratorInterceptor implements Interceptor {
             	  
              }
 		 });
+		 logger.debug("DecoratorInterceptor:Before invocation.invoke");
 		 
 		 String result =  invocation.invoke();
-		  
-			logger.debug( "DecoratorInterceptor:request.getContentLength()"+wrapper.toString());
+		       
+			logger.debug( "DecoratorInterceptor:request.getContentLength() expecting first element <root>:"+wrapper.toString());
 			HTMLProcessor processor = new HTMLProcessor();
-			String resulthtml = processor.process(wrapper.toString(), invocation);
+			String resulthtml = null;
+			if("actionclass.XMLResult".equals(invocation.getResult().getClass().getCanonicalName()))
+			resulthtml = processor.process(wrapper.toString(), invocation);
 			
 			
 			CharResponseWrapper newrsp = new CharResponseWrapper(wrapper);
 			PrintWriter out = responseParent.getWriter();
 			CharArrayWriter car = new CharArrayWriter();
-			if(processor.getLastResult())
+			logger.debug("Processing Error in HTMLProcessor false indicates error:"+processor.getLastResult());
+			if(processor.getLastResult() && resulthtml!= null)
 				car.write(resulthtml);
 			else
-				car.write(wrapper.toString());	
+				car.write(wrapper.toString());	//fallthrough for other than custom result types
+			
 			car.write("TODO: hello from DecoratorInterceptor");
 					    
 			responseParent.setContentLength(car.toString().length());

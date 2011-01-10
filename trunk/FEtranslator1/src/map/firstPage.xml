@@ -2,7 +2,7 @@
 <root>
 	<screen>
 		<htmltempalte>
-			pages/logintpl.xml
+		
 		</htmltempalte>
 		<includedjsp>
 		
@@ -37,7 +37,7 @@
 				<input type="text" class="userid" forid="userid" value="${testHeader}"
 					column="USER_ID" rulemessage="" dbcolsize="" mask="" mandatory="" hidden="" >
 					<rule></rule>
-					<validation></validation>
+					<validation event="onclick" ></validation>
 					<query></query>
 				</input>
 			</field>

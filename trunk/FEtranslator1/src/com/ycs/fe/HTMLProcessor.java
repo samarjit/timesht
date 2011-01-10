@@ -12,8 +12,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,9 +32,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import nu.xom.Builder;
-
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.w3c.dom.CDATASection;
@@ -40,12 +39,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.NodeType;
+import com.opensymphony.xwork2.ActionProxy;
+import com.opensymphony.xwork2.config.entities.ActionConfig;
+import com.opensymphony.xwork2.config.entities.ResultConfig;
  
 
  
@@ -73,6 +74,8 @@ public class HTMLProcessor {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dbuild;
 		String xmlString ="";
+    
+		 
 		try {
 			dbf.setIgnoringElementContentWhitespace(true); 
 			dbuild = dbf.newDocumentBuilder();
@@ -95,7 +98,7 @@ public class HTMLProcessor {
 		
 
 			
-			logger.debug("HTMLProcessor: TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
+			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
 			pathhtml = ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
 			if(new File(pathhtml).exists())logger.debug("The html exists");
 			FileInputStream fin = new FileInputStream(new File(pathhtml));
@@ -110,11 +113,44 @@ public class HTMLProcessor {
 				Element inputElm = (Element) nl.item(i);
 				logger.debug("here.. inside //field"+inputElm.getNodeName());
 			    logger.debug(" .. found input type = ..");
+			    String type = inputElm.getAttribute("type");
 			    String htmlid = inputElm.getAttribute("forid");
-				Element n = (Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+				Node n = (Node) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 				if(n != null){
-					n.setAttribute("value", inputElm.getAttribute("value"));
+					if(type.equalsIgnoreCase("text") || type.equalsIgnoreCase("password")){
+						Element element = dochtml.createElement("input");
+						element.setAttribute("name", inputElm.getAttribute("name"));
+						element.setAttribute("value", inputElm.getAttribute("value"));
+						element.setAttribute("type", inputElm.getAttribute("type"));
+						element.setAttribute("class", inputElm.getAttribute("class"));
+						element.setAttribute("id", inputElm.getAttribute("id"));
+						n.appendChild(element);
+				    }else if(type.equalsIgnoreCase("radio") || type.equalsIgnoreCase("checkbox")){
+				    	String listValue = inputElm.getAttribute("value");
+						if(listValue != null && listValue != ""){
+							listValue = listValue.replace("{", " ");
+							listValue = listValue.replace("}", " ");
+							String[] list = listValue.split(",");
+							for(int j=list.length-1;j>=0;j--){
+								String val = list[j].trim();
+								String[] key = val.split("=");
+								Element element = dochtml.createElement("input");
+								element.setAttribute("name", inputElm.getAttribute("name"));
+								element.setAttribute("value", key[0]);
+								element.setAttribute("type", inputElm.getAttribute("type"));
+								element.setAttribute("class", inputElm.getAttribute("class"));
+								element.setAttribute("id", inputElm.getAttribute("id")+(j+1));
+								element.setTextContent(key[1]);
+								n.appendChild(element);
+							}
+							
+						}
+				    }
+					
+//					n.setAttribute("value", inputElm.getAttribute("value"));
+//					n.setTextContent(inputElm.getAttribute("value"));
+
 				}else{
 					//TODO: We need to insert in custom fields
 				}
@@ -135,11 +171,65 @@ public class HTMLProcessor {
 					CDATASection cdata = dochtml.createCDATASection(textelement.getTextContent());
 					//element.appendChild(cdata);
 					appendXmlFragment(dbuild,n,textelement.getChildNodes());
+					
 				}else{
 					//TODO: We need to insert in custom fields
 				}
 				
 			}
+			
+			nl = (NodeList) xp.evaluate("//fields/field/display", xmlelmNode, XPathConstants.NODESET);
+			for (int i = 0; i < nl.getLength(); i++) {
+				Element inputElm = (Element) nl.item(i);
+				String htmlid = inputElm.getAttribute("forid");
+				Element n = (Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
+				if(n != null){
+					n.setTextContent(inputElm.getAttribute("value"));
+				}else{
+					//TODO: We need to insert in custom fields
+				}
+				
+			}
+			
+			nl = (NodeList) xp.evaluate("//fields/field/select", xmlelmNode, XPathConstants.NODESET);
+			for (int i = 0; i < nl.getLength(); i++) {
+				Element inputElm = (Element) nl.item(i);
+				String htmlid = inputElm.getAttribute("forid");
+				Element n = (Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
+				if(n != null){
+					NodeList textnodenl = inputElm.getElementsByTagName("text");
+					Element textelement = null;
+					if(textnodenl != null){
+						textelement = (Element) textnodenl.item(0);
+					}
+					CDATASection cdata = dochtml.createCDATASection(textelement.getTextContent());
+					//element.appendChild(cdata);
+					appendXmlFragment(dbuild,n,textelement.getChildNodes());
+					String listValue = inputElm.getAttribute("value");
+					
+					if(listValue != null && listValue != ""){
+						listValue = listValue.replace("{", " ");
+						listValue = listValue.replace("}", " ");
+						String[] list = listValue.split(",");
+						NodeList nodeList = dochtml.getElementsByTagName("select");
+						Node node = nodeList.item(0);
+						for(String val:list){
+							val = val.trim();
+							String[] key = val.split("=");
+							Element element = dochtml.createElement("option");
+							element.setAttribute("value", key[0]);
+							element.setTextContent(key[1]);
+							node.appendChild(element);
+						}
+					}
+				}else{
+					//TODO: We need to insert in custom fields
+				}
+				
+			}
+			
 			String scripts = (String) xp.evaluate("//scripts/text()", xmlelmNode, XPathConstants.STRING);
 				NodeList headnl = dochtml.getElementsByTagName("head");
 				if(headnl.getLength() < 1){
@@ -149,13 +239,43 @@ public class HTMLProcessor {
 					Element headelm = (Element) headnl.item(0);
 					appendXmlFragment(dbuild,headelm,scripts);
 				}
-				 
-			 			
+				
+			String scriptinclude = (String)xp.evaluate("//scriptinclude/text()", xmlelmNode, XPathConstants.STRING);
+			Node headNode = headnl.item(0);
+			if (scriptinclude != null) {
+				String[] includeScripts = scriptinclude.split(",");
+				for (String val : includeScripts) {
+					Element e = dochtml.createElement("script");
+					e.setAttribute("src", val);
+					e.setAttribute("language", "JavaScript");
+					e.setAttribute("type", "text/javascript");
+					headNode.appendChild(e);
+				}
+			}
+			
+			
+			String stylesheets = (String)xp.evaluate("//stylesheets/text()", xmlelmNode, XPathConstants.STRING);
+			if(stylesheets != null){
+				appendXmlFragment(dbuild,headNode,stylesheets);
+			}
+			
+			String styleInclude = (String)xp.evaluate("//styleinclude/text()", xmlelmNode, XPathConstants.STRING);
+			if (styleInclude != null) {
+				String[] includeStyles = styleInclude.split(",");
+				for (String val : includeStyles) {
+					Element e = dochtml.createElement("link");
+					e.setAttribute("href", val);
+					e.setAttribute("rel", "stylesheet");
+					e.setAttribute("type", "text/css");
+					headNode.appendChild(e);
+				}
+			}
+			
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			//initialize StreamResult with File object to save to file
 			StreamResult result = new StreamResult(new StringWriter());
-			DOMSource source = new DOMSource(dochtml );
+			DOMSource source = new DOMSource(dochtml);
 
 			transformer.transform(source, result);
 
@@ -205,7 +325,7 @@ public class HTMLProcessor {
 		Node fragmentNode = docBuilder.parse(new InputSource(new StringReader("<root>"+fragment+"</root>"))).getDocumentElement();
 		NodeList nl = fragmentNode.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
-			Node n = nl.item(i);		
+			Node n = nl.item(i);			
 				Node node = doc.importNode(n, true);
 				parent.appendChild(node);
 		}
@@ -242,6 +362,6 @@ public class HTMLProcessor {
 		temp.process(root, out);
 		out.flush();
 		 HTMLProcessor htmp = new HTMLProcessor();
-		 htmp.process(htmp.fileReadAll("C:/Eclipse/workspace1/FEtranslator1/src/actionclass/sampleoutput.xml"), null);
+		 htmp.process(htmp.fileReadAll("C:/Eclipse/workspace/FEtranslator1/src/actionclass/sampleoutput.xml"), null);
 	}
 }
