@@ -123,8 +123,10 @@ private boolean templateprocessed = false;
 			Element xmlelmNode = docXML.getRootElement();
 			
 			String pathhtml = null;
-			if(xmlelmNode.elements("htmltempalte").size() > 0){
-				pathhtml = xmlelmNode.element("htmltempalte").getText().trim();
+			System.out.println( xmlelmNode.elements("screen/scripts").size());
+			if(xmlelmNode.selectNodes("//htmltempalte").size() > 0){
+				pathhtml = xmlelmNode.selectSingleNode("//htmltempalte").getText().trim();
+				logger.debug("htmltemplate:"+pathhtml);
 			}else{
 				logger.debug("HTMLProcessor: no template found in "+inputXML.substring(0,20)+"..." ); 
 				templateprocessed= false;
@@ -155,7 +157,7 @@ private boolean templateprocessed = false;
 				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 				if(n != null){
 					if(type.equalsIgnoreCase("text") || type.equalsIgnoreCase("password")){
-						Element element = dochtml.addElement("input");
+						Element element = factory.createElement("input");
 						element.addAttribute("name", inputElm.attributeValue("name"));
 						element.addAttribute("value", inputElm.attributeValue("value"));
 						element.addAttribute("type", inputElm.attributeValue("type"));
@@ -171,7 +173,7 @@ private boolean templateprocessed = false;
 							for(int j=list.length-1;j>=0;j--){
 								String val = list[j].trim();
 								String[] key = val.split("=");
-								Element element = dochtml.addElement("input");
+								Element element = factory.createElement("input");
 								element.addAttribute("name", inputElm.attributeValue("name"));
 								element.addAttribute("value", key[0]);
 								element.addAttribute("type", inputElm.attributeValue("type"));
@@ -206,7 +208,7 @@ private boolean templateprocessed = false;
 //					}
 					//CDATASection cdata = dochtml.createCDATASection(textelement.getText());
 					//element.appendContent(cdata);
-					n.add(textelement);
+					n.appendContent(textelement);
 					//appendXmlFragment(dbuild,n,textelement.elements());
 					
 				}else{
@@ -243,6 +245,7 @@ private boolean templateprocessed = false;
 //					}
 //					CDATASection cdata = dochtml.createCDATASection(textelement.getText());
 //					element.appendContent(cdata);
+					logger.debug("To remove:"+textelement.getText());
 					appendXmlFragment(dbuild,n,textelement.getText());
 					String listValue = inputElm.attributeValue("value");
 					
@@ -252,11 +255,12 @@ private boolean templateprocessed = false;
 						String[] list = listValue.split(",");
 //						List List = dochtml.selectNodes("select");
 //						Node node = List.get(0);
-						Node node = dochtml.selectSingleNode("select");
+						logger.debug("To remove:"+"//select[@id=\""+htmlid+"\"]");
+						Node node = dochtml.selectSingleNode("//select[@id=\""+htmlid+"\"]");
 						for(String val:list){
 							val = val.trim();
 							String[] key = val.split("=");
-							Element element = dochtml.addElement("option");
+							Element element = factory.createElement("option");
 							element.addAttribute("value", key[0]);
 							element.setText(key[1]);
 							Element nodelm = (Element) node;
@@ -268,9 +272,9 @@ private boolean templateprocessed = false;
 						if(opts != null){
 //							List List = dochtml.selectNodes("select");
 //							Node node = List.get(0);
-							Node node = dochtml.selectSingleNode("select");
+							Node node = dochtml.selectSingleNode("//select[@id=\""+htmlid+"\"]");
 							for (Entry<String, String> option : opts.entrySet()) {
-								Element element = dochtml.addElement("option");
+								Element element = factory.createElement("option");
 								element.addAttribute("value", option.getKey());
 								element.setText(option.getValue());
 								Element nodelm = (Element) node;
@@ -284,22 +288,22 @@ private boolean templateprocessed = false;
 				
 			}
 			
-			List  headnl = dochtml.selectNodes("head");
+			List  headnl = dochtml.selectNodes("/html/head");
 			if(headnl.size() < 1){
-				Element elm = dochtml.addElement("head");
-				Element htmltop = (Element) dochtml.selectSingleNode("html");
+				Element elm = factory.createElement("head");
+				Element htmltop = (Element) dochtml.selectSingleNode("/html");
 				htmltop.appendContent(elm);
 				//TODO: append head
 			}
 			
 			
 				
-			Element headNode = (Element) headnl.get(0);
+			Element headNode = (Element) dochtml.selectSingleNode("/html/head");
 			/*String scriptinclude = (String)xp.evaluate("//scriptinclude/text()", xmlelmNode, XPathConstants.STRING);
 			if (scriptinclude != null) {
 				String[] includeScripts = scriptinclude.split(",");
 				for (String val : includeScripts) {
-					Element e = dochtml.addElement("script");
+					Element e = factory.createElement("script");
 					e.addAttribute("src", val);
 					e.addAttribute("language", "JavaScript");
 					e.addAttribute("type", "text/javascript");
@@ -314,7 +318,7 @@ private boolean templateprocessed = false;
 				appendXmlFragment(dbuild,headNode,scripts);
 			}*/
 			///multiple scriptincludes and scripts tags
-			List scriptsnl =   ((Element)xmlelmNode.selectSingleNode("scripts")).elements();		
+			List scriptsnl =   ((Element)xmlelmNode.selectSingleNode("//scripts")).elements();		
 			for (int i = 0; i < scriptsnl.size(); i++) {
 				Node scriptnode = (Node) scriptsnl.get(i);
 //				logger.debug("Adding scipts"+scriptnode.getText());
@@ -324,7 +328,7 @@ private boolean templateprocessed = false;
 				if(scriptnode.getNodeType() == Node.ELEMENT_NODE && "scriptinclude".equals(scriptnode.getName())){
 					String[] includeScripts = scriptnode.getText().split(",");
 					for (String val : includeScripts) {
-						Element e = dochtml.addElement("script");
+						Element e = factory.createElement("script");
 						e.addAttribute("src", val);
 						e.addAttribute("language", "JavaScript");
 						e.addAttribute("type", "text/javascript");
@@ -347,7 +351,7 @@ private boolean templateprocessed = false;
 			if (styleInclude != null) {
 				String[] includeStyles = styleInclude.split(",");
 				for (String val : includeStyles) {
-					Element e = dochtml.addElement("link");
+					Element e = factory.createElement("link");
 					e.addAttribute("href", val);
 					e.addAttribute("rel", "stylesheet");
 					e.addAttribute("type", "text/css");
@@ -355,7 +359,7 @@ private boolean templateprocessed = false;
 				}
 			}*/
 			//////
-			List stylenl =   ((Element) xmlelmNode.selectNodes("stylesheets").get(0)).elements();		
+			List stylenl =   ((Element) xmlelmNode.selectSingleNode("//stylesheets")).elements();		
 			for (int i = 0; i < stylenl.size(); i++) {
 				Node scriptnode = (Node) stylenl.get(i);
 //				logger.debug("Adding styles"+scriptnode.getText());
@@ -365,7 +369,7 @@ private boolean templateprocessed = false;
 				if(scriptnode.getNodeType() == Node.ELEMENT_NODE && "styleinclude".equals(scriptnode.getName())){
 					String[] includeScripts = scriptnode.getText().split(",");
 					for (String val : includeScripts) {
-						Element e = dochtml.addElement("link");
+						Element e = factory.createElement("link");
 						e.addAttribute("href", val);
 						e.addAttribute("rel", "stylesheet");
 						e.addAttribute("type", "text/css");
@@ -376,7 +380,7 @@ private boolean templateprocessed = false;
 			}
 			///multiple styleincludes and stylesheet tags
 			
-			nl = (List) xp.evaluate("//fields/field/div", xmlelmNode, XPathConstants.NODESET);
+			nl = xmlelmNode.selectNodes("//fields/field/div");// xp.evaluate("//fields/field/div", xmlelmNode, XPathConstants.NODESET);
 			for (int i = 0; i < nl.size(); i++) {
 				Element inputElm = (Element) nl.get(i);
 				String htmlid = inputElm.attributeValue("forid");
@@ -386,9 +390,9 @@ private boolean templateprocessed = false;
 					n.setText(inputElm.attributeValue("value"));
 				}else{
 					//TODO: We need to insert in custom fields
-					Element e = dochtml.addElement("div");
+					Element e = factory.createElement("div");
 					e.addAttribute("id", inputElm.attributeValue("id"));
-					Element body = (Element) dochtml.selectNodes("body").get(0);
+					Element body = (Element) dochtml.selectSingleNode("//body");
 					Node xpathnode = (Node) inputElm.selectNodes("xpath").get(0);
 					if(xpathnode.getText().length() >0 )
 						body = (Element) dochtml.selectSingleNode("/html/body");//(Element) xp.evaluate("/html/body", dochtml, XPathConstants.NODE);
@@ -400,7 +404,7 @@ private boolean templateprocessed = false;
 			
 			String globaljs = "";
 			//compositefield for DataElements
-			nl = (List) xp.evaluate("//fields/field/compositefield", xmlelmNode, XPathConstants.NODESET);
+			nl = xmlelmNode.selectNodes("//fields/field/compositefield");//(List) xp.evaluate("//fields/field/compositefield", xmlelmNode, XPathConstants.NODESET);
 			for (int i = 0; i < nl.size(); i++) {
 				Element compositefield = (Element) nl.get(i);
 				Element datafield = (Element) compositefield.selectNodes("datafield").get(0);
@@ -414,7 +418,7 @@ private boolean templateprocessed = false;
 				}
 				JSONObject dfjson = new JSONObject(dfvalue);
 				List displayfield = compositefield.selectNodes("displayfield");
-				Element datafldhtm = dochtml.addElement("input");
+				Element datafldhtm = factory.createElement("input");
 				datafldhtm.addAttribute("type", dftype);
 				datafldhtm.addAttribute("id", dfid);
 				datafldhtm.addAttribute("name", dfname);
@@ -431,7 +435,7 @@ private boolean templateprocessed = false;
 					String deforid = dispelmxml.attributeValue("forid");
 					String detype = dispelmxml.attributeValue("type");
 					Element n = (Element) xp.evaluate("//*[@id=\""+deforid+"\"]", dochtml, XPathConstants.NODE);
-					Element difldhtm = dochtml.addElement("input");
+					Element difldhtm = factory.createElement("input");
 					difldhtm.addAttribute("type", detype);
 					difldhtm.addAttribute("id", dename);
 					difldhtm.addAttribute("name", dename);
@@ -449,7 +453,7 @@ private boolean templateprocessed = false;
 			}
 			//compositefield for DataElements end
 			//Append all validations
-			nl = (List) xp.evaluate("//validation", xmlelmNode, XPathConstants.NODESET);
+			nl =xmlelmNode.selectNodes("//validation");// (List) xp.evaluate("//validation", xmlelmNode, XPathConstants.NODESET);
 			for (int i = 0; i < nl.size(); i++) {
 				String validation = ((Element) nl.get(i)).getText();
 				
@@ -458,7 +462,7 @@ private boolean templateprocessed = false;
 				}
 			}
 			//JSON rule begin
-			nl = (List) xp.evaluate("//rule", xmlelmNode, XPathConstants.NODESET);
+			nl = xmlelmNode.selectNodes("//rule");//(List) xp.evaluate("//rule", xmlelmNode, XPathConstants.NODESET);
 			JSONObject rulejson = new JSONObject("{rules:{},messages:{}}");
 			for (int i = 0; i < nl.size(); i++) {
 				Element ruleElm = (Element) nl.get(i);
@@ -496,7 +500,7 @@ private boolean templateprocessed = false;
 			 XMLWriter writer = new XMLWriter(new StringWriter(),format);
 			 
 			 
-			 xmlString = writer.toString();
+			 xmlString =dochtml.asXML();// writer.toString();
 			templateprocessed = true;
 			
 		} catch (SAXException e) {
@@ -532,5 +536,9 @@ private boolean templateprocessed = false;
 		// TODO Auto-generated method stub
 		
 	}
+public static void main(String args[]) {
+	   HTMLProcessorDom4jImpl htmp = new HTMLProcessorDom4jImpl();
+	 htmp.process(htmp.fileReadAll("F:/eclipse/workspace/charts/FEtranslator1/src/actionclass/sampleoutput.xml"), null);
 
+}
 }

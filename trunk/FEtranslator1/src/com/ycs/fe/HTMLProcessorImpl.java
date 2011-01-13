@@ -222,7 +222,8 @@ public class HTMLProcessorImpl extends HTMLProcessor   {
 						listValue = listValue.replace("}", " ");
 						String[] list = listValue.split(",");
 						NodeList nodeList = dochtml.getElementsByTagName("select");
-						Node node = nodeList.item(0);
+						Node node = nodeList.item(0);//? why only first select
+						
 						for(String val:list){
 							val = val.trim();
 							String[] key = val.split("=");
@@ -537,6 +538,6 @@ public class HTMLProcessorImpl extends HTMLProcessor   {
 		temp.process(root, out);
 		out.flush();
 		 HTMLProcessorImpl htmp = new HTMLProcessorImpl();
-		 htmp.process(htmp.fileReadAll("C:/Eclipse/workspace/FEtranslator1/src/actionclass/sampleoutput.xml"), null);
+		 htmp.process(htmp.fileReadAll("F:/eclipse/workspace/charts/FEtranslator1/src/actionclass/sampleoutput.xml"), null);
 	}
 }
