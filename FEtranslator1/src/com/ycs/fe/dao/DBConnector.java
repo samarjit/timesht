@@ -28,7 +28,7 @@ import com.ycs.fe.dto.PrepstmtDTOArray;
  * 
  */ 
 public class DBConnector {  
-private static final String DBURL = "jdbc:oracle:thin:@192.168.8.5:1521:XE";
+private static final String DBURL = "jdbc:oracle:thin:@localhost:1521:XE";
 private static final String DBUSER = "test";
 private static final String DBPASSWORD = "test";
 private boolean isRuninServerContext;
