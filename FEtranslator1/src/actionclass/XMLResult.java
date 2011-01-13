@@ -16,6 +16,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StrutsResultSupport;
 import org.apache.struts2.views.freemarker.FreemarkerManager;
@@ -40,8 +41,16 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
 
-
+ 
+/**
+ * XMLResult class gets executed right after action class. It makes the freemarker call for scriptlets executing. The control
+ * goes back to DecoratorInterceptor class and then HMTLProcessor gets called, which merges the XML and template HTML.
+ * 
+ * @author Samarjit
+ * 	
+ */
 public class XMLResult extends StrutsResultSupport {
+	private Logger logger = Logger.getLogger(this.getClass());
     protected FreemarkerManager freemarkerManager;
     
     @Inject
@@ -79,7 +88,7 @@ public class XMLResult extends StrutsResultSupport {
 
          Object result = invocation.getAction();
          String actionName = invocation.getProxy().getActionName();
-         String xmlFileName = actionName+".xml";
+         String xmlFileName = actionName+".xml"; //Not used with action name
 		 ///////Decide whether to process or not?////
 			ActionProxy proxy = invocation.getProxy();
 		 	 ActionConfig config = proxy.getConfig();
@@ -92,7 +101,7 @@ public class XMLResult extends StrutsResultSupport {
 		        } catch (NullPointerException e) {
 		            // swallow
 		        }
-		       System.out.println("Result classname = "+resultConfig.getClassName()); 
+		       logger.debug("Result classname = "+resultConfig.getClassName()); 
 		       Map<String, String> params = resultConfig.getParams();
 		       xmlFileName = params.get("resultxml");
 		       System.out.println("Now filename of tempalte is = "+xmlFileName);
@@ -120,13 +129,13 @@ public class XMLResult extends StrutsResultSupport {
 //         Transformer transformer = TransformerFactory.newInstance().newTransformer(styleSource);
          StreamResult result1 = new StreamResult(writer);
         //DOMSource source = new DOMSource(xmlSource);
-        System.out.println("xmlSource = " + xmlSource);
+        //System.out.println("xmlSource = " + xmlSource);
         // transformer.transform(xmlSource, result1);
          
          //freemarker
         this.invocation = invocation;
         String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
-        System.out.println("tplpath="+tplpath);
+        logger.debug("tplpath="+tplpath);
         Configuration cfg = new Configuration();
         	cfg.setDirectoryForTemplateLoading(new File(tplpath));
      		cfg.setObjectWrapper(new DefaultObjectWrapper()); 
@@ -146,7 +155,7 @@ public class XMLResult extends StrutsResultSupport {
          
          //freemarker
          
-         System.out.println(result1.getWriter().toString());
+         logger.debug("Freemarker processing ended");
          //writer.write("hello World from XMLResult.java");
          writer.flush(); 
          
