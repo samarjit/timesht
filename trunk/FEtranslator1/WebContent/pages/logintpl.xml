@@ -46,6 +46,27 @@
 					<div id="check"></div>
 				</td>
 			</tr>
+			<tr>
+				<td>Select month </td>
+				<td>
+					<div id="selectmonth"></div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>Jquery datepicker :</td>
+				<td>
+					<div id="jquerydatepicker"></div>
+				</td>
+			</tr>
+			<tr>
+				<td>Address :</td>
+				<td>
+					<div id="compositeaddress"></div>
+					First Line:<div id="firstline"></div>
+					Street:<div id="street"></div>
+				</td>
+			</tr>
 		</table>
 
 <br/>
@@ -56,7 +77,8 @@
 		Hello test action
 		<a href="engine.action?retrievename=somename">engine.action</a>
 		<a href="">Launch the configuration browser</a>
-
+		
+		
 
 </form>
 	</body>

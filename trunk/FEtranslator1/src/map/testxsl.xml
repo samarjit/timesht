@@ -8,34 +8,96 @@
 		
 		</includedjsp>
 		<scripts>
+			<scriptinclude>js/test.js,js/json2.js</scriptinclude>
 			<![CDATA[    
 				<@s.head/>
-    			<@sx.head/>
+    			<sx.head/>
+    			<@sj.head jqueryui="true" locale="en" jquerytheme="start"/>
+
 				<script>
 				function javaScriptFn(){
 				}
+				$(document).ready(function(){
+				var form1 = document.forms[0];	
+				     $(form1).validate(rule);
+				});
+				
+				function formsubmit(){
+				var form1 = document.forms[0];	
+					if(!jQuery(form1).valid()){
+						return;
+					}
+				}
+				
+				 
 				</script>
 				
 				]]>
-			<scriptinclude>js/test.js,js/jquery.js</scriptinclude>
+			<scriptinclude>js/jquery.validate.js</scriptinclude>
 		</scripts>
 		<stylesheets>
+		<styleinclude>css/home.css</styleinclude>
 			<![CDATA[
 				<style>	
+				body{
+				font-size:9pt;
+				}
 				.userid{
 				 text-decoration:underline;
 				 }
+				 
+				.ui-datepicker-trigger{
+				padding:0px;
+				border: 0 none;
+				}
 				</style>
+				<style>
+	#field { margin-left: .5em;   }
+  	#field, label { 
+  		 display: block;
+  	    font-family: Arial, Helvetica, sans-serif;
+  	    font-size: small; 
+  	    }
+	br { clear: both; }
+	
+	input.error { border: 1px solid red; }
+	label.error {
+		
+		background: url('css/images/unchecked.gif') no-repeat;
+		padding-left: 16px;
+		margin-left: .3em;
+	}
+	label.valid {
+		background: url('css/images/checked.gif') no-repeat;
+		 
+		width: 16px;
+		height: 16px;
+	}
+</style>
 			]]>	
-				<styleinclude>css/home.css</styleinclude>	
+			 
 		</stylesheets>
 	</screen>
 
 	<panels>
+	 <panel>
+	 	<fields>
+	 		<field>
+	 		 <div id="alertmessage" forid="alertmessage" >
+	 		 	<xpath position="prepend">/html/body</xpath>
+	 		 	<rule></rule>
+	 		 	<validation></validation>
+	 		 	<query></query>
+	 		 </div>	
+	 		</field>
+	 	</fields>
+	 </panel>
+	 <panel>
 		<fields>
-			<field>
-				<input type="text" class="userid" forid="userid" value="${testHeader}" name="firstname" id="firstname"
-					column="USER_ID" rulemessage="" dbcolsize="" mask="" mandatory="" hidden="" label="">
+			<field> 
+				<input type="text" class="userid required" forid="userid" value="${testHeader}" name="firstname" id="firstname"
+					column="USER_ID"  dbcolsize="" mask="" mandatory="" hidden="" label="">
+					 
 					<rule></rule>
 					<validation></validation>
 					<query><![CDATA[<@s.text name="details.firstname" />]]></query>
@@ -44,24 +106,24 @@
 
 			<field>
 				<input type="text" class="password" forid="password"  value="${testFooter}" name="LastName" id="LastName"
-					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
-					<rule></rule>
+					validation="" column="PASSWD"  dbcolsize="" mask="">
+					<rule>[{fieldname:"LastName",rules:{required:true},messages:{required:"Last Name is required"}}]</rule>
 					<validation></validation>
 					<query></query>
 				</input>
 			</field>
 			<field>
-			<input class="radiobutton" forid="gender" value="${genderlist}" name="gender" type="radio" id="genderlist"
-					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
-					<rule></rule>
-					<validation></validation>
-					<query></query>
-			</input>
+				<input class="radiobutton" forid="gender" value="${genderlist}" name="gender" type="radio" id="genderlist"
+						validation="" column="PASSWD"  dbcolsize="" mask="">
+						<rule></rule>
+						<validation></validation>
+						<query></query>
+				</input>
 			</field>
 			
 			<field>
 			<input class="check" forid="check" value="${checklist}" name="check" type="checkbox" id="checklist"
-					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
+					validation="" column="PASSWD"  dbcolsize="" mask="">
 					<rule></rule>
 					<validation></validation>
 					<query></query>
@@ -69,28 +131,87 @@
 			</field>
 			<field>
 				<customfield type="datepicker" class=" " forid="dateid" 
-					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
-					<!-- will need to experiment to see if dojo tags of struts2 say datepicker can be added? -->
-					<text><![CDATA[<@sx.datetimepicker name="orderdate"  displayFormat="dd-MMM-yyyy" />]]></text>
-					<rule></rule>
+					validation="" column="PASSWD"  dbcolsize="" mask="">
+					<!-- will need to experiment to see if dojo tags of struts2 like datepicker can be added? -->
+					<text><![CDATA[<sx.datetimepicker name="dateid"  displayFormat="dd-MMM-yyyy" />]]></text>
+					<!-- rule>[{fieldname:"dateid",rules:{required:true},messages:{required: "Dojo Date is mandatory field"}}]</rule-->
 					<validation></validation>
 					<query></query>
 				</customfield>
 			</field>
 			<field>
-			<select class="" forid="list" value="${list}" 
-					validation="" column="PASSWD" rulemessage="" dbcolsize="" mask="">
-					<text><![CDATA[<select name="country"> </select>]]></text>
-					<rule></rule>
-					<validation></validation>
-					<query></query>
-			</select>
+				<select class="" forid="list" value="${list}" 
+						validation="" column="PASSWD"  dbcolsize="" mask="">
+						<text>
+							<![CDATA[
+							<select name="country">
+								<@s.iterator value="list1">
+	 								<option value="<@s.property value="key"/>" ><@s.property value="value"/></option>
+								</@s.iterator>
+						 	</select>
+						 	]]>
+						 </text>
+						<rule></rule>
+						<validation></validation>
+						<query type="QUERYID" stackid="list1" ><![CDATA[SELMONTH]]></query>
+				</select>
 			</field>
-			
-			
+			<field>
+				<customfield type="select" class=" " forid="selectmonth" 
+					validation="" column="PASSWD"  dbcolsize="" mask="">
+					<text><![CDATA[
+							<@s.select label="Months"
+					       name="selectmonth"
+					       headerKey="" headerValue="Select Month"
+					      list="selectmonth"
+					       value=r"#{'2010-10-11'}"
+					       required="true"
+					       
+							/>]]>
+					</text>
+					<rule>[{fieldname:"selectmonth",rules:{required:true},messages:{required: "Month is mandatory field"}}]</rule>
+					<validation></validation>
+					<query type="SQL" stackid="selectmonth" ><![CDATA[select NOW,TEXT from TEST_DEBUG ]]></query>
+				</customfield>
+			</field>
+			<field>
+				<customfield type="select" class=" " forid="jquerydatepicker" 
+					validation="" column="PASSWD"  dbcolsize="" mask="">
+					<text><![CDATA[
+							<@sj.datepicker id="date0" name="date0" label="With Button Panel" changeMonth="true" changeYear="true" />
+
+							]]>
+					</text>
+					<rule>[{fieldname:"date0",rules:{required:true},messages:{required: "Date is mandatory field"}}] </rule>
+					<validation></validation>
+					<query type="SQL" stackid="selectmonth" ></query>
+				</customfield>
+			</field>
+			<field>
+				<compositefield type="" class="" forid="compositeaddress" 
+					validation="" column=""  dbcolsize="" mask="">
+					<datafield type="text"  value="{&quot;firstline&quot;:&quot;701&quot;}" name="address" id="address" column="ADDRESS" forid="address"/>
+							<displayfield type="text" name="firstline" forid="firstline"/>
+							<displayfield type="text" name="street"  forid="street"/>
+							<displayfield type="text" name="state"  forid="state"/>
+							<displayfield type="text" name="country"  forid="country"/>
+					<text><![CDATA[]]></text>
+					<rule>[{fieldname:"address",rules:{required:true},messages:{required: "Address is mandatory field"}}] </rule>
+					<validation>
+						<![CDATA[
+
+						]]>	
+					</validation>
+					<query type="SQL" stackid="selectmonth" ></query>
+				</compositefield>
+			</field>
 		</fields>
 		<button forid="loginbutton" onclick=""></button>
 		<button forid="reset" onclick=""></button>
 		freemarker start ${testHeader} and ${testFooter}  freemarker end
+		
+				property <![CDATA[<@s.property value="selectmonthl"/> ]]>  
+				 
+	  </panel>	
 	</panels>
 </root>

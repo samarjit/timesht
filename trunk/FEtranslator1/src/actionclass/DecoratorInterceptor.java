@@ -2,7 +2,6 @@ package actionclass;
 
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,12 +11,11 @@ import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.ActionProxy;
-import com.opensymphony.xwork2.config.entities.ActionConfig;
-import com.opensymphony.xwork2.config.entities.ResultConfig;
 import com.opensymphony.xwork2.interceptor.Interceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.ycs.fe.HTMLProcessor;
+import com.ycs.fe.HTMLProcessorDom4jImpl;
+import com.ycs.fe.HTMLProcessorImpl;
  
 public class DecoratorInterceptor implements Interceptor {
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -35,9 +33,12 @@ public class DecoratorInterceptor implements Interceptor {
 //		ExampleXSLTAction action = (ExampleXSLTAction)invocation.getAction();
 //		 System.out.print(action.getName());
 //		 loger.debug(action.getRetrievename());
+		 HTMLProcessor processor = new HTMLProcessorDom4jImpl();
 		 invocation.addPreResultListener(new PreResultListener() {
              public void beforeResult(ActionInvocation invocation, String resultCode) {
                  // perform operation necessary before Result execution
+            	 HTMLProcessor preprocess = new HTMLProcessorDom4jImpl();
+            	 preprocess.populateValueStack(invocation, resultCode);
 //            	 try {
 //            		 
 ////            		 responseParent = (HttpServletResponse) ActionContext.getContext().get(StrutsStatics.HTTP_RESPONSE);
@@ -55,9 +56,8 @@ public class DecoratorInterceptor implements Interceptor {
 		 String result =  invocation.invoke();
 		       
 			logger.debug( "DecoratorInterceptor:request.getContentLength() expecting first element <root>:"+wrapper.toString());
-			HTMLProcessor processor = new HTMLProcessor();
 			String resulthtml = null;
-			if("actionclass.XMLResult".equals(invocation.getResult().getClass().getCanonicalName()))
+			if(XMLResult.class.getName().equals(invocation.getResult().getClass().getCanonicalName()))
 			resulthtml = processor.process(wrapper.toString(), invocation);
 			
 			
@@ -70,7 +70,7 @@ public class DecoratorInterceptor implements Interceptor {
 			else
 				car.write(wrapper.toString());	//fallthrough for other than custom result types
 			
-			car.write("TODO: hello from DecoratorInterceptor");
+			car.write("TODO: hello from DecoratorInterceptor <a href='index.jsp'>index</a>");
 					    
 			responseParent.setContentLength(car.toString().length());
 			out.write(car.toString());
