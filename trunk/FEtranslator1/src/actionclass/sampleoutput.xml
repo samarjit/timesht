@@ -161,7 +161,7 @@ jQuery(document).ready(function () {
 				</customfield>
 			</field>
 			<field>
-				<select class="" forid="list" value="{Malaysia=Malaysia, Singapore=Singapore, India=India}" 
+				<select class="" forid="country" value="{Malaysia=Malaysia, Singapore=Singapore, India=India}" 
 						validation="" column="PASSWD"  dbcolsize="" mask="">
 						<text>
 							<![CDATA[

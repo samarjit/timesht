@@ -47,7 +47,7 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.util.ValueStack;
 
-public class HTMLProcessorDom4jImpl extends HTMLProcessor {
+public class HTMLProcessorJsoupFullImpl extends HTMLProcessor {
 
 private boolean templateprocessed = false;
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -542,7 +542,7 @@ private boolean templateprocessed = false;
 		
 	}
 public static void main(String args[]) {
-	   HTMLProcessorDom4jImpl htmp = new HTMLProcessorDom4jImpl();
+	   HTMLProcessorJsoupFullImpl htmp = new HTMLProcessorJsoupFullImpl();
 	   String processedhtml =  htmp.process(htmp.fileReadAll("C:/Eclipse/workspace1/FEtranslator1/src/actionclass/sampleoutput.xml"), null);
 	   System.out.println(processedhtml);
 }
