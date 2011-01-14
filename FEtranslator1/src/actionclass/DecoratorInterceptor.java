@@ -15,7 +15,7 @@ import com.opensymphony.xwork2.interceptor.Interceptor;
 import com.opensymphony.xwork2.interceptor.PreResultListener;
 import com.ycs.fe.HTMLProcessor;
 import com.ycs.fe.HTMLProcessorDom4jImpl;
-import com.ycs.fe.HTMLProcessorImpl;
+import com.ycs.fe.HTMLProcessorJsoupImpl;
  
 public class DecoratorInterceptor implements Interceptor {
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -33,7 +33,7 @@ public class DecoratorInterceptor implements Interceptor {
 //		ExampleXSLTAction action = (ExampleXSLTAction)invocation.getAction();
 //		 System.out.print(action.getName());
 //		 loger.debug(action.getRetrievename());
-		 HTMLProcessor processor = new HTMLProcessorDom4jImpl();
+		 HTMLProcessor processor = new HTMLProcessorJsoupImpl();
 		 invocation.addPreResultListener(new PreResultListener() {
              public void beforeResult(ActionInvocation invocation, String resultCode) {
                  // perform operation necessary before Result execution

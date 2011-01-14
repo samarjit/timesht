@@ -140,11 +140,11 @@
 				</customfield>
 			</field>
 			<field>
-				<select class="" forid="country" value="${list}" 
+				<select class="" forid="selcountry" value="${list}" 
 						validation="" column="PASSWD"  dbcolsize="" mask="">
 						<text>
 							<![CDATA[
-							<select name="country" id="country">
+							<select name="country" id="selcountry">
 								<@s.iterator value="list1">
 	 								<option value="<@s.property value="key"/>" ><@s.property value="value"/></option>
 								</@s.iterator>
