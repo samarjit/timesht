@@ -9,6 +9,7 @@
 		</includedjsp>
 		<scripts>
 			<scriptinclude>js/test.js,js/json2.js</scriptinclude>
+			<text>
 			<![CDATA[    
 				<link rel="stylesheet" href="/FEtranslator1/struts/xhtml/styles.css" type="text/css"/>
 <script src="/FEtranslator1/struts/utils.js" type="text/javascript"></script>    			<sx.head/>
@@ -53,12 +54,12 @@ jQuery(document).ready(function () {
 				 
 				</script>
 				
-				]]>
+				]]></text>
 			<scriptinclude>js/jquery.validate.js</scriptinclude>
 		</scripts>
 		<stylesheets>
 		<styleinclude>css/home.css</styleinclude>
-			<![CDATA[
+			<text><![CDATA[
 				<style>	
 				body{
 				font-size:9pt;
@@ -96,7 +97,7 @@ jQuery(document).ready(function () {
 	}
 </style>
 			]]>	
-			 
+			 </text>
 		</stylesheets>
 	</screen>
 
