@@ -9,9 +9,14 @@
      $(dfid).val(myJSONText);
    };
 						    
- function replacer(key, value) {
+function replacer(key, value) {
 	if (typeof value === 'number'  && !isFinite(value)) {
 		return String(value);
 	}
 	return value;
 }
+ 
+function submitcallback(form){
+	var idlist = eval("panel_"+form.id);
+	alert(idlist);
+} 

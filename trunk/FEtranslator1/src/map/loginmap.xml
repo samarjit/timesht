@@ -33,6 +33,7 @@
 
 	<panels>
 		<panel id="userpanel">
+		<savefieldids>userid,password,dateid,</savefieldids>
 		<sqlselect>select USER_ID userid, PASSWD password from USER_MASTER</sqlselect>
 		<sqlinsert>derive</sqlinsert>
 		<sqlselectcount>derive</sqlselectcount>
