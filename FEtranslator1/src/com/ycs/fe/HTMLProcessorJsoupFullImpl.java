@@ -27,12 +27,12 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.dom4j.Branch;
-import org.dom4j.Document;
+
+import org.jsoup.nodes.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Node;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.dom4j.dom.DOMDocumentFactory;
 import org.dom4j.io.HTMLWriter;
 import org.dom4j.io.OutputFormat;
@@ -40,6 +40,8 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -62,17 +64,19 @@ private boolean templateprocessed = false;
 //		logger.debug("still coming here");
 		//Document doc = parent.getOwnerDocument();
 //		Node fragmentNode = docBuilder.parse(new InputSource(new StringReader("<root>"+fragment+"</root>"))).getDocumentElement();
-		List nl = fragment;
-		if(((Node) fragment.get(0)).getNodeType() == Node.CDATA_SECTION_NODE){
-			appendXmlFragment( docBuilder,  parent,  ((Element) fragment.get(0)).getText());
-			return;
-		}
-		Element elmparent = (Element) parent;
-		for (int i = 0; i < nl.size(); i++) {
-			Element n = (Element) nl.get(i);			
-				//Node node = doc.importNode(n, true);
-				elmparent.appendContent(n);
-		}
+		
+		
+//		List nl = fragment;
+//		if(((Node) fragment.get(0)).getNodeType() == Node.CDATA_SECTION_NODE){
+//			appendXmlFragment( docBuilder,  parent,  ((Element) fragment.get(0)).text());
+//			return;
+//		}
+//		Element elmparent = (Element) parent;
+//		for (int i = 0; i < nl.size(); i++) {
+//			Element n = (Element) nl.get(i);			
+//				//Node node = doc.importNode(n, true);
+//				elmparent.appendContent(n);
+//		}
 	}
  
 	 
@@ -86,13 +90,14 @@ private boolean templateprocessed = false;
 //				Node node = doc.importNode(n, true);
 //				parent.appendContent(node);
 //		}
-		try {
-			Document domdoc = DocumentHelper.parseText("<root>"+fragment+"</root>");
-			Element elmparent = (Element) parent;
-			elmparent.appendContent(domdoc.getRootElement());
-		} catch (DocumentException e) {
-			logger.debug("appendXmlFragment Exception",e);
-		}
+		
+//		try {
+//			Document domdoc = DocumentHelper.parseText("<root>"+fragment+"</root>");
+//			Element elmparent = (Element) parent;
+//			elmparent.appendContent(domdoc.getRootElement());
+//		} catch (DocumentException e) {
+//			logger.debug("appendXmlFragment Exception",e);
+//		}
 		
 	}
 
@@ -114,17 +119,17 @@ private boolean templateprocessed = false;
 			reader2.setDocumentFactory(factory);//d4j
 			StringReader strreader = new StringReader(inputXML);
 			logger.debug("HTMLProcessor: before input parsing");
-			org.dom4j.Document docXML = reader2.read(strreader);
+			Document docXML = Jsoup.parse(inputXML);//reader2.read(strreader);
 			logger.debug("HTMLProcessor: after d4j parsing");
 			//Document docXML = (org.dom4j.dom.DOMDocument)d4jdoc;
 			//Document docXML = dbuild.parse(reader);
 			logger.debug("HTMLProcessor: after input parsing");
-			Element xmlelmNode = docXML.getRootElement();
+			Element xmlelmNode = docXML.getElementsByTag("html").get(0);
 			
 			String pathhtml = null;
 			
-			if(xmlelmNode.selectNodes("//htmltempalte").size() > 0){
-				pathhtml = xmlelmNode.selectSingleNode("//htmltempalte").getText().trim();
+			if(xmlelmNode.select("htmltempalte").size() > 0){
+				pathhtml = xmlelmNode.select("htmltempalte").first().text().trim();
 				logger.debug("htmltemplate:"+pathhtml);
 			}else{
 				logger.debug("HTMLProcessor: no template found in "+inputXML.substring(0,20)+"..." ); 
@@ -139,34 +144,35 @@ private boolean templateprocessed = false;
 //			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
 //			pathhtml = ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
 			//logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
-			pathhtml = "C:/Eclipse/workspace1/FEtranslator1/WebContent/pages/logintpl.xml";//ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
+			pathhtml = "F:/eclipse/workspace/charts/FEtranslator1/WebContent/pages/logintpl.xml";//ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
 			if(new File(pathhtml).exists())logger.debug("The html exists");
 			FileInputStream fin = new FileInputStream(new File(pathhtml));
 			//InputStream is = loader.getResourceAsStream("log4j.properties");
 			logger.debug("HTMLProcessor: before html parsing");
-			Document dochtml = reader2.read(fin);
+			org.jsoup.nodes.Document dochtml = Jsoup.parse(new File(pathhtml), "UTF-8", "");
 			logger.debug("HTMLProcessor: after html parsing");
-			logger.debug("HTMLProcessor: dochtml num childs:"+dochtml.nodeCount());
+			logger.debug("HTMLProcessor: dochtml num childs:"+dochtml.getAllElements().size());
 			
-			List nl =  xmlelmNode.selectNodes("//fields/field/input");// xp.evaluate("//fields/field/input", xmlelmNode, XPathConstants.NODESET);
+			List nl =  xmlelmNode.select("input");// xp.evaluate("fields/field/input", xmlelmNode, XPathConstants.NODESET);
+			logger.debug("To Remove: input"+nl.size());
 			for (int i = 0; i < nl.size(); i++) {
 				Element inputElm = (Element) nl.get(i);
 //			    logger.debug(" .. found input type = ..");
-			    String type = inputElm.attributeValue("type");
-			    String htmlid = inputElm.attributeValue("forid");
-				Element n = (Element) dochtml.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Node) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+			    String type = inputElm.attr("type");
+			    String htmlid = inputElm.attr("forid");
+				org.jsoup.nodes.Element n = dochtml.getElementById(htmlid);//("//*[@id=\""+htmlid+"\"]");//(Node) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 				if(n != null){
 					if(type.equalsIgnoreCase("text") || type.equalsIgnoreCase("password")){
-						Element element = n.addElement("input");
-						element.addAttribute("name", inputElm.attributeValue("name"));
-						element.addAttribute("value", inputElm.attributeValue("value"));
-						element.addAttribute("type", inputElm.attributeValue("type"));
-						element.addAttribute("class", inputElm.attributeValue("class"));
-						element.addAttribute("id", inputElm.attributeValue("id"));
+						org.jsoup.nodes.Element element = n.appendElement("input");
+						element.attr("name", inputElm.attr("name"));
+						element.attr("value", inputElm.attr("value"));
+						element.attr("type", inputElm.attr("type"));
+						element.attr("class", inputElm.attr("class"));
+						element.attr("id", inputElm.attr("id"));
 						//n.appendContent(element);
 				    }else if(type.equalsIgnoreCase("radio") || type.equalsIgnoreCase("checkbox")){
-				    	String listValue = inputElm.attributeValue("value");
+				    	String listValue = inputElm.attr("value");
 						if(listValue != null && listValue != ""){
 							listValue = listValue.replace("{", " ");
 							listValue = listValue.replace("}", " ");
@@ -174,45 +180,46 @@ private boolean templateprocessed = false;
 							for(int j=list.length-1;j>=0;j--){
 								String val = list[j].trim();
 								String[] key = val.split("=");
-								Element element = n.addElement("input");
-								element.addAttribute("name", inputElm.attributeValue("name"));
-								element.addAttribute("value", key[0]);
-								element.addAttribute("type", inputElm.attributeValue("type"));
-								element.addAttribute("class", inputElm.attributeValue("class"));
-								element.addAttribute("id", inputElm.attributeValue("id")+(j+1));
-								element.setText(key[1]);
+								org.jsoup.nodes.Element element = n.appendElement("input");
+								element.attr("name", inputElm.attr("name"));
+								element.attr("value", key[0]);
+								element.attr("type", inputElm.attr("type"));
+								element.attr("class", inputElm.attr("class"));
+								element.attr("id", inputElm.attr("id")+(j+1));
+								element.appendText(key[1]);
 								//n.appendContent(element);
 							}
 							
 						}
 				    }
 					
-//					n.addAttribute("value", inputElm.attributeValue("value"));
-//					n.setTextContent(inputElm.attributeValue("value"));
+//					n.attr("value", inputElm.attr("value"));
+//					n.setTextContent(inputElm.attr("value"));
 
 				}else{
 					//TODO: We need to insert in custom fields
 				}
 			}
 			
-			nl = xmlelmNode.selectNodes("//fields/field/customfield");//(List) xp.evaluate("//fields/field/customfield", xmlelmNode, XPathConstants.NODESET);
+			nl = xmlelmNode.select("fields > field > customfield");//(List) xp.evaluate("fields/field/customfield", xmlelmNode, XPathConstants.NODESET);
 			for (int i = 0; i < nl.size(); i++) {
 				Element inputElm = (Element) nl.get(i);
-				String htmlid = inputElm.attributeValue("forid");
-				Element n = (Element) dochtml.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+				String htmlid = inputElm.attr("forid");
+				org.jsoup.nodes.Element n =   dochtml.getElementById(htmlid);//.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 				if(n != null){
-//					List textnodenl = inputElm.selectNodes("text");
-					Element textelement = inputElm.element("text");
+//					List textnodenl = inputElm.select("text");
+					Element textelement = inputElm.getElementsByTag("text").first();
 //					if(textnodenl != null){
 //						textelement = (Element) textnodenl.get(0);
 //					}
-					//CDATASection cdata = dochtml.createCDATASection(textelement.getText());
+					//CDATASection cdata = dochtml.createCDATASection(textelement.text());
 					//element.appendContent(cdata);
-					//n.addText(textelement.get);
-					List l = textelement.elements();
+					//n.appendText(textelement.get);
+					List l = textelement.childNodes();
 //					logger.debug("TO Remove"+(String)textelement.getData());
-					appendXmlFragment(dbuild,n, (String)textelement.getData());
+					n.append((String)textelement.text());
+					//appendXmlFragment(dbuild,n, (String)textelement.getData());
 					
 				}else{
 					//TODO: We need to insert in custom fields
@@ -220,52 +227,53 @@ private boolean templateprocessed = false;
 				
 			}
 			
-			nl = xmlelmNode.selectNodes("//fields/field/display");//(List) xp.evaluate("//fields/field/display", xmlelmNode, XPathConstants.NODESET);
+			nl = xmlelmNode.select("fields > field > display");//(List) xp.evaluate("fields/field/display", xmlelmNode, XPathConstants.NODESET);
 			for (int i = 0; i < nl.size(); i++) {
 				Element inputElm = (Element) nl.get(i);
-				String htmlid = inputElm.attributeValue("forid");
-				Element n = (Element) dochtml.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+				String htmlid = inputElm.attr("forid");
+				org.jsoup.nodes.Element n =  dochtml.getElementById(htmlid);//.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 				if(n != null){
-					n.setText(inputElm.attributeValue("value"));
+					n.appendText(inputElm.attr("value"));
 				}else{
 					//TODO: We need to insert in custom fields
 				}
 				
 			}
 			
-			nl =xmlelmNode.selectNodes("//fields/field/select");// (List) xp.evaluate("//fields/field/select", xmlelmNode, XPathConstants.NODESET);
+			nl =xmlelmNode.select("fields > field > select");// (List) xp.evaluate("fields/field/select", xmlelmNode, XPathConstants.NODESET);
 			for (int i = 0; i < nl.size(); i++) {
 				Element inputElm = (Element) nl.get(i);
-				String htmlid = inputElm.attributeValue("forid");
-				Element n = (Element) dochtml.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+				String htmlid = inputElm.attr("forid");
+				org.jsoup.nodes.Element n =   dochtml.getElementById(htmlid);// dochtml.selectSingleNode("//*[@id=\""+htmlid"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 				if(n != null){
-					//List textnodenl = inputElm.selectNodes("text");
-					Element textelement = inputElm.element("text");
+					//List textnodenl = inputElm.select("text");
+					Element textelement = inputElm.getElementsByTag("text").first();
 //					if(textnodenl != null){
 //						textelement = (Element) textnodenl.get(0);
 //					}
-//					CDATASection cdata = dochtml.createCDATASection(textelement.getText());
+//					CDATASection cdata = dochtml.createCDATASection(textelement.text());
 //					element.appendContent(cdata);
-					logger.debug("To remove:"+textelement.getText());
-					appendXmlFragment(dbuild,n,textelement.getText());
-					String listValue = inputElm.attributeValue("value");
+//					logger.debug("To remove:"+textelement.text());
+					n.append(textelement.text());
+					//appendXmlFragment(dbuild,n,textelement.text());
+					String listValue = inputElm.attr("value");
 					
 					if(listValue != null && listValue != ""){
 						listValue = listValue.replace("{", " ");
 						listValue = listValue.replace("}", " ");
 						String[] list = listValue.split(",");
-//						List List = dochtml.selectNodes("select");
+//						List List = dochtml.select("select");
 //						Node node = List.get(0);
 //						logger.debug("To remove:"+"//select[@id=\""+htmlid+"\"]");
-						Node node = dochtml.selectSingleNode("//select[@id=\""+htmlid+"\"]");
+						org.jsoup.nodes.Node node = dochtml.getElementById(htmlid);//.selectSingleNode("//select[@id=\""+htmlid+"\"]");
 						for(String val:list){
 							val = val.trim();
 							String[] key = val.split("=");
-							Element element = ((Branch) node).addElement("option");
-							element.addAttribute("value", key[0]);
-							element.setText(key[1]);
+							org.jsoup.nodes.Element element =  ((org.jsoup.nodes.Element)node).appendElement("option");
+							element.attr("value", key[0]);
+							element.text(key[1]);
 //							Element nodelm = (Element) node;
 							//nodelm.appendContent(element);
 						}
@@ -273,13 +281,13 @@ private boolean templateprocessed = false;
 						ValueStack stack = ActionContext.getContext().getValueStack();
 						Map<String,String>opts = (Map<String, String>) stack.findValue(htmlid);
 						if(opts != null){
-//							List list = dochtml.selectNodes("select");
+//							List list = dochtml.select("select");
 //							Node node = list.get(0);
-							Node node = dochtml.selectSingleNode("//select[@id=\""+htmlid+"\"]");
+							org.jsoup.nodes.Node node = dochtml.getElementById(htmlid);//.selectSingleNode("//select[@id=\""+htmlid+"\"]");
 							for (Entry<String, String> option : opts.entrySet()) {
-								Element element = ((Branch) node).addElement("option");
-								element.addAttribute("value", option.getKey());
-								element.setText(option.getValue());
+								org.jsoup.nodes.Element element = ((org.jsoup.nodes.Element) node).appendElement("option");
+								element.attr("value", option.getKey());
+								element.text(option.getValue());
 								Element nodelm = (Element) node;
 								//nodelm.appendContent(element);
 							}
@@ -291,24 +299,24 @@ private boolean templateprocessed = false;
 				
 			}
 			
-			List  headnl = dochtml.selectNodes("/html/head");
+			Elements headnl = dochtml.select("head");
 			if(headnl.size() < 1){
-				Element htmltop = (Element) dochtml.selectSingleNode("/html");
-				Element elm = htmltop.addElement("head");
+				org.jsoup.nodes.Element htmltop =   dochtml.getElementsByTag("html").get(0);//.selectSingleNode("/html");
+				 htmltop.appendElement("head");
 				//TODO: append head
 			}
 			
 			
 				
-			Element headNode = (Element) dochtml.selectSingleNode("/html/head");
+			org.jsoup.nodes.Element headNode =   dochtml.getElementsByTag("head").get(0);//.selectSingleNode("/html/head");
 			/*String scriptinclude = (String)xp.evaluate("//scriptinclude/text()", xmlelmNode, XPathConstants.STRING);
 			if (scriptinclude != null) {
 				String[] includeScripts = scriptinclude.split(",");
 				for (String val : includeScripts) {
 					Element e = document.getRootElement().addElement("script");
-					e.addAttribute("src", val);
-					e.addAttribute("language", "JavaScript");
-					e.addAttribute("type", "text/javascript");
+					e.attr("src", val);
+					e.attr("language", "JavaScript");
+					e.attr("type", "text/javascript");
 					headNode.appendContent(e);
 					headNode.appendContent(dochtml.createTextNode("\n"));
 				}
@@ -320,22 +328,25 @@ private boolean templateprocessed = false;
 				appendXmlFragment(dbuild,headNode,scripts);
 			}*/
 			///multiple scriptincludes and scripts tags
-			Iterator scriptsnl =   ((Element)xmlelmNode.selectSingleNode("//scripts")).nodeIterator();
+			   List<Node> scriptsnl = xmlelmNode.select("scripts").first().childNodes();
 			
-			for (int i = 0;  scriptsnl.hasNext(); i++) {
-				Node scriptnode = (Node) scriptsnl.next();
-				if(scriptnode.getNodeType() == Node.CDATA_SECTION_NODE){
-					appendXmlFragment(dbuild,headNode,scriptnode.getText());
+			for (int i = 0;i < scriptsnl.size(); i++) {
+				Node scriptnode =   scriptsnl.get(i);
+				logger.debug("To remove CDATA section matching");
+				if("text".equals(scriptnode.nodeName())){
+					logger.debug("To remove: scripts:"+ scriptnode.toString());
+					headNode.append( ((Element) scriptnode).text());
+					//appendXmlFragment(dbuild,headNode,scriptnode.text());
 				}
-				if(scriptnode.getNodeType() == Node.ELEMENT_NODE && "scriptinclude".equals(scriptnode.getName())){
-					String[] includeScripts = scriptnode.getText().split(",");
+				if((scriptnode instanceof Element) && "scriptinclude".equals(scriptnode.nodeName())){
+					String[] includeScripts = ((Element) scriptnode).text().split(",");
 					for (String val : includeScripts) {
-						Element e = headNode.addElement("script");
-						e.addAttribute("src", val);
-						e.addAttribute("language", "JavaScript");
-						e.addAttribute("type", "text/javascript");
+						org.jsoup.nodes.Element e = headNode.appendElement("script");
+						e.attr("src", val);
+						e.attr("language", "JavaScript");
+						e.attr("type", "text/javascript");
 						 // headNode.appendContent(e);
-						headNode.addText("\n");
+						headNode.appendText("\n");
 					}
 				}
 			}
@@ -354,51 +365,58 @@ private boolean templateprocessed = false;
 				String[] includeStyles = styleInclude.split(",");
 				for (String val : includeStyles) {
 					Element e = document.getRootElement().addElement("link");
-					e.addAttribute("href", val);
-					e.addAttribute("rel", "stylesheet");
-					e.addAttribute("type", "text/css");
+					e.attr("href", val);
+					e.attr("rel", "stylesheet");
+					e.attr("type", "text/css");
 					headNode.appendContent(e);
 				}
 			}*/
 			//////
-			Iterator stylenl =   ((Element) xmlelmNode.selectSingleNode("//stylesheets")).nodeIterator();		
-			for (int i = 0; stylenl.hasNext(); i++) {
-				Node scriptnode = (Node) stylenl.next();
-//				logger.debug("Adding styles"+scriptnode.getText());
-				if(scriptnode.getNodeType() == Node.CDATA_SECTION_NODE){
-					appendXmlFragment(dbuild,headNode,scriptnode.getText());
+			  List<Node> stylenl = xmlelmNode.select("stylesheets").first().childNodes();		
+			for (int i = 0; i<stylenl.size(); i++) {
+				Node scriptnode =   (Node) stylenl.get(i);
+//				logger.debug("Adding styles"+scriptnode.text());
+				if("text".equals(scriptnode.nodeName() )){
+					headNode.append( ((Element) scriptnode).text());
+					//appendXmlFragment(dbuild,headNode,scriptnode.text());
 				}
-				if(scriptnode.getNodeType() == Node.ELEMENT_NODE && "styleinclude".equals(scriptnode.getName())){
-					String[] includeScripts = scriptnode.getText().split(",");
+				if((scriptnode instanceof Element) && "styleinclude".equals(scriptnode.nodeName())){
+					String[] includeScripts = ((Element) scriptnode).text().split(",");
 					for (String val : includeScripts) {
-						Element e = headNode.addElement("link");
-						e.addAttribute("href", val);
-						e.addAttribute("rel", "stylesheet");
-						e.addAttribute("type", "text/css");
+						org.jsoup.nodes.Element e = headNode.appendElement("link");
+						e.attr("href", val);
+						e.attr("rel", "stylesheet");
+						e.attr("type", "text/css");
 						//headNode.appendContent(e);
-						headNode.addText("\n");
+						headNode.appendText("\n");
 					}
 				}
 			}
 			///multiple styleincludes and stylesheet tags
 			
-			nl = xmlelmNode.selectNodes("//fields/field/div");// xp.evaluate("//fields/field/div", xmlelmNode, XPathConstants.NODESET);
+			nl = xmlelmNode.select("fields > field > div");// xp.evaluate("fields/field/div", xmlelmNode, XPathConstants.NODESET);
 			for (int i = 0; i < nl.size(); i++) {
 				Element inputElm = (Element) nl.get(i);
-				String htmlid = inputElm.attributeValue("forid");
-				Element n =   (Element) dochtml.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+				String htmlid = inputElm.attr("forid");
+				org.jsoup.nodes.Element n =     dochtml.getElementById(htmlid);//.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 				if(n != null){
-					n.setText(inputElm.attributeValue("value"));
+					n.text(inputElm.attr("value"));
 				}else{
 					//TODO: We need to insert in custom fields
-					org.w3c.dom.Element e = ((org.w3c.dom.Document)dochtml).createElement("div");
-					e.setAttribute("id", inputElm.attributeValue("id"));
-					Element body = (Element) dochtml.selectSingleNode("//body");
-					Node xpathnode = (Node) inputElm.selectNodes("xpath").get(0);
-					if(xpathnode.getText().length() >0 )
-						body = (Element) dochtml.selectSingleNode("/html/body");//(Element) xp.evaluate("/html/body", dochtml, XPathConstants.NODE);
-					((org.w3c.dom.Node) body).insertBefore((org.w3c.dom.Element)e, (org.w3c.dom.Element)body.elements().get(0));
+					org.jsoup.nodes.Element body = dochtml.getElementsByTag("body").first();
+					org.jsoup.nodes.Element div = dochtml.createElement("div");
+					logger.debug("To Remove"+inputElm.attr("id"));
+					div.attr("id",inputElm.attr("id"));
+     				body.prependChild(div);
+					
+					//					org.w3c.dom.Element e = ((org.w3c.dom.Document)dochtml).createElement("div");
+//					e.setAttribute("id", inputElm.attr("id"));
+//					org.jsoup.nodes.Element body = (org.jsoup.nodes.Element) dochtml.selectSingleNode("//body");
+//					Node xpathnode = (Node) inputElm.select("xpath").get(0);
+//					if(xpathnode.text().length() >0 )
+//						body = (Element) dochtml.selectSingleNode("/html/body");//(Element) xp.evaluate("/html/body", dochtml, XPathConstants.NODE);
+//					((org.w3c.dom.Node) body).insertBefore((org.w3c.dom.Element)e, (org.w3c.dom.Element)body.elements().get(0));
 					 
 				}
 				
@@ -406,72 +424,72 @@ private boolean templateprocessed = false;
 			
 			String globaljs = "";
 			//compositefield for DataElements
-			nl = xmlelmNode.selectNodes("//fields/field/compositefield");//(List) xp.evaluate("//fields/field/compositefield", xmlelmNode, XPathConstants.NODESET);
+			nl = xmlelmNode.select("fields > field > compositefield");//(List) xp.evaluate("fields/field/compositefield", xmlelmNode, XPathConstants.NODESET);
 			for (int i = 0; i < nl.size(); i++) {
 				Element compositefield = (Element) nl.get(i);
-				Element datafield = (Element) compositefield.selectNodes("datafield").get(0);
-				String dfid=datafield.attributeValue("id");
-				String dfforid=datafield.attributeValue("forid");
-				String dfname=datafield.attributeValue("name");
-				String dfvalue=datafield.attributeValue("value");
-				String dftype=datafield.attributeValue("type");
+				Element datafield = (Element) compositefield.select("datafield").get(0);
+				String dfid=datafield.attr("id");
+				String dfforid=datafield.attr("forid");
+				String dfname=datafield.attr("name");
+				String dfvalue=datafield.attr("value");
+				String dftype=datafield.attr("type");
 				if(dfvalue.length() == 0){
 					dfvalue="{}";
 				}
 				JSONObject dfjson = new JSONObject(dfvalue);
-				List displayfield = compositefield.selectNodes("displayfield");
-				Element datafldhtm = factory.createElement("input");
-				datafldhtm.addAttribute("type", dftype);
-				datafldhtm.addAttribute("id", dfid);
-				datafldhtm.addAttribute("name", dfname);
-				datafldhtm.addAttribute("value", dfvalue);
-				Element dfnode =   (Element)dochtml.selectSingleNode("//*[@id=\""+dfforid+"\"]");// xp.evaluate("//*[@id=\""+dfforid+"\"]", dochtml, XPathConstants.NODE);
+				List displayfield = compositefield.select("displayfield");
+				org.jsoup.nodes.Element datafldhtm = dochtml.createElement("input");
+				datafldhtm.attr("type", dftype);
+				datafldhtm.attr("id", dfid);
+				datafldhtm.attr("name", dfname);
+				datafldhtm.attr("value", dfvalue);
+				org.jsoup.nodes.Element dfnode =   (org.jsoup.nodes.Element)dochtml.getElementById(dfforid);//.selectSingleNode("//*[@id=\""+dfforid+"\"]");// xp.evaluate("//*[@id=\""+dfforid+"\"]", dochtml, XPathConstants.NODE);
 				boolean dfforidfound = false;
 				if(dfforid == null){
 					dfforidfound = true;
-					dfnode.add(datafldhtm);
+					dfnode.appendChild(datafldhtm);
 				}
 				for (int j = 0; j < displayfield.size(); j++) {
 					Element dispelmxml = (Element)displayfield.get(j);
-					String dename = dispelmxml.attributeValue("name");
-					String deforid = dispelmxml.attributeValue("forid");
-					String detype = dispelmxml.attributeValue("type");
-					Element n = (Element)dochtml.selectSingleNode("//*[@id=\""+deforid+"\"]");// xp.evaluate("//*[@id=\""+deforid+"\"]", dochtml, XPathConstants.NODE);
-					Element difldhtm = factory.createElement("input");
-					difldhtm.addAttribute("type", detype);
-					difldhtm.addAttribute("id", dename);
-					difldhtm.addAttribute("name", dename);
+					String dename = dispelmxml.attr("name");
+					String deforid = dispelmxml.attr("forid");
+					String detype = dispelmxml.attr("type");
+					org.jsoup.nodes.Element n = (org.jsoup.nodes.Element)dochtml.getElementById(deforid);//.selectSingleNode("//*[@id=\""+deforid+"\"]");// xp.evaluate("//*[@id=\""+deforid+"\"]", dochtml, XPathConstants.NODE);
+					org.jsoup.nodes.Element difldhtm = dochtml.createElement("input");
+					difldhtm.attr("type", detype);
+					difldhtm.attr("id", dename);
+					difldhtm.attr("name", dename);
 					if(dfjson.has(dename))
-					difldhtm.addAttribute("value", dfjson.getString(dename));
-					difldhtm.addAttribute("onblur", "updateCompositeField(this,'#"+dfid+"')");
+					difldhtm.attr("value", dfjson.getString(dename));
+					difldhtm.attr("onblur", "updateCompositeField(this,'#"+dfid+"')");
 					if(dfforidfound == false && n!=null){
 						dfforidfound = true; //appending to first display element
-						n.add(datafldhtm);
+						n.appendChild(datafldhtm);
 					}
 					if(n!=null)
-					n.add(difldhtm);
+					n.appendChild(difldhtm);
 				}
 				
 			}
 			//compositefield for DataElements end
 			//Append all validations
-			nl =xmlelmNode.selectNodes("//validation");// (List) xp.evaluate("//validation", xmlelmNode, XPathConstants.NODESET);
+			nl =xmlelmNode.select("validation");// (List) xp.evaluate("//validation", xmlelmNode, XPathConstants.NODESET);
 			for (int i = 0; i < nl.size(); i++) {
-				String validation = ((Element) nl.get(i)).getText();
+				String validation = ((Element) nl.get(i)).text();
 				
 				if(validation != null && validation.length() > 1){
 					globaljs += validation +"\n";
 				}
 			}
 			//JSON rule begin
-			nl = xmlelmNode.selectNodes("//rule");//(List) xp.evaluate("//rule", xmlelmNode, XPathConstants.NODESET);
+			nl = xmlelmNode.select("rule");//(List) xp.evaluate("//rule", xmlelmNode, XPathConstants.NODESET);
 			JSONObject rulejson = new JSONObject("{rules:{},messages:{}}");
 			for (int i = 0; i < nl.size(); i++) {
 				Element ruleElm = (Element) nl.get(i);
-				String ruletext = ruleElm.getText();
+				String ruletext = ruleElm.text();
 				logger.debug("Rule="+ruletext);
 				if(ruletext != null && ruletext.length() > 0){
-					JSONArray jar = new JSONArray(ruleElm.getText());
+					JSONArray jar = new JSONArray(ruleElm.text());
 					//JSONObject messageelmpart =  jobj.getJSONObject("messages");
 					for (int j = 0; j < jar.length(); j++) {
 						JSONObject jobj = jar.getJSONObject(j);
@@ -487,7 +505,8 @@ private boolean templateprocessed = false;
 			rulejson.put("errorLabelContainer", "#alertmessage");
 			globaljs +="var rule="+rulejson.toString(3)+";\n";
 			String strrule = "<script>"+globaljs+"</script>";
-			appendXmlFragment(dbuild, headNode, strrule);
+			headNode.append(strrule);
+			//appendXmlFragment(dbuild, headNode, strrule);
 			//JSON rule ends
 			
 			
@@ -498,20 +517,18 @@ private boolean templateprocessed = false;
 //			DOMSource source = new DOMSource((org.dom4j.dom.DOMDocument)dochtml);
 //			transformer.transform(source, result);
 		
-			OutputFormat format = OutputFormat.createPrettyPrint();
-			 format.setExpandEmptyElements( true);
-			 StringWriter strw  = new StringWriter();
-			 HTMLWriter writer = new HTMLWriter(strw,format);
-			 
-			 writer.setEscapeText(false); 
-			 writer.write(dochtml);
-			 xmlString = strw.toString();
+//			OutputFormat format = OutputFormat.createPrettyPrint();
+//			 format.setExpandEmptyElements( true);
+//			 StringWriter strw  = new StringWriter();
+//			 HTMLWriter writer = new HTMLWriter(strw,format);
+//			 
+//			 writer.setEscapeText(false); 
+//			 writer.write(dochtml);
+			 xmlString = dochtml.html();
 //			xmlString = result.getWriter().toString(); 
 //			xmlString = xmlString.replaceFirst("(\\<\\?xml[\\d\\D]*\\?\\>)","");
 			templateprocessed = true;
 			
-		} catch (SAXException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (TransformerConfigurationException e) {
@@ -543,7 +560,7 @@ private boolean templateprocessed = false;
 	}
 public static void main(String args[]) {
 	   HTMLProcessorJsoupFullImpl htmp = new HTMLProcessorJsoupFullImpl();
-	   String processedhtml =  htmp.process(htmp.fileReadAll("C:/Eclipse/workspace1/FEtranslator1/src/actionclass/sampleoutput.xml"), null);
+	   String processedhtml =  htmp.process(htmp.fileReadAll("F:/eclipse/workspace/charts/FEtranslator1/src/actionclass/sampleoutput.xml"), null);
 	   System.out.println(processedhtml);
 }
 }
