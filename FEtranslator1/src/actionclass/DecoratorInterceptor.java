@@ -64,7 +64,7 @@ public class DecoratorInterceptor implements Interceptor {
 			CharResponseWrapper newrsp = new CharResponseWrapper(wrapper);
 			PrintWriter out = responseParent.getWriter();
 			CharArrayWriter car = new CharArrayWriter();
-			logger.debug("Processing Error in HTMLProcessor false indicates error:"+processor.getLastResult());
+			logger.debug("Processing Error in HTMLProcessor last result(false means not processed):"+processor.getLastResult());
 			if(processor.getLastResult() && resulthtml!= null)
 				car.write(resulthtml);
 			else

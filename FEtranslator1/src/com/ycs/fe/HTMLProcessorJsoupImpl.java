@@ -140,7 +140,7 @@ private boolean templateprocessed = false;
 			
 //			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
 //			pathhtml = ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
-			//logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
+//			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
 			pathhtml = "C:/Eclipse/workspace1/FEtranslator1/WebContent/pages/logintpl.xml";//ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
 			if(new File(pathhtml).exists())logger.debug("The html exists");
 			FileInputStream fin = new FileInputStream(new File(pathhtml));
@@ -497,11 +497,34 @@ private boolean templateprocessed = false;
 			//default rule properties ,errorElement:\"div\",errorLabelContainer:\"#alertmessage\"
 			rulejson.put("errorElement", "label");
 			rulejson.put("errorLabelContainer", "#alertmessage");
+			rulejson.put("submitHandler", "JSONincludedFunc:function(form){ alert('hi');}");
 			globaljs +="var rule="+rulejson.toString(3)+";\n";
+			//JSON rule ends
+			
+			//savefieldids begin
+			List<Node> panels = xmlelmNode.selectNodes("/root/panels/panel");
+			for (Node panel : panels) {
+				Node savefield = panel.selectSingleNode("savefieldids");
+				logger.debug("savefieldids:"+savefield);
+				String id = ((Element) panel).attributeValue("id");
+				if(savefield != null ){
+					globaljs +="var panel_"+id+" = [";
+					String[] idlist = savefield.getText().split(",");
+					for (int i = 0; i < idlist.length; i++) {
+						globaljs +="\""+idlist[i]+"\",";
+					}
+					if(globaljs.charAt(globaljs.length()-1) == ',')globaljs = globaljs.substring(0,globaljs.length()-1);
+					globaljs +="];\n";
+					 
+				}
+			}
+			//savefieldids end
+			
+			
 			String strrule = "<script>"+globaljs+"</script>";
 			headNode.append(strrule);
 			//appendXmlFragment(dbuild, headNode, strrule);
-			//JSON rule ends
+			
 			
 			
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();

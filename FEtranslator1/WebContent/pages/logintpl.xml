@@ -7,7 +7,7 @@
 
 	</head>
 	<body>
-<form method="post" action="details.action">
+<form method="post" action="details.action" id="userpanel">
 		<table>
 			<tr>
 				<td>First Name</td>

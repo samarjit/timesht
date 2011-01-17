@@ -486,6 +486,27 @@ private boolean templateprocessed = false;
 			rulejson.put("errorElement", "label");
 			rulejson.put("errorLabelContainer", "#alertmessage");
 			globaljs +="var rule="+rulejson.toString(3)+";\n";
+			//JSON rule ends
+			
+			//savefieldids begin
+			List<Node> panels = xmlelmNode.selectNodes("/root/panels/panel");
+			for (Node panel : panels) {
+				Node savefield = panel.selectSingleNode("savefieldids");
+				String id = ((Element) panel).attributeValue("id");
+				if(savefield != null ){
+					globaljs +="var panel_"+id+" = [";
+					String[] idlist = savefield.getText().split(",");
+					for (int i = 0; i < idlist.length; i++) {
+						globaljs +="\""+idlist[i]+"\",";
+					}
+					if(globaljs.charAt(globaljs.length()-1) == ',')globaljs = globaljs.substring(0,globaljs.length()-2);
+					globaljs +="];\n";
+					 
+				}
+			}
+			//savefieldids end
+			
+			
 			String strrule = "<script>"+globaljs+"</script>";
 			appendXmlFragment(dbuild, headNode, strrule);
 			//JSON rule ends
