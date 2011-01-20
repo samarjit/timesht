@@ -255,8 +255,7 @@ private boolean templateprocessed = false;
 					n.append(textelement.getText());
 					//appendXmlFragment(dbuild,n,textelement.getText());
 					String listValue = inputElm.attributeValue("value");
-					
-					if(listValue != null && listValue != ""){
+//					if(listValue != null && "".equals(listValue)){
 						listValue = listValue.replace("{", " ");
 						listValue = listValue.replace("}", " ");
 						String[] list = listValue.split(",");
@@ -273,22 +272,22 @@ private boolean templateprocessed = false;
 //							Element nodelm = (Element) node;
 							//nodelm.appendContent(element);
 						}
-					}else{ //if hard coded values are not there then look for filling up from action context
+//					}else{ //if hard coded values are not there then look for filling up from action context
 						ValueStack stack = ActionContext.getContext().getValueStack();
 						Map<String,String>opts = (Map<String, String>) stack.findValue(htmlid);
 						if(opts != null){
 //							List list = dochtml.selectNodes("select");
 //							Node node = list.get(0);
-							org.jsoup.nodes.Node node = dochtml.getElementById(htmlid);//.selectSingleNode("//select[@id=\""+htmlid+"\"]");
+							org.jsoup.nodes.Node node2 = dochtml.getElementById(htmlid);//.selectSingleNode("//select[@id=\""+htmlid+"\"]");
 							for (Entry<String, String> option : opts.entrySet()) {
-								org.jsoup.nodes.Element element = ((org.jsoup.nodes.Element) node).appendElement("option");
+								org.jsoup.nodes.Element element = ((org.jsoup.nodes.Element) node2).appendElement("option");
 								element.attr("value", option.getKey());
 								element.text(option.getValue());
-								Element nodelm = (Element) node;
+								//Element nodelm = (Element) node2;
 								//nodelm.appendContent(element);
 							}
 						}
-					}
+//					}
 				}else{
 					//TODO: We need to insert in custom fields
 				}
@@ -495,9 +494,9 @@ private boolean templateprocessed = false;
 				}
 			}
 			//default rule properties ,errorElement:\"div\",errorLabelContainer:\"#alertmessage\"
-			rulejson.put("errorElement", "label");
-			rulejson.put("errorLabelContainer", "#alertmessage");
-			rulejson.put("submitHandler", "JSONincludedFunc:function(form){ alert('hi');}");
+//			rulejson.put("errorElement", "label");
+//			rulejson.put("errorLabelContainer", "#alertmessage");
+//			rulejson.put("submitHandler", "JSONincludedFunc:function(form){ alert('hi');}");
 			globaljs +="var rule="+rulejson.toString(3)+";\n";
 			//JSON rule ends
 			
