@@ -18,8 +18,8 @@
 				function javaScriptFn(){
 				}
 				$(document).ready(function(){
-				var form1 = document.forms[0];	
-				  var ruleobj = JSONstring.toObject(rule);
+				var form1 = document.forms[0];	 
+				     var ruleobj  = initRule_Callback(rule); 
 				     $(form1).validate(ruleobj);
 				});
 				
@@ -60,7 +60,7 @@
   	    font-size: small; 
   	    }
 	br { clear: both; }
-	
+	select.error { border: 1px solid red; }
 	input.error { border: 1px solid red; }
 	label.error {
 		
@@ -150,7 +150,16 @@
 								<@s.iterator value="list1">
 	 								<option value="<@s.property value="key"/>" ><@s.property value="value"/></option>
 								</@s.iterator>
+								
 						 	</select>
+	<@s.generator val="%{'aaa,bbb,ccc,ddd,eee'}">
+	 <@s.iterator>
+	     <@s.property /><br/>
+	 </@s.iterator>
+	</@s.generator>
+ <#list list1?keys as key>
+    ${key} - ${list1[key]}
+</#list>
 						 	]]>
 						</text>
 						<rule></rule>
