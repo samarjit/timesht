@@ -16,7 +16,7 @@ public class TestInsert {
 	    	EntityManager em = emf.createEntityManager();
 	    	
 	    	
-	    	ChildTbl child = new ChildTbl();
+	    /*	ChildTbl child = new ChildTbl();
 	    	child.setChilddesc("child of parent 2");
 	    	child.setParentTbl(newParentTbl);
 	    	
@@ -27,12 +27,33 @@ public class TestInsert {
 	    	List<ChildTbl> lstChild = new ArrayList();
 	    	lstChild.add(child);
 	    	lstChild.add(child2);
-	    	newParentTbl.setChildTbls(lstChild);
+	    	newParentTbl.setChildTbls(lstChild);*/
 	    	
-	    	em.getTransaction().begin();
+	    	Address addr = new Address();
+	    	addr.setAddressdesc("addr 1");
+	    	
+	    	Person per = new Person();
+	    	per.setName("sam");
+	    	per.setAddress(addr);
+	    	
+	    	Person per2 = new Person();
+	    	per2.setName("samar");
+	    	per2.setAddress(addr);
+	    	
+	    	List<Person> persons = new ArrayList();
+	    	persons.add(per);
+	    	persons.add(per2);
+	    	
+			addr.setPersons(persons );
+	    	
+			em.getTransaction().begin();
 	    	em.persist(newParentTbl);
-	    	em.persist(child);
-	    	em.persist(child2);
+//	    	em.persist(child);
+//	    	em.persist(child2);
+	    	em.persist(addr);
+	    	em.persist(per2);
+	    	em.persist(per);
+	    	
 	    	em.getTransaction().commit();
 	    	return newParentTbl;
 	    }

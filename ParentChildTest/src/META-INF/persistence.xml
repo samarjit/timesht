@@ -8,6 +8,8 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/x
         </provider>
 		<class>model.ChildTbl</class>
 		<class>model.ParentTbl</class>
+		<class>model.Address</class>
+		<class>model.Person</class>
 		<properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle9Dialect"/>
             <property name="hibernate.connection.driver_class" value="oracle.jdbc.driver.OracleDriver"/>
