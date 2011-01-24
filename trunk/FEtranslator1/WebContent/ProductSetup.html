@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ 
+ 
+<html>
+ <head>
+  <title>Product Setup</title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Autdor" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+
+  <link type="text/css" href="css/fg.menu.css" rel="stylesheet" />
+<link type="text/css" href="css/jquery-ui-1.8.8.custom.css" rel="stylesheet" /> 
+<link href="css/main.css" rel="stylesheet" type="text/css">
+<link href="css/body.css" rel="stylesheet" type="text/css">
+ 
+ 
+
+ <link type="text/css" href="css/fg.menu.css" rel="stylesheet" />
+ 
+ 
+<script  src="js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.8.custom.min.js"></script>
+<script  src="js/jquery.validate.js"></script>
+<script type="text/javascript" src="js/fg.menu.js"></script>
+
+<script type="text/javascript" src="js/iadtframework.js"></script>
+
+
+<script type="text/javascript">
+ 
+var rule={
+		rules:{
+			loginid: {
+				required: true
+			}
+		},
+		messages:{
+			loginid:{
+				required: "Email ID/Login ID is required"
+			}
+		}
+	};
+	
+$(document).ready(function(){
+    $("#loginform").validate();
+	createMenu();
+	
+	$( "#txtFixedDate" ).datepicker({
+			showOn: "button",
+			buttonImage: "css/images/calendar.gif",
+			buttonImageOnly: true,
+			altField: "#txtExpPeriod",
+			altFormat: "dd/mm/yyyy",
+			dateFormat: "dd/mm/yyyy"
+		});
+		
+  });
+
+ function showDatePicker(obj){
+ 	if(obj.checked == true){
+ 	  $("#spantxtFixedDate").show();
+	  $("#spantxtnumMonth").hide();
+	  }
+	else{
+	  $("#spantxtFixedDate").hide();
+	}
+ } 
+ 
+ function showMonthPicker(obj){
+ 	if(obj.checked == true){
+ 		$("#spantxtnumMonth").show();
+		 $("#spantxtFixedDate").hide();
+	}
+	else 
+		$("#spantxtnumMonth").hide();	
+ } 
+ 
+ function callsubmit(){
+ 	document.forms[0].submit();
+ }
+
+ 
+function initial()
+{
+
+}
+function clearall()
+{
+	
+	$('.field, .field2').validation().resetFrom();
+	$('#userregfrm').reset();
+}
+
+function updateHidProdName(){
+	if($("#selprodname").val() == 'New'){
+	   $("#spannewprog").show();
+	 }else{
+	   $("#hidprodname").val($("#selprodname").val());
+	   $("#spannewprog").hide();
+	   }
+}
+</script>
+ </head>
+ 
+ </head>
+ <body onLoad="initial();">
+ 
+ <div align="center"  class="wrap">	
+ <div class="navbar"><span class="disabled">Logged in as Henry</span> | <span class="enabled">Home</span> | <span class="enabled">Sign-Out</span></div>
+  <div class="shrink">
+		 <div class="menuheader  ">
+		 	
+		   </div>
+   
+ 
+		 <div class="body">
+		 <form id="userregfrm">
+		  <div class="displayLabel">Program Setup &gt;&gt; Product Setup </div>
+		  <hr />
+		
+ 
+		 
+		 
+		 
+		 
+		 
+
+ 
+<table class="head2" border="0" cellspacing="0" height="20" cellpadding="0" width="100%">
+	<tr>
+		<td><b>Product Setup</b></td>
+		
+	</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="5" class="table">
+	<tr class="even">
+		<td >Product Name</td>
+		<td> 
+          
+         <select name="selprodname" id="selprodname" class="field" onchange="updateHidProdName()"  >
+          <option value="">Select</option>
+          <option value="New">New</option>
+          <option value="USDLC">USD Loyalty Card</option>
+          <option value="USDTRL">USD Travel Card</option>
+         </select>
+          <span id="spannewprog" style="padding-left:10px;display:none"> &nbsp;Enter new Product Name 
+         <input name="txtnewprodname" id="txtnewprodname" type="text" class="field" onblur="copyTxttohidden(this,'hidprodname');" /> </span><input name="hidprodname" id="hidprodname"  type="hidden" class="field" /></td>
+	</tr>
+    <tr class="odd" >
+      <td >Program</td>
+       <td >  
+          <select name="programname"  maxlength="50" class="field">
+        	<option value="">Select</option>
+            <option value="New">New</option>
+            <option value="LOYCARD">Loyalty Card</option>
+            <option value="TRACARD">Travel Card</option>
+         </select></td>
+    </tr>
+     <tr class="even" >
+       <td>Bin Group</td>
+       <td>
+         <select name="bingroup" id="bingroup" class="field" >
+          <option value="">Select</option>
+          <option value="BINGRP">BINGRP</option>
+         </select>&nbsp;
+         </td></tr>
+    <tr class="odd" >
+      <td> Additional Info</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr class="even" >
+      <td >Product Currency</td>      
+      <td ><SELECT style="WIDTH: 130px" class="field" onchange="binccy();" name="binccy1">
+              <OPTION value="NO_DATA">select</OPTION>
+              <OPTION value="USD">USD~US Dollar</OPTION>
+              <OPTION selected="selected" value="INR">INR~Indian   Rupees</OPTION>
+              <OPTION value="AUD">AUD~Australian Dollar</OPTION>
+              <OPTION value="SGD">SGD~Singapore Dollar</OPTION>
+              <OPTION value="THB">THB~Thailand Baht</OPTION>
+              <OPTION value="MYR">MYR~Malaysia Ringgit</OPTION>
+              <OPTION value="PHP">PHP~Philipines Peso</OPTION>
+              <OPTION value="IDR">IDR~Indonesia Rupiah</OPTION>
+            </SELECT> 
+       </td>
+    </tr>
+    <tr class="even" >
+    	<td>Expiery Period        </td>
+        <td>
+        
+        <input name="FixedDate" type="radio" id="FixedDate" onclick="showDatePicker(this)" checked="CHECKED">
+         Fixed Date
+          <span id="spantxtFixedDate" style="padding-right:10px"><input type="text" id="txtFixedDate" name="txtFixedDate" class="field"  />
+          </span>
+          <input type="radio" name="FixedDate" id="numMonths" onclick="showMonthPicker(this)"  /> Months
+          <span  id="spantxtnumMonth" style="display:none;" ><input type="text" id="txtnumMonth" name="txtnumMonth" class="field"  onblur="copyTxttohidden(this,'txtExpPeriod');" /></span>
+          
+          <input type="hidden" name="txtExpPeriod" id="txtExpPeriod" class="field" />
+          
+        </tr>
+    <tr class="odd">
+    		<td>Embossing Template</td>
+    		<td><select name="selEmbossTpl" id="selEmbossTpl" class="field" >
+            		<option value="">Select</option>
+                    <option value="VISAGOLD">VISA Gold</option>
+                    <option value="VISASILVER">VISA Silver</option>
+                    <option value="MASTER">Master</option>
+                </select>
+            </td>
+          </tr>     
+    <tr class="even">
+       <td>Plastic code</td>
+       <td><select class="field">
+        		<option value="">Select</option>
+                <option value="PLS001">PLS001</option>
+				<option value="PLS002">PLS002</option>
+           </select>
+       </td>
+    </tr>            
+</table>
+   
+<p>&nbsp;</p>
+  
+  <div class="buttonPosition">
+    <table  border="0"   >
+    
+      <tr>
+             <td    style="cursor:hand">
+                 <button class="buttonenabled"  >Add</button>
+             </td> 
+             <td      style="cursor:hand">
+                 <button class="buttonenabled"  >Modify</button>
+             </td> 
+               <td     style="cursor:hand">
+                 <button class="buttonenabled"  >Cancel</button>
+             </td> 
+               <td     style="cursor:hand">
+                 <button class="buttonenabled"  >Submit</button>
+             </td> 
+         </tr>
+     </table>
+</div>
+
+  <div id="showsubcan" style="display:none">
+<table  border="0" cellspacing="0" cellpadding="0" >
+
+  <tr>
+         <td class="buttonenabled" onClick="location.href='entityRegistrationConfirm.html';"  style="cursor:hand">Modify
+         </td><td>&nbsp;</td>
+         <td class="buttonenabled" onClick="location.href='entityRegistrationConfirm.html';"  style="cursor:hand">Next</button>
+         </td><td>&nbsp;</td>
+		 <td class="buttonenabled" onClick="location.href='welcome.html';" style="cursor:hand">Ok
+         </td>
+     </tr>
+ </table>
+</div>
+
+ </form>
+ 		 </div><!-- body div-->
+	<!-- shrink -->
+  </div>
+  <div class="push"></div>
+  <!-- center align div-->
+ </div>
+
+<div class="footer">
+ <center>
+  <div class="shrink" >
+	 <hr />
+  	<div  style="float:left"> www.XYZ.com</div> 
+<div style="float:right">Copyright Â© 2011 XYZ </div>
+  </div>
+  </center>	
+</div>
+
+</body>
+</html>
