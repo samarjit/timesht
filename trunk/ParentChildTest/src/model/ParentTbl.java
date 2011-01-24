@@ -1,8 +1,14 @@
 package model;
 
 import java.io.Serializable;
-import javax.persistence.*;
-import java.util.List;
+import java.util.ArrayList;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 
 /**
@@ -13,29 +19,21 @@ import java.util.List;
 @Table(name="PARENT_TBL")
 public class ParentTbl implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private String parentid;
-	private String description;
-	private List<ChildTbl> childTbls;
-private String childmapkey;
- 
-    @Column(name="CHILDMAPKEY")
-    public String getChildmapkey() {
-	return childmapkey;
-}
-
-
-public void setChildmapkey(String childmapkey) {
-	this.childmapkey = childmapkey;
-}
-
-
-	public ParentTbl() {
-    }
-
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="PARENTID",unique=true, nullable=false, length=10)
+	@Column(unique=true, nullable=false, length=10)
+	private String parentid;
+
+	@Column(length=10)
+	private String childmapkey;
+
+	@Column(length=20)
+	private String description;
+
+    public ParentTbl() {
+    }
+
 	public String getParentid() {
 		return this.parentid;
 	}
@@ -44,8 +42,14 @@ public void setChildmapkey(String childmapkey) {
 		this.parentid = parentid;
 	}
 
+	public String getChildmapkey() {
+		return this.childmapkey;
+	}
 
-	@Column(length=20)
+	public void setChildmapkey(String childmapkey) {
+		this.childmapkey = childmapkey;
+	}
+
 	public String getDescription() {
 		return this.description;
 	}
@@ -54,19 +58,8 @@ public void setChildmapkey(String childmapkey) {
 		this.description = description;
 	}
 
-
-	//bi-directional many-to-one association to ChildTbl
-	@OneToMany(mappedBy="parentTbl")
-	public List<ChildTbl> getChildTbls() {
-		return this.childTbls;
+	public void addChildTbls(ChildTbl childtbl) {
+	 
 	}
 
-	public void setChildTbls(List<ChildTbl> childTbls) {
-		this.childTbls = childTbls;
-	}
-	
-	public String toString(){
-		return "parent tbl";
-	}
-	
 }

@@ -12,28 +12,31 @@ import javax.persistence.*;
 @Table(name="CHILD_TBL")
 public class ChildTbl implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	private String childid ;
-	
-	
-	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO)
-	public String getChildid() {
-		return childid;
-	}
 
-	public void setChildid(String childid) {
-		this.childid = childid;
-	}
-	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(unique=true, nullable=false, length=10)
+	private String childid;
+
+	@Column(length=20)
 	private String childdesc;
+
+	//uni-directional many-to-one association to ParentTbl
+    @ManyToOne
+	@JoinColumn(name="PARENTFK", referencedColumnName="CHILDMAPKEY")
 	private ParentTbl parentTbl;
 
     public ChildTbl() {
     }
 
+	public String getChildid() {
+		return this.childid;
+	}
 
-	@Column(length=20)
+	public void setChildid(String childid) {
+		this.childid = childid;
+	}
+
 	public String getChilddesc() {
 		return this.childdesc;
 	}
@@ -42,10 +45,6 @@ public class ChildTbl implements Serializable {
 		this.childdesc = childdesc;
 	}
 
-
-	//bi-directional many-to-one association to ParentTbl
-    @ManyToOne
-	@JoinColumn(name="PARENTFK", referencedColumnName="CHILDMAPKEY", insertable=false, updatable=false)
 	public ParentTbl getParentTbl() {
 		return this.parentTbl;
 	}
