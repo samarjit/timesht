@@ -28,11 +28,11 @@
     <filter-name>struts-cleanup</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  --><!--<filter-mapping>
+  --><filter-mapping>
     <filter-name>decorator</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  <filter-mapping>
+  <!--<filter-mapping>
     <filter-name>hitcounter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>

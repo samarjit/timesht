@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ 
+ 
+<html>
+ <head>
+  <title>Program Details</title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Autdor" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+
+  <link type="text/css" href="css/fg.menu.css" rel="stylesheet" />
+<link type="text/css" href="css/jquery-ui-1.8.8.custom.css" rel="stylesheet" /> 
+<link href="css/main.css" rel="stylesheet" type="text/css">
+<link href="css/body.css" rel="stylesheet" type="text/css">
+ 
+ 
+
+ <link type="text/css" href="css/fg.menu.css" rel="stylesheet" />
+  
+ 
+<script  src="js/jquery.js"></script>
+<script  src="js/jquery.validate.js"></script>
+<script type="text/javascript" src="js/fg.menu.js"></script>
+<script type="text/javascript" src="js/iadtframework.js"></script>
+
+
+<script type="text/javascript">
+ 
+var rule={
+		rules:{
+			loginid: {
+				required: true
+			}
+		},
+		messages:{
+			loginid:{
+				required: "Email ID/Login ID is required"
+			}
+		}
+	};
+	
+$(document).ready(function(){
+    $("#loginform").validate();
+	createMenu();
+  });
+
+ 
+ function callsubmit(){
+ 	document.forms[0].submit();
+ }
+
+ 
+function initial()
+{
+
+}
+function clearall()
+{
+	
+	$('.field, .field2').validation().resetFrom();
+	$('#userregfrm').reset();
+}
+
+function  populateFieldsToModify(){
+  $("#issuername").val("HSBC Bank");
+  $("#countryofissue").val("SINGAPORE");
+}
+</script>
+</head>
+ 
+ </head>
+ <body onLoad="initial();">
+ 
+ <div align="center"  class="wrap">	
+ <div class="navbar"><span class="disabled">Logged in as Henry</span> | <span class="enabled">Home</span> | <span class="enabled">Sign-Out</span></div>
+  <div class="shrink">
+		 <div class="menuheader  ">
+		 	
+		   </div>
+   
+ 
+		 <div class="body">
+		 <form id="userregfrm">
+		  <div class="displayLabel">Program Setup &gt;&gt; Program Setup</div>
+		  <hr />
+		
+		 
+		 
+		 
+		 
+		 
+		 
+
+ 
+<table class="head2" border="0" cellspacing="0" height="20" cellpadding="0" width="100%">
+	<tr>
+		<td><b>Program details</b></td>
+		
+	</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="5" class="table">
+	<tr class="even">
+		<td width="50%">Program Name</td><td>
+        <select name="programname"  maxlength="50" class="field" onchange="copySeltohidden(this,'newprog','hidProgName')" >
+        	<option value="">Select</option>
+            <option value="New">New</option>
+            <option value="LOYCARD">Loyalty Card</option>
+            <option value="TRACARD">Travel Card</option>
+         </select>
+         <span id="newprog"  style="display:none;padding-left:10px"> &nbsp;Enter new Program Name 
+         <input name="txtnewprogname" id="txtnewprogname" type="text" class="field" onblur="copyTxttohidden(this,'hidProgName')" /></span>&nbsp;<input  type="hidden" id="hidProgName" name="hidProgName" class="field"/></td>
+	</tr>
+    <tr class="odd" >
+      <td >Issuer Name</td>
+       <td ><input name="issusername" type="text"  id="issuername" class="field" /></td>
+    </tr>
+    <tr class="odd" >
+      <td >Country of Issue</td>      
+      <td ><input  style="display:none" class="field" />
+        <select name="countryofissue" maxlength="50" class="field" id="countryofissue">
+        <option value="" selected="selected">Select</option>
+        <option value="INDIA">India</option>
+        <option value="SINGAPORE">Singapore</option>
+        <option value="AUSTRALIA">Australia</option>
+        <option value="PHILIPPINES">Philippines</option>
+        </select>
+        </td>
+    </tr>
+	</table>
+   
+
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    
+    <tr>
+      <td  >&nbsp;</td>
+    </tr>
+  </table>
+
+   
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td bgcolor="#FFFFFF">&nbsp;</td>
+    </tr>
+  </table>
+
+
+
+		
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+</table>
+ 
+
+   
+ 
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td bgcolor="#FFFFFF">&nbsp;</td>
+    </tr>
+  </table>
+  <div id="showsubcan" class="buttonPosition">
+<table  border="0"   >
+
+  <tr>
+         <td    style="cursor:hand">
+             <button class="buttonenabled"  >Add</button>
+         </td> 
+         <td      style="cursor:hand">
+             <button class="buttonenabled"  >Modify</button>
+         </td> 
+		   <td     style="cursor:hand">
+             <button class="buttonenabled"  >Close</button>
+         </td> 
+		   <td     style="cursor:hand">
+             <button class="buttonenabled"  >Next</button>
+         </td> 
+     </tr>
+ </table>
+</div>
+
+  <div id="showsubcan" style="display:none" class="buttonPosition">
+<table  border="0" cellspacing="0" cellpadding="0" >
+
+  <tr>
+         <td class="buttonenabled" onClick="location.href='entityRegistrationConfirm.html';"  style="cursor:hand">Modify
+         </td><td>&nbsp;</td>
+         <td class="buttonenabled" onClick="location.href='entityRegistrationConfirm.html';"  style="cursor:hand">Next</button>
+         </td><td>&nbsp;</td>
+		 <td class="buttonenabled" onClick="location.href='welcome.html';" style="cursor:hand">Ok
+         </td>
+     </tr>
+ </table>
+</div>
+
+ </form>
+ 		 </div><!-- body div-->
+	<!-- shrink -->
+  </div>
+  <div class="push"></div>
+  <!-- center align div-->
+ </div>
+
+<div class="footer">
+ <center>
+  <div class="shrink" >
+	 <hr />
+  	<div  style="float:left"> www.XYZ.com</div> 
+<div style="float:right">Copyright © 2011 XYZ </div>
+  </div>
+  </center>	
+</div>
+
+</body>
+</html>
