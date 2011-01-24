@@ -25,6 +25,7 @@
 				
 				function formsubmit(){
 				var form1 = document.forms[0];	
+					alert("hello from formsubmit()");
 					if(!jQuery(form1).valid()){
 						return;
 					}
@@ -152,14 +153,7 @@
 								</@s.iterator>
 								
 						 	</select>
-	<@s.generator val="%{'aaa,bbb,ccc,ddd,eee'}">
-	 <@s.iterator>
-	     <@s.property /><br/>
-	 </@s.iterator>
-	</@s.generator>
- <#list list1?keys as key>
-    ${key} - ${list1[key]}
-</#list>
+	
 						 	]]>
 						</text>
 						<rule></rule>
