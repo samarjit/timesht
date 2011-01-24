@@ -44,7 +44,7 @@ public class Person implements Serializable {
 
 	//bi-directional many-to-one association to Address
     @ManyToOne
-	@JoinColumn(name="ADDRESSID")
+	@JoinColumn(name="ADDRESSIDFK")
 	public Address getAddress() {
 		return this.address;
 	}
