@@ -101,6 +101,7 @@ function createMenu(){
 				$(this).attr("value","");
 			});
 		  screenMode = "addnew";
+		  obj.value = 'New';
 	  }
   }
   
