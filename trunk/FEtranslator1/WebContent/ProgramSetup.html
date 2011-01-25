@@ -17,9 +17,9 @@
  
 
  <link type="text/css" href="css/fg.menu.css" rel="stylesheet" />
-  
  
-<script  src="js/jquery.js"></script>
+ 
+<script  src="js/jquery-1.4.4.min.js"></script>
 <script  src="js/jquery.validate.js"></script>
 <script type="text/javascript" src="js/fg.menu.js"></script>
 <script type="text/javascript" src="js/iadtframework.js"></script>
@@ -29,20 +29,33 @@
  
 var rule={
 		rules:{
-			loginid: {
+			programname: {
+				required: true
+			},
+			issuername:{
+				required : true	
+			},
+			txtnewprogname:{
 				required: true
 			}
+			
 		},
 		messages:{
-			loginid:{
-				required: "Email ID/Login ID is required"
-			}
+			programname: {
+				required: "Program Name is required"
+			},
+			issuername:{
+				required : "Issuer Name is required"	
+			} 
 		}
 	};
+
 	
 $(document).ready(function(){
-    $("#loginform").validate();
+    $("#form1").validate(rule);
 	createMenu();
+	
+		 
   });
 
  
@@ -62,9 +75,161 @@ function clearall()
 	$('#userregfrm').reset();
 }
 
+/**
+ * Called from copySeltohidden()
+ */
 function  populateFieldsToModify(){
   $("#issuername").val("HSBC Bank");
   $("#countryofissue").val("SINGAPORE");
+}
+
+function onAdd (formid, divlist, divheaderlist) {
+	if(!$(formid).valid())return;
+	
+	var arList = $.trim($(divlist+' '+divheaderlist).text()).split(",");
+
+	var rowcount = $(divlist+' table').get(0).rows.length;
+	var str = "<tr class='even'><td><input type='radio' value='"+rowcount+"' name='check' id='check"+rowcount+"' onclick='radClick(this,\""+divlist+"\",\""+divheaderlist+"\");' />"+
+	"&nbsp;<span id='icons'><span class='ui-icon ui-icon-pencil' onclick='editMe(this,\""+divlist+"\",\""+divheaderlist+"\");' ></span></span>"+
+	"<span id='icons'><span class='ui-icon ui-icon-closethick' onclick='deleteMe(this)' ></span></span></td>"; 
+	$.each(arList,function (i,v){
+		
+		var idname = v.substring(0,v.indexOf(":"));
+		var ishidden = v.indexOf("hidden") >1?"none":"table-cell";
+		var val = $("#"+idname).val();
+		str+="<td style='display:"+ishidden+"'>"+val+"<input type='hidden' value='"+val+"' id='"+idname+"__"+rowcount+"' name='"+idname+"__"+rowcount+"'/></td>";
+		 
+	});
+	str+="</tr>";
+	
+	$(divlist+' table').append($(str)); 
+	refreshHoverIcon ();
+}
+
+function onModify (formid, divlist, divheaderlist) {
+	if(!$(formid).valid())return;
+	
+	var arList = $.trim($(divlist+' '+divheaderlist).text()).split(",");
+	var selectedRadio =$(divlist+' input[type=radio]:checked');
+	var selectedIndex = selectedRadio.val(); 
+	if (typeof(selectedIndex) == 'undefined') {
+		showMessage("Please select a record to modify");
+		return;
+	}
+	//remove all <td> tags
+	var TRref = selectedRadio.parent().parent();
+	selectedRadio.parent().parent().children().remove();
+	var rowcount =  selectedIndex;
+	var str = "<td><input type='radio' value='"+rowcount+"' name='check' id='check"+rowcount+"' onclick='radClick(this,\""+divlist+"\",\""+divheaderlist+"\");' />"+
+	"&nbsp;<span id='icons'><span class='ui-icon ui-icon-pencil' onclick='editMe(this,\""+divlist+"\",\""+divheaderlist+"\");' ></span></span>"+
+	"<span id='icons'><span class='ui-icon ui-icon-closethick' onclick='deleteMe(this)' ></span></span></td>"; 
+ 
+	$.each(arList,function (i,v){
+		var idname = v.substring(0,v.indexOf(":"));
+		var ishidden = v.indexOf("hidden") >1?"none":"table-cell";
+		var val = $("#"+idname).val();
+		str+="<td style='display:"+ishidden+"'>"+val+"<input type='hidden' value='"+val+"' id='"+idname+"__"+rowcount+"' name='"+idname+"__"+rowcount+"'/></td>";
+	});
+	//replace newly created tags inside <tr> 
+	TRref.append($(str));
+	
+	refreshHoverIcon ();
+}
+
+function deleteMe ( objthis) {
+	$(objthis.parentNode.parentNode.parentNode).remove();
+}
+
+function editMe ( objthis,divlist, divheaderlist) {
+	//get the radio
+	 $(objthis.parentNode.parentNode.parentNode.firstChild.firstChild).attr("checked","checked");
+	var radioObj = objthis.parentNode.parentNode.parentNode.firstChild.firstChild;
+	 
+	var arList = $.trim($(divlist+' '+divheaderlist).text()).split(",");
+	//tr:input 
+	var dataList =  $(objthis.parentNode.parentNode.parentNode).find(":input");
+	$.each(arList,function (i,v){
+		var idname = v.substring(0,v.indexOf(":"));
+		//first input is radio , skip that
+		  $("#"+idname).val(dataList[i+1].value);
+	});
+	
+	screenMode ="edit";
+	
+	radClickCallback(radioObj);
+}
+
+function onDelete (formid, divlist, divheaderlist) {
+	if(!$(formid).valid())return;
+	
+	var arList = $.trim($(divlist+' '+divheaderlist).text()).split(",");
+	var selectedRadio =$(divlist+' input[type=radio]:checked');
+	var selectedIndex = selectedRadio.val(); 
+	if (typeof(selectedIndex) == 'undefined') {
+		showMessage("Please select a record to delete");
+		return;
+	}
+	//remove all <td> tags
+	var TRref = selectedRadio.parent().parent();
+	selectedRadio.parent().parent().remove();
+	refreshHoverIcon (); 
+}
+
+function radClick (obj,divlist, divheaderlist) {
+	var arList = $.trim($(divlist+' '+divheaderlist).text()).split(",");
+	//tr:input 
+	var dataList =  $(obj.parentNode.parentNode).find(":input");
+	$.each(arList,function (i,v){
+		
+		var idname = v.substring(0,v.indexOf(":"));
+		  $("#"+idname).val(dataList[i+1].value);
+		 
+		//str+="<td>"+val+"</td>";
+	});
+	
+	screenMode ="edit";
+	
+	radClickCallback(obj);
+	
+	 
+}
+
+/**
+ * Caleld after radClick() event to hide unhide widgets 
+ * @param {Object} obj
+ */
+function radClickCallback (obj) {
+	if($('#programname').val()=='New'){
+		$('#newprog').show();
+	}else{
+		$('#newprog').hide();
+	}
+}
+
+function onNext (args) {
+	showMessage("Data saved successfully");
+}
+
+function showMessage (message) {
+	var str = "<div  style='width:100%'>"+message+"<span id='icons'><span class='ui-icon ui-icon-closethick' style='float:right' onclick='hideMessage(this)'></span></span></div>";
+	$('.infoBar').append(str);
+	$('.infoBar').slideDown('slow');
+	refreshHoverIcon ();
+}
+
+function hideMessage (objSpanIcon) {
+	$(objSpanIcon).parent().remove();
+	if ($('.infoBar').find('span').length == 0) {
+		$('.infoBar').slideUp('slow');
+	}
+}
+
+function refreshHoverIcon () {
+	 //hover states on the static widgets
+	$('span[id=icons]').hover(
+		function() { $(this).addClass('ui-state-error'); }, 
+		function() { $(this).removeClass('ui-state-error'); }
+	);
 }
 </script>
 </head>
@@ -81,12 +246,12 @@ function  populateFieldsToModify(){
    
  
 		 <div class="body">
-		 <form id="userregfrm">
+		 <form id="form1"  >
 		  <div class="displayLabel">Program Setup &gt;&gt; Program Setup</div>
 		  <hr />
 		
-		 
-		 
+		 <div class="infoBar" style="display:none"></div>
+		 <p>&nbsp;</p>
 		 
 		 
 		 
@@ -101,19 +266,19 @@ function  populateFieldsToModify(){
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="5" class="table">
 	<tr class="even">
-		<td width="50%">Program Name</td><td>
-        <select name="programname"  maxlength="50" class="field" onchange="copySeltohidden(this,'newprog','hidProgName')" >
+		<td width="50%">Program Name <span class="star">*</span></td><td>
+        <select name="programname" id="programname"  maxlength="50" class="field" onchange="copySeltohidden(this,'newprog','txtnewprogname')" >
         	<option value="">Select</option>
             <option value="New">New</option>
             <option value="LOYCARD">Loyalty Card</option>
             <option value="TRACARD">Travel Card</option>
          </select>
          <span id="newprog"  style="display:none;padding-left:10px"> &nbsp;Enter new Program Name 
-         <input name="txtnewprogname" id="txtnewprogname" type="text" class="field" onblur="copyTxttohidden(this,'hidProgName')" /></span>&nbsp;<input  type="hidden" id="hidProgName" name="hidProgName" class="field"/></td>
+         <input name="txtnewprogname" id="txtnewprogname" type="text" class="field"  value=""  /></span>&nbsp;<input  type="hidden" id="hidProgName" name="hidProgName" class="field"/></td>
 	</tr>
     <tr class="odd" >
-      <td >Issuer Name</td>
-       <td ><input name="issusername" type="text"  id="issuername" class="field" /></td>
+      <td >Issuer Name <span class="star">*</span></td>
+       <td ><input name="issuername" type="text"  id="issuername" class="field" /></td>
     </tr>
     <tr class="odd" >
       <td >Country of Issue</td>      
@@ -127,32 +292,10 @@ function  populateFieldsToModify(){
         </select>
         </td>
     </tr>
-	</table>
-   
-
-  <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    
-    <tr>
-      <td  >&nbsp;</td>
-    </tr>
-  </table>
-
-   
-  <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr>
-      <td bgcolor="#FFFFFF">&nbsp;</td>
-    </tr>
-  </table>
-
-
-
-		
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td>&nbsp;</td>
-	</tr>
 </table>
+   
+
+<p>&nbsp;</p>
  
 
    
@@ -167,36 +310,60 @@ function  populateFieldsToModify(){
 
   <tr>
          <td    style="cursor:hand">
-             <button class="buttonenabled"  >Add</button>
+             <button class="buttonenabled" type="button"  onclick="onAdd('#form1','#multiplerows','.headerlist');" id="btnAdd">Add</button>
          </td> 
          <td      style="cursor:hand">
-             <button class="buttonenabled"  >Modify</button>
+             <button class="buttonenabled" type="button" onclick="onModify('#form1','#multiplerows','.headerlist');"  id="btnModify">Modify</button>
          </td> 
-		   <td     style="cursor:hand">
-             <button class="buttonenabled"  >Close</button>
-         </td> 
-		   <td     style="cursor:hand">
-             <button class="buttonenabled"  >Next</button>
-         </td> 
-     </tr>
- </table>
-</div>
-
-  <div id="showsubcan" style="display:none" class="buttonPosition">
-<table  border="0" cellspacing="0" cellpadding="0" >
-
-  <tr>
-         <td class="buttonenabled" onClick="location.href='entityRegistrationConfirm.html';"  style="cursor:hand">Modify
-         </td><td>&nbsp;</td>
-         <td class="buttonenabled" onClick="location.href='entityRegistrationConfirm.html';"  style="cursor:hand">Next</button>
-         </td><td>&nbsp;</td>
-		 <td class="buttonenabled" onClick="location.href='welcome.html';" style="cursor:hand">Ok
+		 <td     style="cursor:hand">
+             <button class="buttonenabled" type="button" onclick="onDelete('#form1','#multiplerows','.headerlist');" id="btnDelete">Delete</button>
          </td>
+		 <td     style="cursor:hand">
+             <button class="buttonenabled" type="button" onclick="onClose('#form1','#multiplerows','.headerlist');" id="btnClose">Close</button>
+         </td> 
+		   <td     style="cursor:hand">
+             <button class="buttonenabled" type="submit"   id="btnNext">Next</button>
+         </td> 
      </tr>
  </table>
 </div>
 
- </form>
+ 
+
+</form>
+<form id="form2"  >
+<DIV id=multiplerows>
+    <div class="headerlist" style="display:none;">
+        programname:Program Select:hidden,txtnewprogname:Prgram Name,issuername:Issuer Name,countryofissue:Country of Issue    </div>
+    <BR>
+    <TABLE id=tablespace class=table1 border=0 cellSpacing=0 cellPadding=5 width="100%">
+        <TR class=trlightgrey >
+            <th width="6%" align=middle>
+                Select            </th>
+            <th width="9%"  style="display:none">Program Select</th>
+            <th width="9%">Prgram Name</th>
+            <th width="21%">Issuer Name</th>
+            <th width="12%">Country of Issue</th>
+        </TR>
+       
+    </TABLE>
+</DIV>
+<p>&nbsp;</p>
+ <div id="showsubcan" style="display:block" class="buttonPosition">
+<table  border="0"  >
+  <tr>
+         <td    style="cursor:hand">
+         		<button type="button" onclick="onCancel()" class="buttonenabled">Cancel</button>
+         </td> 
+         <td    style="cursor:hand">
+         		<button type="button" onclick="onNext()" class="buttonenabled" >Next</button></button>
+         </td> 
+     </tr>
+ </table>
+</div>
+
+</form>
+<p>&nbsp;</p>
  		 </div><!-- body div-->
 	<!-- shrink -->
   </div>

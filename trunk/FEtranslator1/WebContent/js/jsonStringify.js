@@ -20,6 +20,7 @@ Andrea Giammarchi 2007
 
 */
 
+/*samarjit This can serialize functions too*/
 JSONstring={
 	compactOutput:false, 		
 	includeProtos:false, 	
