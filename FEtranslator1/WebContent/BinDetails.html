@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ 
+ 
+<html>
+ <head>
+  <title>Bin Group</title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Autdor" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+
+  <link type="text/css" href="css/fg.menu.css" rel="stylesheet" />
+<link type="text/css" href="css/jquery-ui-1.8.8.custom.css" rel="stylesheet" /> 
+<link href="css/main.css" rel="stylesheet" type="text/css">
+<link href="css/body.css" rel="stylesheet" type="text/css">
+ 
+ 
+
+ <link type="text/css" href="css/fg.menu.css" rel="stylesheet" />
+<link type="text/css" href="css/jquery-ui-1.8.8.custom.css" rel="stylesheet" />   
+ 
+<script  src="js/jquery-1.4.4.min.js"></script>
+<script  src="js/jquery.validate.js"></script>
+<script type="text/javascript" src="js/fg.menu.js"></script>
+<script type="text/javascript" src="js/iadtframework.js"></script>
+
+
+<script type="text/javascript">
+ 
+var rule={
+		rules:{
+			loginid: {
+				required: true
+			}
+		},
+		messages:{
+			loginid:{
+				required: "Email ID/Login ID is required"
+			}
+		}
+	};
+	
+$(document).ready(function(){
+    $("#loginform").validate();
+	createMenu();
+  });
+
+ 
+ function callsubmit(){
+ 	document.forms[0].submit();
+ }
+
+ 
+function initial()
+{
+
+}
+function clearall()
+{
+	
+	$('.field, .field2').validation().resetFrom();
+	$('#userregfrm').reset();
+}
+</script>
+ </head>
+ 
+ </head>
+ <body onLoad="initial();">
+ 
+ <div align="center"  class="wrap">	
+ <div class="navbar"><span class="disabled">Logged in as Henry</span> | <span class="enabled">Home</span> | <span class="enabled">Sign-Out</span></div>
+  <div class="shrink">
+		 <div class="menuheader  ">
+		 	
+		   </div>
+   
+ 
+		 <div class="body">
+		 <form id="userregfrm">
+		  <div class="displayLabel"><a href="ProgramSetup.html">Program Setup </a>&gt;&gt;<a href="BinGroup.html"> Bin Group</a> &gt;&gt; <a href="BinDetails.html">Bin Details</a></div>
+		  <hr />
+		
+		 
+		 
+		 
+		 
+		 
+		 
+
+ 
+<table class="head2" border="0" cellspacing="0" height="20" cellpadding="0" width="100%">
+	<tr>
+		<td><b>Bin  Details</b></td>
+		
+	</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="5" class="table">
+	<tr class="even">
+		<td ><strong>Bin group</strong></td>
+		<td> 
+          
+         <select name="bingroup" id="bingroup" class="field" >
+          <option value="">Select</option>
+          <option value="BINGRP">BINGRP</option>
+         </select>
+          </td>
+	</tr>
+    <tr class="odd" >
+      <td ><strong>Bin Details</strong></td>
+       <td ><label>
+         <input type="text" name="txtbindetails" id="txtbindetails" class="field" />
+       </label></td>
+    </tr>
+     <tr class="even" >
+       <td><strong>Type of Card</strong></td>
+       <td>                            <SELECT style="WIDTH: 130px"
+                            class="field" onchange="binccy();"
+                            name="binccy1">
+                                <OPTION value="">
+                                select</OPTION>
+                                <OPTION value="CONTACT">Contact</OPTION>
+                                <OPTION selected="selected"
+                                value="CONTACTLESS">Contactless</OPTION>
+                                <OPTION value="MAGNETIC">Magnetic Stipe</OPTION>
+          </SELECT></td></tr>
+    <tr class="odd" ><td> <strong>Issuer Name</strong></td>
+    <td><input type="text" name="issuername" id="issuername" class="field" /></td></tr>
+    <tr class="even" >
+      <td ><strong>Country of Issue</strong></td>      
+      <td ><input  style="display:none" class="field" />
+        <select name="countryofissue" maxlength="50" class="field" id="countryofissue">
+        <option value="">Select</option>
+        <option value="INDIA">India</option>
+        <option value="SINGAPORE">Singapore</option>
+        <option value="AUSTRALIA">Australia</option>
+        <option value="PHILIPPINES">Philippines</option>
+        </select>        </td>
+    </tr>
+	</table>
+   
+
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    
+    <tr>
+      <td  >&nbsp;</td>
+    </tr>
+  </table>
+
+   
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td bgcolor="#FFFFFF">&nbsp;</td>
+    </tr>
+  </table>
+
+
+
+		
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+</table>
+ 
+
+   
+ 
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td bgcolor="#FFFFFF">&nbsp;</td>
+    </tr>
+  </table>
+  <div class="buttonPosition">
+    <table  border="0"   >
+    
+      <tr>
+             <td    style="cursor:hand">
+                 <button class="buttonenabled"  >Add</button>
+             </td> 
+             <td      style="cursor:hand">
+                 <button class="buttonenabled"  >Modify</button>
+             </td> 
+               <td     style="cursor:hand">
+                 <button class="buttonenabled"  >Cancel</button>
+             </td> 
+               <td     style="cursor:hand">
+                 <button class="buttonenabled"  >Submit</button>
+             </td> 
+         </tr>
+     </table>
+</div>
+
+  <div id="showsubcan" style="display:none">
+<table  border="0" cellspacing="0" cellpadding="0" >
+
+  <tr>
+         <td class="buttonenabled" onClick="location.href='entityRegistrationConfirm.html';"  style="cursor:hand">Modify
+         </td><td>&nbsp;</td>
+         <td class="buttonenabled" onClick="location.href='entityRegistrationConfirm.html';"  style="cursor:hand">Next</button>
+         </td><td>&nbsp;</td>
+		 <td class="buttonenabled" onClick="location.href='welcome.html';" style="cursor:hand">Ok
+         </td>
+     </tr>
+ </table>
+</div>
+
+ </form>
+ 		 </div><!-- body div-->
+	<!-- shrink -->
+  </div>
+  <div class="push"></div>
+  <!-- center align div-->
+ </div>
+
+<div class="footer">
+ <center>
+  <div class="shrink" >
+	 <hr />
+  	<div  style="float:left"> www.XYZ.com</div> 
+<div style="float:right">Copyright Â© 2011 XYZ </div>
+  </div>
+  </center>	
+</div>
+
+</body>
+</html>
