@@ -55,7 +55,7 @@ body {
 
 .table {
 	border: 1px solid #E2E2E2;
-	background-color: #F0F0F0;
+	#background-color: #F0F0F0;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	color: #000000;
@@ -64,6 +64,7 @@ body {
 }
 .table td{
 	font-weight: bold;
+	background-color:#FFFFFF;
 }
 .tables {
 	border: 1px solid #E2E2E2;
@@ -233,11 +234,11 @@ background:url(../images/menu_orange.gif);
 .butadd {
 	font-family: Arial, Helvetica, sans-serif;
 	
-	color: #FFFFFF;
+	color: #ffffff;
 	font-style: normal;
 	font-weight: bold;
 	text-decoration:none;
-	background-color:   #FFA000;
+	background-color:   #ffa000;
 	background-repeat: no-repeat;
 	width: 115px;
 	height: 23px;
@@ -297,7 +298,7 @@ z-index: 100;
 .listtable {
  
  
-	border: 1px solid #E2E2E2;
+	border: 1px solid #e2e2e2;
 	#text-indent: 10px; 
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
@@ -318,4 +319,18 @@ z-index: 100;
 	font-weight: bold;
 	color: #000000;
 	background-color: #DCDCDC;
+}
+
+.trlightgrey{
+	text-align: left;
+	#text-indent: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #000000;
+	background-color: #F0F0F0;
+}
+
+.trlightgrey th,td{
+	text-align: left;
 }

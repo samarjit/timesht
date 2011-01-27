@@ -234,6 +234,16 @@ color: grey;
 text-align:left;
 }
 
+.displayLabel a{
+color: grey;
+text-decoration: none;
+}
+
+.displayLabel a:hover{
+color: grey;
+text-decoration: underline;
+}
+
 .displayContent{
 padding-top:10px;
 font-size:1em;
@@ -334,6 +344,10 @@ text-align: left;
  position: absolute;	
  
  }
-  
-  
+
+span#icons{ border: 0 none;
+background: none;
+cursor:pointer;
+}  
+span.ui-icon { display: inline-block ; margin: 0 4px;}  
  
