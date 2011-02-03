@@ -250,7 +250,7 @@ media-type="text/html"/-->
 			Type: <xsl:value-of select="@type" />
 			<div style="float:right" >Returns: <xsl:value-of select="@return" /> </div>
 				<xsl:if test="sample">	
-					Sample: <xsl:value-of select="sample" />
+					Sample:  <xsl:value-of select="sample"/>
 				</xsl:if>
 			</div>
 					
@@ -259,6 +259,10 @@ media-type="text/html"/-->
 		 
 		  
 	</xsl:template>
+	<xsl:template match="sample"  >
+		 
+	</xsl:template>
+	
 	<xsl:template match="entry/category"  >
 			<xsl:variable name="myurl">
 			    #<xsl:value-of select="../@name"     /> <xsl:value-of select="@name"     />
