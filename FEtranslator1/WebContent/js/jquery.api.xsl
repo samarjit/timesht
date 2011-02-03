@@ -88,15 +88,16 @@ media-type="text/html"/-->
 				sub-category. If so, we have to add the
 				conditional class attribute.
 			-->
+			<xsl:attribute name="onclick">
+					<xsl:text>filterSnapshot('</xsl:text>
+					<xsl:value-of select="@name" />
+					<xsl:text>')</xsl:text>
+			</xsl:attribute>
 			<xsl:if test="../../category">
 				<xsl:attribute name="class">
 					<xsl:text>sub</xsl:text>
 				</xsl:attribute>
-				<xsl:attribute name="onclick">
-					<xsl:text>filterSnapshot('</xsl:text>
-					<xsl:value-of select="@name" />
-					<xsl:text>')</xsl:text>
-				</xsl:attribute>
+				
 			</xsl:if>
 
 			<xsl:value-of select="@name" /><br/>
@@ -317,7 +318,19 @@ media-type="text/html"/-->
 		   <xsl:variable name="addresses" select="/"/>
 		   <xsl:variable name="var2" select="name()"/>
 		   <xsl:variable name="vartxt" select="text()"/>
-		   <xsl:if test="name()='code'">
+		   
+		   <xsl:choose>
+		    <xsl:when test="name()='code'"><span class="code"> <xsl:value-of select="."     /></span></xsl:when>
+		     <xsl:when test="name()='p'"><p> <xsl:value-of select="."     /></p></xsl:when>
+		    <xsl:when test="name()='blockquote'"><blockquote> <xsl:value-of select="."     /></blockquote></xsl:when>
+		    <xsl:when test="name()='strong'"><strong> <xsl:value-of select="."     /></strong></xsl:when>
+		    <xsl:when test="self::text()" >  <xsl:value-of select="."  disable-output-escaping="no"     /> </xsl:when>
+		    <xsl:otherwise  >  
+		    	<xsl:call-template name="code" /> 
+			</xsl:otherwise>
+		   </xsl:choose>
+		   
+		   <!--<xsl:if test="name()='code'">
 		       <span class="code"> <xsl:value-of select="."     /></span>
 		   </xsl:if>
 		   <xsl:if test="name()='p'">
@@ -328,7 +341,7 @@ media-type="text/html"/-->
 		   </xsl:if>
 			 
 				 
-		 </xsl:for-each>
+		 --></xsl:for-each>
 		 
 	</xsl:template>	
 	
@@ -337,7 +350,17 @@ media-type="text/html"/-->
 		   <xsl:variable name="addresses" select="/"/>
 		   <xsl:variable name="var2" select="name()"/>
 		   <xsl:variable name="vartxt" select="text()"/>
-		   <xsl:if test="name()='code'">
+		   <xsl:choose>
+		    <xsl:when test="name()='code'"><span class="code"> <xsl:value-of select="."     /></span></xsl:when>
+		    <xsl:when test="name()='p'"><p> <xsl:value-of select="."     /></p></xsl:when>
+		    <xsl:when test="name()='blockquote'"><blockquote> <xsl:value-of select="."     /></blockquote></xsl:when>
+		    <xsl:when test="name()='strong'"><strong> <xsl:value-of select="."     /></strong></xsl:when>
+		    <xsl:when test="self::text()" >  <xsl:value-of select="."     /> </xsl:when>
+		    <xsl:otherwise  >  
+		    	<xsl:value-of select="."  disable-output-escaping="no"   /> 
+			</xsl:otherwise>
+		   </xsl:choose>
+		   <!--<xsl:if test="name()='code'">
 		       <span class="code"> <xsl:value-of select="."     /></span>
 		   </xsl:if>
 		   <xsl:if test="name()='p'">
@@ -347,7 +370,7 @@ media-type="text/html"/-->
 		       <xsl:value-of select="."     />
 		   </xsl:if>
 				 
-		 </xsl:for-each>
+		 --></xsl:for-each>
 	 
 	</xsl:template>
 	
