@@ -17,6 +17,7 @@ $.fn.menu = function(options){
 	var caller = this;
 	var options = options;
 	var m = new Menu(caller, options);	
+	m.parentButton =  "body";
 	allUIMenus.push(m);
 	
 	$(this)
@@ -106,11 +107,20 @@ function Menu(caller, options){
 		if (!menu.menuExists) { menu.create() };
 		caller
 			.addClass('fg-menu-open')
-			.addClass(options.callerOnState);
+			.addClass(options.callerOnState); 
 		container.parent().show().click(function(){ menu.kill(); return false; });
 		container.hide().slideDown(options.showSpeed).find('.fg-menu:eq(0)');
 		menu.menuOpen = true;
 		caller.removeClass(options.loadingState);
+		var killtimeout = null;
+		if(killtimeout != null){
+			clearTimeout(killtimeout);
+			}
+		container.mouseleave(function(){ killAllMenus();
+			killtimeout = setTimeout(function(){killAllMenus();}, 1000);
+			
+			});
+		
 		$(document).click(killAllMenus);
 		
 		// assign key events
@@ -200,7 +210,7 @@ function Menu(caller, options){
 	};
 	
 	this.create = function(){	
-		container.css({ width: options.width }).appendTo('body').find('ul:first').not('.fg-menu-breadcrumb').addClass('fg-menu');
+		container.css({ width: options.width }).appendTo(this.parentButton).find('ul:first').not('.fg-menu-breadcrumb').addClass('fg-menu');
 		container.find('ul, li a').addClass('ui-corner-all');
 		
 		// aria roles & attributes
@@ -265,7 +275,7 @@ function Menu(caller, options){
 
 Menu.prototype.flyout = function(container, options) {
 	var menu = this;
-	
+	 
 	this.resetFlyoutMenu = function(){
 		var allLists = container.find('ul ul');
 		allLists.removeClass('ui-widget-content').hide();	
@@ -322,6 +332,7 @@ Menu.prototype.flyout = function(container, options) {
 
 Menu.prototype.drilldown = function(container, options) {
 	var menu = this;	
+	 
 	var topList = container.find('.fg-menu');	
 	var breadcrumb = $('<ul class="fg-menu-breadcrumb ui-widget-header ui-corner-all ui-helper-clearfix"></ul>');
 	var crumbDefaultHeader = $('<li class="fg-menu-breadcrumb-text">'+options.crumbDefaultText+'</li>');
@@ -512,7 +523,7 @@ Menu.prototype.setPosition = function(widget, caller, options) {
 	// add the offsets (zero by default)
 	xVal += options.positionOpts.offsetX;
 	yVal += options.positionOpts.offsetY;
-	
+	 
 	// position the object vertically
 	if (options.positionOpts.directionV == 'up') {
 		el.css({ top: 'auto', bottom: yVal });
