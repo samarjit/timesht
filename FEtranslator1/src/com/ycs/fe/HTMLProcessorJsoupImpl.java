@@ -138,10 +138,10 @@ private boolean templateprocessed = false;
 		
 
 			
+			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
+			pathhtml = ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
 //			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
-//			pathhtml = ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
-//			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
-			pathhtml = "C:/Eclipse/workspace1/FEtranslator1/WebContent/pages/logintpl.xml";//ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
+//			pathhtml = "C:/Eclipse/workspace1/FEtranslator1/WebContent/pages/logintpl.xml";//ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
 			if(new File(pathhtml).exists())logger.debug("The html exists");
 			FileInputStream fin = new FileInputStream(new File(pathhtml));
 			//InputStream is = loader.getResourceAsStream("log4j.properties");
@@ -159,36 +159,44 @@ private boolean templateprocessed = false;
 				org.jsoup.nodes.Element n = dochtml.getElementById(htmlid);//("//*[@id=\""+htmlid+"\"]");//(Node) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 				if(n != null){
-					if(type.equalsIgnoreCase("text") || type.equalsIgnoreCase("password")){
-						org.jsoup.nodes.Element element = n.appendElement("input");
-						element.attr("name", inputElm.attributeValue("name"));
-						element.attr("value", inputElm.attributeValue("value"));
-						element.attr("type", inputElm.attributeValue("type"));
-						element.attr("class", inputElm.attributeValue("class"));
-						element.attr("id", inputElm.attributeValue("id"));
-						//n.appendContent(element);
-				    }else if(type.equalsIgnoreCase("radio") || type.equalsIgnoreCase("checkbox")){
-				    	String listValue = inputElm.attributeValue("value");
-						if(listValue != null && listValue != ""){
-							listValue = listValue.replace("{", " ");
-							listValue = listValue.replace("}", " ");
-							String[] list = listValue.split(",");
-							for(int j=list.length-1;j>=0;j--){
-								String val = list[j].trim();
-								String[] key = val.split("=");
-								org.jsoup.nodes.Element element = n.appendElement("input");
-								element.attr("name", inputElm.attributeValue("name"));
-								element.attr("value", key[0]);
-								element.attr("type", inputElm.attributeValue("type"));
-								element.attr("class", inputElm.attributeValue("class"));
-								element.attr("id", inputElm.attributeValue("id")+(j+1));
-								element.appendText(key[1]);
-								//n.appendContent(element);
+					if(!n.tagName().equalsIgnoreCase("input")){	
+						if(type.equalsIgnoreCase("text") || type.equalsIgnoreCase("password")){
+							org.jsoup.nodes.Element element = n.appendElement("input");
+							element.attr("name", inputElm.attributeValue("name"));
+							element.attr("value", inputElm.attributeValue("value"));
+							element.attr("type", inputElm.attributeValue("type"));
+							element.attr("class", inputElm.attributeValue("class"));
+							element.attr("id", inputElm.attributeValue("id"));
+							//n.appendContent(element);
+					    }else if(type.equalsIgnoreCase("radio") || type.equalsIgnoreCase("checkbox")){
+					    	String listValue = inputElm.attributeValue("value");
+							if(listValue != null && listValue != ""){
+								listValue = listValue.replace("{", " ");
+								listValue = listValue.replace("}", " ");
+								String[] list = listValue.split(",");
+								for(int j=list.length-1;j>=0;j--){
+									String val = list[j].trim();
+									String[] key = val.split("=");
+									org.jsoup.nodes.Element element = n.appendElement("input");
+									element.attr("name", inputElm.attributeValue("name"));
+									element.attr("value", key[0]);
+									element.attr("type", inputElm.attributeValue("type"));
+									element.attr("class", inputElm.attributeValue("class"));
+									element.attr("id", inputElm.attributeValue("id")+(j+1));
+									element.appendText(key[1]);
+									//n.appendContent(element);
+								}
+								
 							}
-							
+					    }
+					}else{ //this is an input element
+						if(type.equalsIgnoreCase("text") || type.equalsIgnoreCase("password")){
+							n.attr("value", inputElm.attributeValue("value"));
+						}else if(type.equalsIgnoreCase("radio") || type.equalsIgnoreCase("checkbox")){
+							n.attr("value", inputElm.attributeValue("value"));
 						}
-				    }
-					
+						
+					}
 //					n.attr("value", inputElm.attributeValue("value"));
 //					n.setTextContent(inputElm.attributeValue("value"));
 
@@ -241,6 +249,7 @@ private boolean templateprocessed = false;
 			for (int i = 0; i < nl.size(); i++) {
 				Element inputElm = (Element) nl.get(i);
 				String htmlid = inputElm.attributeValue("forid");
+				String id = inputElm.attributeValue("id");
 				org.jsoup.nodes.Element n =   dochtml.getElementById(htmlid);// dochtml.selectSingleNode("//*[@id=\""+htmlid"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 				if(n != null){
@@ -252,33 +261,51 @@ private boolean templateprocessed = false;
 //					CDATASection cdata = dochtml.createCDATASection(textelement.getText());
 //					element.appendContent(cdata);
 //					logger.debug("To remove:"+textelement.getText());
-					n.append(textelement.getText());
+					if(n.tagName().equalsIgnoreCase("select")){
+						//do nothing as this is the select element, but remove the option tags and append options of template <text>
+						n.empty();
+//1. Fill from <Text>
+						org.jsoup.nodes.Document selecttext = Jsoup.parse("<fakeroot>"+textelement.getText()+"</fakeroot>");
+						 
+						n.append(selecttext.select("option").outerHtml());
+						
+					}else{
+						n.append(textelement.getText());
+						
+					}
 					//appendXmlFragment(dbuild,n,textelement.getText());
+
+					
+//2. Fill from list 
 					String listValue = inputElm.attributeValue("value");
 //					if(listValue != null && "".equals(listValue)){
-						listValue = listValue.replace("{", " ");
+					    listValue = listValue.replace("{", " ");
 						listValue = listValue.replace("}", " ");
 						String[] list = listValue.split(",");
 //						List List = dochtml.selectNodes("select");
 //						Node node = List.get(0);
 //						logger.debug("To remove:"+"//select[@id=\""+htmlid+"\"]");
-						org.jsoup.nodes.Node node = dochtml.getElementById(htmlid);//.selectSingleNode("//select[@id=\""+htmlid+"\"]");
+						org.jsoup.nodes.Node node = dochtml.getElementById(id);//.selectSingleNode("//select[@id=\""+htmlid+"\"]");
+						
 						for(String val:list){
 							val = val.trim();
 							String[] key = val.split("=");
-							org.jsoup.nodes.Element element =  ((org.jsoup.nodes.Element)node).appendElement("option");
-							element.attr("value", key[0]);
-							element.text(key[1]);
+							if(val.indexOf("=") > -1){
+								org.jsoup.nodes.Element element =  ((org.jsoup.nodes.Element)node).appendElement("option");
+								element.attr("value", key[0]);
+								element.text(key[1]);
+							}
 //							Element nodelm = (Element) node;
 							//nodelm.appendContent(element);
 						}
 //					}else{ //if hard coded values are not there then look for filling up from action context
+//3. Fill from ValueStack
 						ValueStack stack = ActionContext.getContext().getValueStack();
 						Map<String,String>opts = (Map<String, String>) stack.findValue(htmlid);
 						if(opts != null){
 //							List list = dochtml.selectNodes("select");
 //							Node node = list.get(0);
-							org.jsoup.nodes.Node node2 = dochtml.getElementById(htmlid);//.selectSingleNode("//select[@id=\""+htmlid+"\"]");
+							org.jsoup.nodes.Node node2 = dochtml.getElementById(id);//.selectSingleNode("//select[@id=\""+htmlid+"\"]");
 							for (Entry<String, String> option : opts.entrySet()) {
 								org.jsoup.nodes.Element element = ((org.jsoup.nodes.Element) node2).appendElement("option");
 								element.attr("value", option.getKey());
@@ -288,6 +315,8 @@ private boolean templateprocessed = false;
 							}
 						}
 //					}
+
+						
 				}else{
 					//TODO: We need to insert in custom fields
 				}
@@ -332,6 +361,7 @@ private boolean templateprocessed = false;
 					//appendXmlFragment(dbuild,headNode,scriptnode.getText());
 				}
 				if(scriptnode.getNodeType() == Node.ELEMENT_NODE && "scriptinclude".equals(scriptnode.getName())){
+					if(scriptnode.getText().trim().length() == 0) continue;
 					String[] includeScripts = scriptnode.getText().split(",");
 					for (String val : includeScripts) {
 						org.jsoup.nodes.Element e = headNode.appendElement("script");
@@ -374,6 +404,7 @@ private boolean templateprocessed = false;
 					//appendXmlFragment(dbuild,headNode,scriptnode.getText());
 				}
 				if(scriptnode.getNodeType() == Node.ELEMENT_NODE && "styleinclude".equals(scriptnode.getName())){
+					if(scriptnode.getText().trim().length() == 0) continue;
 					String[] includeScripts = scriptnode.getText().split(",");
 					for (String val : includeScripts) {
 						org.jsoup.nodes.Element e = headNode.appendElement("link");
@@ -399,7 +430,7 @@ private boolean templateprocessed = false;
 					//TODO: We need to insert in custom fields
 					org.jsoup.nodes.Element body = dochtml.getElementsByTag("body").first();
 					org.jsoup.nodes.Element div = dochtml.createElement("div");
-					logger.debug("To Remove"+inputElm.attributeValue("id"));
+//					logger.debug("To Remove"+inputElm.attributeValue("id"));
 					div.attr("id",inputElm.attributeValue("id"));
      				body.prependChild(div);
 					
@@ -480,7 +511,7 @@ private boolean templateprocessed = false;
 			for (int i = 0; i < nl.size(); i++) {
 				Element ruleElm = (Element) nl.get(i);
 				String ruletext = ruleElm.getText();
-				logger.debug("Rule="+ruletext);
+				logger.debug("Ruleobj="+ruletext);
 				if(ruletext != null && ruletext.length() > 0){
 					JSONArray jar = new JSONArray(ruleElm.getText());
 					//JSONObject messageelmpart =  jobj.getJSONObject("messages");
@@ -497,7 +528,7 @@ private boolean templateprocessed = false;
 //			rulejson.put("errorElement", "label");
 //			rulejson.put("errorLabelContainer", "#alertmessage");
 //			rulejson.put("submitHandler", "JSONincludedFunc:function(form){ alert('hi');}");
-			globaljs +="var rule="+rulejson.toString(3)+";\n";
+			globaljs +="var ruleobj="+rulejson.toString(3)+";\n";
 			//JSON rule ends
 			
 			//savefieldids begin
@@ -541,6 +572,7 @@ private boolean templateprocessed = false;
 //			 writer.setEscapeText(false); 
 //			 writer.write(dochtml);
 			 xmlString = dochtml.html();
+//			 logger.debug("To  Remove result HTML:"+xmlString);
 //			xmlString = result.getWriter().toString(); 
 //			xmlString = xmlString.replaceFirst("(\\<\\?xml[\\d\\D]*\\?\\>)","");
 			templateprocessed = true;

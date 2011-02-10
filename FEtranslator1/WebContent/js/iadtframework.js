@@ -36,7 +36,7 @@ function submitcallback(form){
  * Extra initialization options are provided through var options; variable inside this function
  * @returns ruleobj which is used to initilalize validator
  */
-function initRule_Callback(rule) {
+function initRule_Callback(ruleobj) {
 	var options = {
 			errorElement:"label",
 			errorLabelContainer:"#alertmessage", 
@@ -173,12 +173,12 @@ function createMenu(){
   
    iadt.refreshHoverIcon = function() {
 		 //hover states on the static widgets
-//	    $('span.icons').live( 'hover', 
-//				function() { $(this).toggleClass('ui-state-error');   } 
-//			);
-	   $('body').delegate("span", 'hover', 
+	    $('span.icons').live( 'hover', 
 				function() { $(this).toggleClass('ui-state-error');   } 
 			);
+//	   $('body').delegate("span", 'hover', 
+//				function() { $(this).toggleClass('ui-state-error');   } 
+//			);
 	};
   
    iadt.showMessage = function(message) { 
@@ -299,7 +299,7 @@ iadt.addrow = function(formid){
 	 
 		//replace newly created tags inside <tr> 
 		 TRref.append(templateResult.find('tr').html());
-		
+		 
 	};
 	
 	$.fn.serializeObject = function()

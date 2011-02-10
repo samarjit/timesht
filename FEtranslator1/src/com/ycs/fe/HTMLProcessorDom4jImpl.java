@@ -136,10 +136,10 @@ private boolean templateprocessed = false;
 		
 
 			
-//			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
-//			pathhtml = ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
+			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
+			pathhtml = ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
 			//logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
-			pathhtml = "C:/Eclipse/workspace1/FEtranslator1/WebContent/pages/logintpl.xml";//ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
+//			pathhtml = "C:/Eclipse/workspace1/FEtranslator1/WebContent/pages/logintpl.xml";//ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
 			if(new File(pathhtml).exists())logger.debug("The html exists");
 			FileInputStream fin = new FileInputStream(new File(pathhtml));
 			//InputStream is = loader.getResourceAsStream("log4j.properties");
@@ -238,6 +238,7 @@ private boolean templateprocessed = false;
 			for (int i = 0; i < nl.size(); i++) {
 				Element inputElm = (Element) nl.get(i);
 				String htmlid = inputElm.attributeValue("forid");
+				String id = inputElm.attributeValue("id");
 				Element n = (Element) dochtml.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 				logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 				if(n != null){
@@ -259,7 +260,7 @@ private boolean templateprocessed = false;
 //						List List = dochtml.selectNodes("select");
 //						Node node = List.get(0);
 //						logger.debug("To remove:"+"//select[@id=\""+htmlid+"\"]");
-						Node node = dochtml.selectSingleNode("//select[@id=\""+htmlid+"\"]");
+						Node node = dochtml.selectSingleNode("//select[@id=\""+id+"\"]");
 						for(String val:list){
 							val = val.trim();
 							String[] key = val.split("=");
@@ -275,7 +276,7 @@ private boolean templateprocessed = false;
 						if(opts != null){
 //							List list = dochtml.selectNodes("select");
 //							Node node = list.get(0);
-							Node node = dochtml.selectSingleNode("//select[@id=\""+htmlid+"\"]");
+							Node node = dochtml.selectSingleNode("//select[@id=\""+id+"\"]");
 							for (Entry<String, String> option : opts.entrySet()) {
 								Element element = ((Branch) node).addElement("option");
 								element.addAttribute("value", option.getKey());

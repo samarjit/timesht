@@ -55,7 +55,7 @@ function Menu(caller, options){
 			directionH: 'right',
 			directionV: 'down', 
 			detectH: true, // do horizontal collision detection  
-			detectV: true, // do vertical collision detection
+			detectV: false, // do vertical collision detection
 			linkToFront: false
 		},
 		showSpeed: 200, // show/hide speed in milliseconds
@@ -93,6 +93,11 @@ function Menu(caller, options){
 		if (container.is('.fg-menu-flyout')) { menu.resetFlyoutMenu(); };	
 		container.parent().hide();	
 		menu.menuOpen = false;
+		
+		//samarjit
+		container.parent().unbind("mouseleave");
+		container.parent().unbind("mouseenter");
+		//samarjit
 		$(document).unbind('click', killAllMenus);
 		$(document).unbind('keydown');
 		callbackAfterKill(this);
@@ -104,7 +109,7 @@ function Menu(caller, options){
 
 	this.showMenu = function(){
 		killAllMenus();
-		if (!menu.menuExists) { menu.create() };
+		if (!menu.menuExists) { menu.create(); };
 		caller
 			.addClass('fg-menu-open')
 			.addClass(options.callerOnState); 
@@ -112,14 +117,15 @@ function Menu(caller, options){
 		container.hide().slideDown(options.showSpeed).find('.fg-menu:eq(0)');
 		menu.menuOpen = true;
 		caller.removeClass(options.loadingState);
-		var killtimeout = null;
-		if(killtimeout != null){
-			clearTimeout(killtimeout);
-			}
-		container.mouseleave(function(){ killAllMenus();
-			killtimeout = setTimeout(function(){killAllMenus();}, 1000);
-			
+		
+		///samarjit for closing of menu on mouseout
+		container.parent().mouseleave(function(){  
+			menu.killtimeout = setTimeout(function(){killAllMenus();}, 1000);
 			});
+		container.parent().mouseenter(function(){  
+			  clearTimeout(menu.killtimeout);
+			});
+		//samarjit
 		
 		$(document).click(killAllMenus);
 		
@@ -212,7 +218,9 @@ function Menu(caller, options){
 	this.create = function(){	
 		container.css({ width: options.width }).appendTo(this.parentButton).find('ul:first').not('.fg-menu-breadcrumb').addClass('fg-menu');
 		container.find('ul, li a').addClass('ui-corner-all');
-		
+		//samarjit 
+		container.find(' td a').addClass('ui-corner-all');
+		//samarjit
 		// aria roles & attributes
 		container.find('ul').attr('role', 'menu').eq(0).attr('aria-activedescendant','active-menuitem').attr('aria-labelledby', caller.attr('id'));
 		container.find('li').attr('role', 'menuitem');
@@ -243,17 +251,38 @@ function Menu(caller, options){
 					$(this).removeClass(options.linkHover).blur().parent().removeAttr('id');
 				}
 			);
+			//samarjit
+			allLinks = container.find('.fg-menu td a');
+			allLinks.hover(
+				function(){
+					var menuitem = $(this);
+					$('.'+options.linkHover).removeClass(options.linkHover).blur().parent().removeAttr('id');
+					$(this).addClass(options.linkHover).focus().parent().attr('id','active-menuitem');
+				},
+				function(){
+					$(this).removeClass(options.linkHover).blur().parent().removeAttr('id');
+				}
+			);
 		};
 		
 		if (options.linkHoverSecondary) {
 			container.find('.fg-menu li').hover(
 				function(){
-					$(this).siblings('li').removeClass(options.linkHoverSecondary);
-					if (options.flyOutOnState) { $(this).siblings('li').find('a').removeClass(options.flyOutOnState); }
+					$(this).siblings('td').removeClass(options.linkHoverSecondary);
+					if (options.flyOutOnState) { $(this).siblings('td').find('a').removeClass(options.flyOutOnState); }
 					$(this).addClass(options.linkHoverSecondary);
 				},
 				function(){ $(this).removeClass(options.linkHoverSecondary); }
 			);
+			//samarjit
+			container.find('.fg-menu td').hover(
+					function(){
+						$(this).siblings('td').removeClass(options.linkHoverSecondary);
+						if (options.flyOutOnState) { $(this).siblings('td').find('a').removeClass(options.flyOutOnState); }
+						$(this).addClass(options.linkHoverSecondary);
+					},
+					function(){ $(this).removeClass(options.linkHoverSecondary); }
+				);
 		};	
 		
 
@@ -349,7 +378,7 @@ Menu.prototype.drilldown = function(container, options) {
 	breadcrumb.append(crumbDefaultHeader);
 	
 	var checkMenuHeight = function(el){
-		if (el.height() > options.maxHeight) { el.addClass('fg-menu-scroll') };	
+		if (el.height() > options.maxHeight) { el.addClass('fg-menu-scroll'); };	
 		el.css({ height: options.maxHeight });
 	};
 	
@@ -672,13 +701,15 @@ Number.prototype.pxToEm = String.prototype.pxToEm = function(settings){
 
 //menu handlers 
 function callbackAfterKill(){
+	if($('.mi div').length >0)
 	$('.mi div').unbind();
 }
 
 function callbackAfterShow(){
+	if($('.mi div').length >0)
 	$('.mi div').hover(
 	function(){
-		$(this).css("background-color", "#edfec5");
+		$(this).css("background-color", "#F1F1F1");
 	}
 	,function(){$(this).css("background-color","#ffffff");
 	}
