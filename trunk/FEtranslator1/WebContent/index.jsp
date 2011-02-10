@@ -19,6 +19,7 @@
 <a href="<%=ctxstr%>/logout.jsp">logout</a><br/>
 <a href="<%=ctxstr%>/config-browser/actionNames.action?namespace=%2Fconfig-browser" >config browser</a>|
 <a href="<%=ctxstr%>/engine.action?debug=browser" >debug browser</a>	
+<a href="http://localhost:8082/FEtranslator1/html/programsetupview.action">programsetup</a>
 <form method="post" action="testxsl.action">
 	<table>
 		<tr><td>Enter FirstName :</td>

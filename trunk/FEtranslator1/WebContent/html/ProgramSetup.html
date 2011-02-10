@@ -8,7 +8,7 @@
   <meta name="Autdor" content="" />
   <meta name="Keywords" content="" />
   <meta name="Description" content="" />
-
+  <meta name="charset" content="utf-8" />
   <link type="text/css" href="../css/fg.menu.css" rel="stylesheet" />
 <link type="text/css" href="../css/jquery-ui-1.8.8.custom.css" rel="stylesheet" /> 
 <link href="../css/main.css" rel="stylesheet" type="text/css">
@@ -19,7 +19,7 @@
  <link type="text/css" href="../css/fg.menu.css" rel="stylesheet" />
  
  
-<script  src="../js/jquery.js"></script>
+<script  src="../js/jquery-1.4.4.min.js"></script>
 <script  src="../js/jquery.validate.js"></script>
 <script type="text/javascript" src="../js/fg.menu.js"></script>
 <script type="text/javascript" src="../js/jquery.tmpl.js"></script>
@@ -90,7 +90,9 @@ function  populateFieldsToModify(){
       if($("#programname").val() == 'TRACARD') $("#txtprogramdesc").val("Travel Card Program");
 	  $("#countryofissue").val("SINGAPORE");
 	  $('#txtstatus').val("Modify");
-	  iadt.setScreenMode("updaterow");
+	  $('#btnModify').removeAttr("disabled");
+	  $('#btnAdd').attr("disabled","disabled");
+	  //iadt.setScreenMode("updaterow");
   }
 }
 
@@ -165,6 +167,7 @@ function editMe ( objthis, radClickCallback) {
 	 $('input[type=radio]',objthis.parentNode.parentNode.parentNode).attr("checked","checked");
 	
 	 $('#btnAdd').attr('disabled','disabled'); 
+	 $('#btnModify').removeAttr('disabled');
 	 iadt.populateToFields($(objthis.parentNode.parentNode.parentNode).get(0), radClickCallback);
 	
 }
@@ -207,8 +210,31 @@ function radClickCallback (obj) {
 }
 
 function onSubmit (args) {
-	document.getElementById("form1").submit();
-	iadt.showMessage("Data saved successfully");
+	//document.getElementById("form1").submit();
+	var formdata = {form1:[]};
+	
+	$(iadt.options.divlist).find("tr:gt(0)").each(function(id, obj){
+        var rowobj={};		
+        rowobj["row"] = id;
+ 
+		$("input:gt(0)", this).each(function(i,v){
+			 rowobj[v.name] = v.value;
+			 }); 
+		formdata["form1"].push(rowobj);	 
+	});
+
+	
+	var submitdata = "submitdata="+JSONstring.make(formdata);
+	$('#form2')[0].action = "programsetupsave.action";
+//	$('#form2').append("<input type='hidden' id='submitdata' name='submitdata' />");
+//	$('#submitdata').val(submitdata);
+	 
+	$.post("programsetupsave.action",submitdata, prgsubmitCallback);
+	 
+}
+
+function prgsubmitCallback (data) {
+	iadt.showMessage("Data saved successfully" + data);
 }
 
 function onNext (args) {
@@ -217,7 +243,7 @@ function onNext (args) {
 
 function enableDisableFlds() {
 	if(screenMode == 'updaterow' && $('#txtstatus').val() == 'New'){
-	 
+	   
 	   var updateonar = fieldlist;
 		for ( var i = 0; i < updateonar.length; i++) {
 			var arelm = updateonar[i];
@@ -370,12 +396,12 @@ var keylist = "programname,txtnewprogname,txtstatus".split(",");
 	    &nbsp;<span class='icons'><span class='ui-icon ui-icon-pencil' onclick='editMe(this, radClickCallback);' ></span></span>
 	          <span class='icons'><span class='ui-icon ui-icon-closethick' onclick='deleteMe(this)' ></span></span>
       </td>
-      	<td style='display:none'>${programname}<input type='hidden' value='${programname}' id='programname__${rowcount}' name='programname__{rowcount}'/></td>
-  		<td style='display:table-cell'>${txtnewprogname}<input type='hidden' value='${txtnewprogname}' id='txtnewprogname__${rowcount}' name='txtnewprogname__{rowcount}'/></td>
-        <td style='display:table-cell'>${txtprogramdesc}<input type='hidden' value='${txtprogramdesc}' id='txtprogramdesc__${rowcount}' name='txtprogramdesc__{rowcount}'/></td>
-        <td style='display:table-cell'>${issuername}<input type='hidden' value='${issuername}' id='issuername__${rowcount}' name='issuername__{rowcount}'/></td>
-        <td style='display:table-cell'>${countryofissue}<input type='hidden' value='${countryofissue}' id='countryofissue__${rowcount}' name='countryofissue__{rowcount}'/></td>
-        <td style='display:table-cell'>${txtstatus}<input type='hidden' value='${txtstatus}' id='txtstatus__${rowcount}' name='txtstatus__{rowcount}'/></td>
+      	<td style='display:none'>${programname}<input type='hidden' value='${programname}' id='programname__${rowcount}' name='programname'/></td>
+  		<td style='display:table-cell'>${txtnewprogname}<input type='hidden' value='${txtnewprogname}' id='txtnewprogname__${rowcount}' name='txtnewprogname'/></td>
+        <td style='display:table-cell'>${txtprogramdesc}<input type='hidden' value='${txtprogramdesc}' id='txtprogramdesc__${rowcount}' name='txtprogramdesc'/></td>
+        <td style='display:table-cell'>${issuername}<input type='hidden' value='${issuername}' id='issuername__${rowcount}' name='issuername'/></td>
+        <td style='display:table-cell'>${countryofissue}<input type='hidden' value='${countryofissue}' id='countryofissue__${rowcount}' name='countryofissue'/></td>
+        <td style='display:table-cell'>${txtstatus}<input type='hidden' value='${txtstatus}' id='txtstatus__${rowcount}' name='txtstatus'/></td>
         </tr></table>
 </div>
     
@@ -439,7 +465,7 @@ var keylist = "programname,txtnewprogname,txtstatus".split(",");
   <div class="shrink" >
 	 <hr />
   	<div  style="float:left"> www.XYZ.com</div> 
-<div style="float:right">Copyright © 2011 XYZ </div>
+<div style="float:right">Copyright Â© 2011 XYZ </div>
   </div>
   </center>	
 </div>

@@ -19,7 +19,32 @@
 		</interceptors>
 	</package>
 
-
+	<package name="ProductSetup" extends="yidefaultPackage" namespace="/html">
+		<action name="programsetupview" class="actionclass.ProgramSetup" method="view">
+			<interceptor-ref name="myCustomStack" />
+			<result name="view" type="customXMLRes">
+				<param name="resultxml">ProgramSetup.xml</param>
+			</result>
+			<result name="input">/index.jsp</result>
+		</action>
+		<action name="programsetupsave" class="actionclass.ProgramSetup" method="save">
+			<interceptor-ref name="myCustomStack" />
+			<result name="save" type="customXMLRes">
+				<param name="resultxml">ProgramSetup.xml</param>
+			</result>
+			<result name="input">/index.jsp</result>
+		</action>
+		<action name="programsetupsave" class="actionclass.ProgramSetup" method="save">
+			<param name="pageconfigxml">ProgramSetup.xml</param>
+			<result name="saveajax" type="stream">	
+				<param name="resultxml">ProgramSetup.xml</param>
+				<param name="contentType">text/html</param>
+				<param name="inputName">inputStream</param>
+			</result>
+			<result name="input">/index.jsp</result>
+		</action>
+	</package>
+	
 	<package name="xslt-example" extends="yidefaultPackage">
 
 		<action name="testxsl" class="actionclass.ExampleXSLTAction" method="preview">
@@ -39,9 +64,11 @@
 				
 			</result>
 		</action>
-
+		
+		
 	</package>
-
+	
+	
 	<package name="odl-engine" extends="yidefaultPackage">
 		<!--<interceptors>
 			<interceptor-stack name="appDefault">

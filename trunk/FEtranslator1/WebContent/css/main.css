@@ -323,8 +323,11 @@ text-align: left;
  	
 	font-size:8pt;
 	padding: 5px;
-	border-bottom:1px solid #D0D0D0;
+	
 	cursor: pointer;
+ }
+ .mi td{
+ 	border-bottom:1px solid #D0D0D0;
  }
  .mi a{
 	text-decoration: underline;
@@ -345,9 +348,13 @@ text-align: left;
  
  }
 
-span#icons{ border: 0 none;
+span.icons{ border: 0 none;
 background: none;
 cursor:pointer;
-}  
+}
+.ui-widget-content span.ui-state-error{ border: 0 none;
+background: none;
+cursor:pointer;
+}   
 span.ui-icon { display: inline-block ; margin: 0 4px;}  
  
