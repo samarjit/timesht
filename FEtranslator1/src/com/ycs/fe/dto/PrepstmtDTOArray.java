@@ -21,7 +21,7 @@ package com.ycs.fe.dto;
          int i =0 ; 
          for ( i =0 ;i< ardto.size();i++) { 
                  PrepstmtDTO itr =  ardto.get(i); 
-                 retval = retval + sqlar[i] +" '"+itr.getData() +"'"; 
+                 retval = retval + sqlar[i] +" '"+itr.getData() +"'|"+itr.getTypeString(); 
          } 
          if(i+1 == sqlar.length) 
          retval = retval + sqlar[i]; 
