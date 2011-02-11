@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.opensymphony.xwork2.ActionSupport;
+import com.ycs.fe.crud.InsertData;
 import com.ycs.fe.crud.UpdateData;
 
 public class ProgramSetup extends ActionSupport {
@@ -54,13 +55,17 @@ private Logger logger = Logger.getLogger(getClass());
 				 
 						logger.debug("Going to Modify Block");
 						UpdateData upd = new UpdateData();
-						 upd.update(formname,jobj.getJSONObject(i));
+						upd.update(formname,jobj.getJSONObject(i));
 				}	 
 				if(jobj.getJSONObject(i).getString("txtstatus").equalsIgnoreCase("new")){
-					
+						logger.debug("Going to Modify Block");
+						InsertData ins = new InsertData();
+						ins.insert(formname,jobj.getJSONObject(i));
 				}
 				if(jobj.getJSONObject(i).getString("txtstatus").equalsIgnoreCase("close")){
-					
+						logger.debug("Going to Modify Block");
+						UpdateData upd = new UpdateData();
+						upd.update(formname,jobj.getJSONObject(i));
 				}
 					
 				

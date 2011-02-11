@@ -18,9 +18,9 @@ import com.ycs.fe.dto.PrepstmtDTO;
 import com.ycs.fe.dto.PrepstmtDTO.DataType;
 import com.ycs.fe.dto.PrepstmtDTOArray;
 
-public class UpdateData {
+public class InsertData {
 private Logger logger = Logger.getLogger(getClass()); 
-	public String update(String panelname, JSONObject jsonObject) {
+	public String insert(String panelname, JSONObject jsonObject) {
 		 
 		 
 		    String pageconfigxml =  ActionContext.getContext().getActionInvocation().getProxy().getConfig().getParams().get("pageconfigxml");
@@ -30,8 +30,8 @@ private Logger logger = Logger.getLogger(getClass());
 				org.dom4j.Document document1 = new SAXReader().read(new File(tplpath+"/"+pageconfigxml));
 				org.dom4j.Element root = document1.getRootElement();
 				Node crudnode = root.selectSingleNode("//panel[@id='"+panelname+"']/crud");
-				Node node = crudnode.selectSingleNode("sqlupdate");
-				if(node == null)throw new Exception("<sqlupdate> node not defined");
+				Node node = crudnode.selectSingleNode("sqlinsert");
+				if(node == null)throw new Exception("<sqlinsert> node not defined");
 				
 				String updatequery = "";
 				updatequery += node.getText();
@@ -125,7 +125,7 @@ private Logger logger = Logger.getLogger(getClass());
 			       
 			       logger.debug("UPDATE query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
 			}catch(Exception e){
-				logger.debug("Exception caught in UpdateData",e);
+				logger.debug("Exception caught in InsertData",e);
 			}
 		return parsedquery;
 	}
