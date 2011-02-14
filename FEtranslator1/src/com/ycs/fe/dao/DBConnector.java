@@ -1,7 +1,11 @@
 package com.ycs.fe.dao;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,7 +13,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -28,15 +34,32 @@ import com.ycs.fe.dto.PrepstmtDTOArray;
  * 
  */ 
 public class DBConnector {  
-private static final String DBURL = "jdbc:oracle:thin:@localhost:1521:XE";
-private static final String DBUSER = "test";
-private static final String DBPASSWORD = "test";
+private static String DRIVERNAME = "oracle.jdbc.driver.OracleDriver";
+private static String DBURL = "jdbc:oracle:thin:@localhost:1521:XE";
+private static String DBUSER = "test";
+private static String DBPASSWORD = "test";
 private boolean isRuninServerContext;
 
 
 
 
 
+public DBConnector() {
+	Properties prop = new Properties();
+	try {
+		 ClassLoader loader = this.getClass().getClassLoader();
+		 prop.load(loader.getResourceAsStream("path_config.properties"));
+		 
+		 DBURL = prop.getProperty("DBURL");
+		 DBUSER = prop.getProperty("DBUSER");
+		 DBPASSWORD = prop.getProperty("DBPASSWORD");
+		 DRIVERNAME = prop.getProperty("DRIVERNAME");
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+}
 private void debug(int priority, String s){ 
         if(priority>0){ 
                 System.out.println("DBConnecctor:"+s); 
@@ -58,7 +81,7 @@ public Connection getConnection()
         Connection conn = null; 
         try 
     { 
-        String driverName = "oracle.jdbc.driver.OracleDriver"; 
+        String driverName = DRIVERNAME;// "oracle.jdbc.driver.OracleDriver"; 
        // String url = "jdbc:mysql://localhost:3306/ams"; 
 		String url = DBURL;// "jdbc:oracle:thin:@127.0.0.1:1521:XE";
 		String userName = DBUSER;
@@ -90,7 +113,7 @@ public Connection getConnection()
 				isRuninServerContext = true;
 			}catch(Exception e){
 				fallaback = true;
-				debug(3,"Datasource is not configured, Using fallback method of JDBCUtils",e);
+				debug(3,"Datasource is not configured, Using fallback method of direct connection",e);
 			}
 		}
 		
@@ -98,7 +121,8 @@ public Connection getConnection()
 		///Running in standalone mode
 		 debug(3, "Database connection Running in standalone mode");
 //		 conn = DriverManager.getConnection (url, userName, password);
-		 Class.forName (driverName).newInstance (); 
+		 Class.forName (driverName); 
+		  
 	        conn = DriverManager.getConnection (url, userName, password); 
 	        if(conn == null){ 
 	                System.err.print("Some thing wrong with connecting with database!"); 
@@ -114,7 +138,8 @@ public Connection getConnection()
     } 
     catch (Exception e) 
     { 
-        System.err.println ("Cannot connect to database server:"+e); 
+        System.err.println ("Cannot connect to database server:"+e);
+        e.printStackTrace();
     } 
      
     return conn; 
@@ -180,7 +205,7 @@ public int executeUpdate(String qry) throws SQLException{
                  
                 conn = getConnection(); 
                 Statement stmt = conn.createStatement();  
-        retval  = stmt.executeUpdate(qry); 
+                retval  = stmt.executeUpdate(qry); 
         }catch(SQLException  e){ 
                 debug(5,"Exception:"+qry); 
                 e.printStackTrace();  
@@ -350,9 +375,9 @@ public int executePreparedUpdate(String qry,PrepstmtDTOArray arPrepstmt) throws 
         public static void main(String[] args) { 
                 try{ 
            
-                CachedRowSet crs = new DBConnector().executeQuery("select table_name from user_tables"); 
+                CachedRowSet crs = new DBConnector().executeQuery("select * from  test2"); 
                 while(crs.next()){ 
-                System.out.println("ARGUMENT_NAME:"+crs.getString("table_name")); 
+                System.out.println("ARGUMENT_NAME:"+crs.getString(1)); 
                // System.out.println(",DATA_TYPE:"+crs.getString("DATA_TYPE"));       
                 } 
                 crs.close(); 

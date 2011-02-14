@@ -22,6 +22,7 @@ import actionclass.XMLResult;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.config.entities.ResultConfig;
 import com.ycs.fe.dao.FETranslatorDAO;
+import com.ycs.fe.dto.PrepstmtDTOArray;
 
 public abstract class HTMLProcessor {
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -54,6 +55,7 @@ public abstract class HTMLProcessor {
 			try {
 				org.dom4j.Document document1 = new SAXReader().read(new File(tplpath+"/"+xmlFileName));
 				org.dom4j.Element root = document1.getRootElement();
+				//preload select queries
 				List nodeList = root.selectNodes("//query");
 				logger.debug("query list size:"+nodeList.size());
 				for (Iterator queryList = nodeList.iterator(); queryList.hasNext();) {
@@ -67,9 +69,30 @@ public abstract class HTMLProcessor {
 					org.dom4j.Element e = (org.dom4j.Element) node;
 				
 				}
+				//preload selectonload queries
+				List selonloadnl = root.selectNodes("//selectonload");
+				logger.debug("query selectonload list size:"+selonloadnl.size());
+				for (Iterator queryList = selonloadnl.iterator(); queryList.hasNext();) {
+					org.dom4j.Node node = (org.dom4j.Node) queryList.next();
+					logger.debug("Query Node:"+node.getText());
+					String stackid = ((org.dom4j.Element) node).attributeValue("stackid");
+					String type = ((org.dom4j.Element) node).attributeValue("type");
+					String sqlquery = node.getText();
+					FETranslatorDAO feDAO = new FETranslatorDAO();
+					
+					PrepstmtDTOArray prepar = new PrepstmtDTOArray();
+					feDAO.executecrud(sqlquery,stackid,prepar );
+					org.dom4j.Element e = (org.dom4j.Element) node;
+				
+				}
+				
 			} catch (DocumentException e) {
 				logger.debug("result xml file not readable --",e);
 			}
+			
+			 
+			 
+			
 		}
 		
 		

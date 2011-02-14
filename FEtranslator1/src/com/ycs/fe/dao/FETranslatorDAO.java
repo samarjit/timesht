@@ -2,12 +2,17 @@ package com.ycs.fe.dao;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.rowset.CachedRowSet;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
@@ -103,5 +108,89 @@ public class FETranslatorDAO {
 	    }
 	    
 	}
+	
+	
+	public String executecrud(String sqlquery, String stackid, PrepstmtDTOArray prepar) {
+		ValueStack stack = ActionContext.getContext().getValueStack();
+		DBConnector dbconn = new DBConnector();
+		String retval = "";
+		if(sqlquery!= null && sqlquery.trim().length() >0 ){
+	    	List<Map> values = new ArrayList<Map>();
+	    	Map<String, String> row ; 
+	    	Map<String, Object> context = new HashMap<String, Object>();
+			
+			CachedRowSet crs = null;
+			int countrec = 0;
+			try {
+				//case i insensitive m multiline s doall  
+				if(sqlquery.matches("(?ims:select)[\\S\\s]*(?ims:from).*")){
+					logger.debug("valid query processing...");
+					
+					
+					crs = dbconn.executePreparedQuery(sqlquery, prepar);
+					ResultSetMetaData md = crs.getMetaData();
+					int colcount = md.getColumnCount();
+					if(colcount >= 2){
+						while (crs.next()) {
+							row = new HashMap<String, String>();
+							for (int i = 1; i <= colcount; i++) {
+								row.put(md.getColumnLabel(i), crs.getString(i));
+							}
+							values.add(row);
+							countrec++;	
+						}
+						retval = String.valueOf(countrec) ;
+					}else{
+						while (crs.next()) {
+							row = new HashMap<String, String>();
+							row.put("value",crs.getString(1));
+							values.add(row);
+							countrec++;	
+						}
+					}
+					retval = "SUCCESS:"+String.valueOf(countrec);
+				}else if(sqlquery.matches("[\\S\\s]*(?ims:insert)[\\S\\s]*(?ims:into)[\\S\\s]*")){
+					countrec = dbconn.executePreparedUpdate(sqlquery, prepar);
+					retval = "SUCCESS:"+String.valueOf(countrec);
+				}else if(sqlquery.matches("[\\S\\s]*(?ims:update|delete)[\\S\\s]*(?ims:where)[\\S\\s]*")){
+					countrec = dbconn.executePreparedUpdate(sqlquery, prepar);
+					retval = "SUCCESS:"+String.valueOf(countrec);
+				
+				}else{
+					logger.debug("invalid query skipping..."+sqlquery);
+					retval = "ERROR:Invalid Query";
+					return retval;
+				}
+				
+			} catch (Exception e) {
+				logger.debug("DAO Exception:"+e);
+				retval = "ERROR:"+e.getLocalizedMessage();
+			} finally {
+				if (crs != null) {
+					try {
+						crs.close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					crs = null;
+				}
+			}
+			
+			JSONObject jobj = new JSONObject();
+			try {
+				JSONArray jar = new JSONArray(values);
+				jobj.put(stackid, jar);
+			} catch (JSONException e) {
+				logger.debug("JSON conversion exception preload selects",e);
+			}
+			
+			logger.debug(jobj.toString());
+			context.put("selectonload", jobj.toString());
+	    	stack.push(context);	
+	    }
+		return retval;
+	}
+	
+	
 
 }
