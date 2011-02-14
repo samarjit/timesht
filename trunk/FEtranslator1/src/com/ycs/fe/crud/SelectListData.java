@@ -20,7 +20,7 @@ import com.ycs.fe.dto.PrepstmtDTOArray;
 
 public class SelectListData {
 private Logger logger = Logger.getLogger(getClass()); 
-	public String update(String panelname, JSONObject jsonObject) {
+	public String selectList(String panelname, JSONObject jsonObject) {
 		 
 		 
 		    String pageconfigxml =  ActionContext.getContext().getActionInvocation().getProxy().getConfig().getParams().get("pageconfigxml");

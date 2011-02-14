@@ -38,7 +38,7 @@ private Logger logger = Logger.getLogger(getClass());
 		 
 		String resultHtml = "";
 		String formname = "";
-		
+		String result = "";
 		logger.debug(submitdata);
 		JSONObject jobj1 = new JSONObject(submitdata);
 		
@@ -55,25 +55,38 @@ private Logger logger = Logger.getLogger(getClass());
 				 
 						logger.debug("Going to Modify Block");
 						UpdateData upd = new UpdateData();
-						upd.update(formname,jobj.getJSONObject(i));
+						result =	upd.update(formname,jobj.getJSONObject(i), formname);
+						if(result.indexOf("SUCCESS")> -1)
+							resultHtml += "Records("+result.substring(8)+") Modified Successfully<br/>";
+						else
+							resultHtml += "Request failed"+result+"\n";
 				}	 
 				if(jobj.getJSONObject(i).getString("txtstatus").equalsIgnoreCase("new")){
 						logger.debug("Going to Modify Block");
 						InsertData ins = new InsertData();
-						ins.insert(formname,jobj.getJSONObject(i));
+						result = ins.insert(formname,jobj.getJSONObject(i), formname);
+						if(result.indexOf("SUCCESS")> -1)
+							resultHtml += "Records("+result.substring(8)+") Created Successfully<br/>";
+						else
+							resultHtml += "Request failed"+result+"\n";
 				}
 				if(jobj.getJSONObject(i).getString("txtstatus").equalsIgnoreCase("close")){
 						logger.debug("Going to Modify Block");
 						UpdateData upd = new UpdateData();
-						upd.update(formname,jobj.getJSONObject(i));
+						result = upd.update(formname,jobj.getJSONObject(i), formname);
+						if(result.indexOf("SUCCESS")> -1)
+							resultHtml += "Records("+result.substring(8)+") Closed Successfully<br/>";
+						else
+							resultHtml += "Request failed"+result+"\n";
 				}
 					
 				
 			}
 			
-		} 
+		}
 		
-		
+		 
+//		resultHtml = result;
 		inputStream = new StringBufferInputStream(resultHtml );
 		return "saveajax";
 	}

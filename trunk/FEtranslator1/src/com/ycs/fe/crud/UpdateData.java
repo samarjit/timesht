@@ -14,18 +14,20 @@ import org.dom4j.io.SAXReader;
 import org.json.JSONObject;
 
 import com.opensymphony.xwork2.ActionContext;
+import com.ycs.fe.dao.FETranslatorDAO;
 import com.ycs.fe.dto.PrepstmtDTO;
 import com.ycs.fe.dto.PrepstmtDTO.DataType;
 import com.ycs.fe.dto.PrepstmtDTOArray;
 
 public class UpdateData {
 private Logger logger = Logger.getLogger(getClass()); 
-	public String update(String panelname, JSONObject jsonObject) {
+	public String update(String panelname, JSONObject jsonObject, String formname) {
 		 
 		 
 		    String pageconfigxml =  ActionContext.getContext().getActionInvocation().getProxy().getConfig().getParams().get("pageconfigxml");
 			String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
 			String parsedquery = "";
+			String queryres = "";
 			try {
 				org.dom4j.Document document1 = new SAXReader().read(new File(tplpath+"/"+pageconfigxml));
 				org.dom4j.Element root = document1.getRootElement();
@@ -124,10 +126,13 @@ private Logger logger = Logger.getLogger(getClass());
 			       updatequery = parsedquery;
 			       
 			       logger.debug("UPDATE query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
+			       
+			       FETranslatorDAO fetranslatorDAO = new FETranslatorDAO();
+			       queryres  = fetranslatorDAO.executecrud(parsedquery, formname, arparam);
 			}catch(Exception e){
 				logger.debug("Exception caught in UpdateData",e);
 			}
-		return parsedquery;
+		return queryres;
 	}
 
 }
