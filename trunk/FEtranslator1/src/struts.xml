@@ -5,6 +5,8 @@
 
 <struts>
 	<constant name="struts.devMode" value="true" />
+	<constant name="struts.convention.classes.reload" value="false" />
+	
 	<package name="yidefaultPackage" extends="struts-default">
 		<result-types>
 			<result-type name="customXMLRes" class="actionclass.XMLResult">
@@ -22,6 +24,9 @@
 	<package name="ProductSetup" extends="yidefaultPackage" namespace="/html">
 		<action name="programsetupview" class="actionclass.ProgramSetup" method="view">
 			<interceptor-ref name="myCustomStack" />
+			<result name="view1" type="freemarker">
+				 ProgramSetup.ftl
+			</result>
 			<result name="view" type="customXMLRes">
 				<param name="resultxml">ProgramSetup.xml</param>
 			</result>

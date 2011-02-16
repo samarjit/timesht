@@ -22,19 +22,25 @@ import com.ycs.fe.dto.PrepstmtDTO.DataType;
 import com.ycs.fe.dto.PrepstmtDTOArray;
 import com.ycs.fe.dto.ResultDTO;
 
-public class UpdateData {
+public class JsrpcPojo {
 private Logger logger = Logger.getLogger(getClass()); 
-	public ResultDTO update(String screenName, String panelname, JSONObject jsonObject) {
+	public ResultDTO selectData(String screenName, String panelname,  JSONObject jsonObject) {
+		return selectData(screenName, panelname,"sqlselect", jsonObject);
+	}
+	
+	public ResultDTO selectData(String screenName, String panelname,String querynode, JSONObject jsonObject) {
+		 
 		 
 		    String pageconfigxml =  ScreenMapRepo.findMapXML(screenName);
+			String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
 			String parsedquery = "";
-			ResultDTO queryres = new ResultDTO();
+			ResultDTO resultDTO = new ResultDTO();
 			try {
-				org.dom4j.Document document1 = new SAXReader().read( pageconfigxml);
+				org.dom4j.Document document1 = new SAXReader().read(pageconfigxml);
 				org.dom4j.Element root = document1.getRootElement();
 				Node crudnode = root.selectSingleNode("//panel[@id='"+panelname+"']/crud");
-				Node node = crudnode.selectSingleNode("sqlupdate");
-				if(node == null)throw new Exception("<sqlupdate> node not defined");
+				Node node = crudnode.selectSingleNode(querynode);
+				if(node == null)throw new Exception("<"+querynode+"> node not defined");
 				
 				String updatequery = "";
 				updatequery += node.getText();
@@ -86,7 +92,7 @@ private Logger logger = Logger.getLogger(getClass());
 			          String prop =  m1.group();
 			          logger.debug("Start preparing:"+prop + m1.start() + " "+m1.end()+" "+m1.group(1)+" "+m1.group(2)+" "+m1.group(3));
 			          if(! "".equals(m1.group(2))){
-			        	  if(m1.group(1).equals(panelname)){
+			        	  if(m1.group(1).equals(panelname)){ //:form[0].param
 			        		  //fill with present panel row object
 			        		  String propname = m1.group(3);
 			        		  String propval = "";
@@ -94,7 +100,7 @@ private Logger logger = Logger.getLogger(getClass());
 			        			  propval = jsonObject.getString(propname);
 			        			  parsedquery += updatequery.substring(end,m1.start());//
 			        			  
-			        				  arparam.add(hmfielddbtype.get(propname),propval);
+			        			  arparam.add(hmfielddbtype.get(propname),propval);
 			        			   
 			        			  
 			        			  
@@ -102,11 +108,11 @@ private Logger logger = Logger.getLogger(getClass());
 			        		  }
 			        		  end = m1.end(); 
 			        		  logger.debug("with dot"+m1.group(2)+"."+propname);
-			        	  }else{
+			        	  }else{ //:formx[0].param
 			        		  logger.debug("does it come here"+  m1.group(1));
 			        		  //TODO: implement for object filling from related panels.
 			        	  }
-			          }else{ //fill with present panel row object
+			          }else{ //fill with present panel row object :formxparam
 			        	  String propval;
 			        	  if(jsonObject.has(m1.group(1)) ){
 			        		  String propname = m1.group(1);
@@ -126,14 +132,14 @@ private Logger logger = Logger.getLogger(getClass());
 			       parsedquery += updatequery.substring(end);
 			       updatequery = parsedquery;
 			       
-			       logger.debug("UPDATE query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
-			       
+			       logger.debug("INSERT query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
 			       FETranslatorDAO fetranslatorDAO = new FETranslatorDAO();
-			       queryres  = fetranslatorDAO.executecrud(screenName, parsedquery, panelname, arparam);
+			       resultDTO = fetranslatorDAO.executecrud(screenName, parsedquery, panelname, arparam);
+			       
 			}catch(Exception e){
-				logger.debug("Exception caught in UpdateData",e);
+				logger.debug("Exception caught in InsertData",e);
 			}
-		return queryres;
+		return resultDTO;
 	}
 
 }

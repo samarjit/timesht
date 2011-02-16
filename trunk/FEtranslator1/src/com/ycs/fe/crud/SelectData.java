@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import map.ScreenMapRepo;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.dom4j.Element;
@@ -14,24 +16,31 @@ import org.dom4j.io.SAXReader;
 import org.json.JSONObject;
 
 import com.opensymphony.xwork2.ActionContext;
+import com.ycs.fe.dao.FETranslatorDAO;
 import com.ycs.fe.dto.PrepstmtDTO;
 import com.ycs.fe.dto.PrepstmtDTO.DataType;
 import com.ycs.fe.dto.PrepstmtDTOArray;
+import com.ycs.fe.dto.ResultDTO;
 
 public class SelectData {
 private Logger logger = Logger.getLogger(getClass()); 
-	public String update(String panelname, JSONObject jsonObject) {
+	public ResultDTO selectData(String screenName, String panelname,  JSONObject jsonObject) {
+		return selectData(screenName, panelname,"sqlselect", jsonObject);
+	}
+	
+	public ResultDTO selectData(String screenName, String panelname,String querynode, JSONObject jsonObject) {
 		 
 		 
-		    String pageconfigxml =  ActionContext.getContext().getActionInvocation().getProxy().getConfig().getParams().get("pageconfigxml");
+		    String pageconfigxml =  ScreenMapRepo.findMapXML(screenName);
 			String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
 			String parsedquery = "";
+			ResultDTO resultDTO = new ResultDTO();
 			try {
-				org.dom4j.Document document1 = new SAXReader().read(new File(tplpath+"/"+pageconfigxml));
+				org.dom4j.Document document1 = new SAXReader().read(pageconfigxml);
 				org.dom4j.Element root = document1.getRootElement();
 				Node crudnode = root.selectSingleNode("//panel[@id='"+panelname+"']/crud");
-				Node node = crudnode.selectSingleNode("sqlselect");
-				if(node == null)throw new Exception("<sqlselect> node not defined");
+				Node node = crudnode.selectSingleNode(querynode);
+				if(node == null)throw new Exception("<"+querynode+"> node not defined");
 				
 				String updatequery = "";
 				updatequery += node.getText();
@@ -70,7 +79,7 @@ private Logger logger = Logger.getLogger(getClass());
 				
 				//Where
 //				String updatewhere = crudnode.selectSingleNode("sqlwhere").getText();
-				Pattern   pattern = Pattern.compile("\\:(\\w*)(\\.?)(\\w*)",Pattern.DOTALL|Pattern.MULTILINE);
+				Pattern   pattern = Pattern.compile("\\:(\\w*)\\[(\\d*)\\]?\\.?(\\w*)",Pattern.DOTALL|Pattern.MULTILINE);
 				
 				PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
 				
@@ -123,11 +132,14 @@ private Logger logger = Logger.getLogger(getClass());
 			       parsedquery += updatequery.substring(end);
 			       updatequery = parsedquery;
 			       
-			       logger.debug("Select query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
+			       logger.debug("INSERT query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
+			       FETranslatorDAO fetranslatorDAO = new FETranslatorDAO();
+			       resultDTO = fetranslatorDAO.executecrud(screenName, parsedquery, panelname, arparam);
+			       
 			}catch(Exception e){
 				logger.debug("Exception caught in InsertData",e);
 			}
-		return parsedquery;
+		return resultDTO;
 	}
 
 }

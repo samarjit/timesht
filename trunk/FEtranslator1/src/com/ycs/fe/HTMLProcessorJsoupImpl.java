@@ -550,7 +550,9 @@ private boolean templateprocessed = false;
 			}
 			//savefieldids end
 			
-			
+			String screenName =  ((Element) xmlelmNode.selectSingleNode("/root/screen")).attributeValue("name");
+			globaljs += " var screenName='"+screenName+"'";
+
 			String strrule = "<script>"+globaljs+"</script>";
 			headNode.append(strrule);
 			//appendXmlFragment(dbuild, headNode, strrule);

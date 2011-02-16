@@ -3,7 +3,6 @@
 	<name>FEtranslator1</name>
 	<comment></comment>
 	<projects>
-		<project>FEtranslator1</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

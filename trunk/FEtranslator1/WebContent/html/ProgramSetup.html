@@ -144,7 +144,26 @@ function onCancel() {
 }
 
 function onSearch(){
-	$('#multiplerows .trlightgrey').parent().append($('#searchtemp').find('tr').parent().html());
+	//Dummy data$('#multiplerows .trlightgrey').parent().append($('#searchtemp').find('tr').parent().html());
+	jQuery.get("jsrpc.action?screenName=ProgramSetup&panelName=form1&command=selectonload",function (data){
+		alert(data);
+	var json = jQuery.parseJSON(data);
+		if(json != null){
+			json = json.data.form1;
+			 var templateResult = {};
+			var tablehtml = '<table width="100%" class="table1" ><tr>';
+			$.each(json,function (i,v){
+				var templatedata = $(iadt.options.listtemplate).html();
+				   templateResult = 	$.tmpl(templatedata,v);
+				tablehtml+=templateResult.find("tr").parent().html();
+			});
+			tablehtml +="</table>";		
+			$('body').append(tablehtml);
+		}
+	
+	});
+
+	
 }
 function onViewDetails(){
 if(	$('#multiplerows .trlightgrey').siblings().find('input[type=radio]:checked').length > 0)
@@ -224,7 +243,7 @@ function onSubmit (args) {
 	});
 
 	
-	var submitdata = "submitdata="+JSONstring.make(formdata);
+	var submitdata = "screenName=ProgramSetup&submitdata="+JSONstring.make(formdata);
 	$('#form2')[0].action = "programsetupsave.action";
 //	$('#form2').append("<input type='hidden' id='submitdata' name='submitdata' />");
 //	$('#submitdata').val(submitdata);

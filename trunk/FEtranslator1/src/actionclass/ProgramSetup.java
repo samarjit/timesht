@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.opensymphony.xwork2.ActionSupport;
 import com.ycs.fe.crud.InsertData;
 import com.ycs.fe.crud.UpdateData;
+import com.ycs.fe.dto.ResultDTO;
 
 public class ProgramSetup extends ActionSupport {
 private Logger logger = Logger.getLogger(getClass());
@@ -24,13 +25,13 @@ private Logger logger = Logger.getLogger(getClass());
 	private String submitdata;
 	private String desc;
 	private InputStream inputStream;
-	
+	private String screenName;
 	public InputStream getInputStream() {
 		return inputStream;
 	}
 
 	public String view() throws Exception {
-		 
+		System.out.println("Program Setup view ****************"); 
 		return "view";
 	}
 	
@@ -38,7 +39,7 @@ private Logger logger = Logger.getLogger(getClass());
 		 
 		String resultHtml = "";
 		String formname = "";
-		String result = "";
+		ResultDTO result = new ResultDTO();
 		logger.debug(submitdata);
 		JSONObject jobj1 = new JSONObject(submitdata);
 		
@@ -55,29 +56,29 @@ private Logger logger = Logger.getLogger(getClass());
 				 
 						logger.debug("Going to Modify Block");
 						UpdateData upd = new UpdateData();
-						result =	upd.update(formname,jobj.getJSONObject(i), formname);
-						if(result.indexOf("SUCCESS")> -1)
-							resultHtml += "Records("+result.substring(8)+") Modified Successfully<br/>";
+						result =	upd.update(screenName,formname,jobj.getJSONObject(i));
+						if(result.getMessages().size() > 0)
+							resultHtml += "Records("+result.getMessages().size()+") Modified Successfully<br/>";
 						else
-							resultHtml += "Request failed"+result+"\n";
+							resultHtml += "Request failed "+ result.getErrors().size()+"\n";
 				}	 
 				if(jobj.getJSONObject(i).getString("txtstatus").equalsIgnoreCase("new")){
 						logger.debug("Going to Modify Block");
 						InsertData ins = new InsertData();
-						result = ins.insert(formname,jobj.getJSONObject(i), formname);
-						if(result.indexOf("SUCCESS")> -1)
-							resultHtml += "Records("+result.substring(8)+") Created Successfully<br/>";
+						result = ins.insert(screenName,formname,jobj.getJSONObject(i));
+						if(result.getMessages().size() > 0)
+							resultHtml += "Records("+result.getMessages().size()+") Created Successfully<br/>";
 						else
-							resultHtml += "Request failed"+result+"\n";
+							resultHtml += "Request failed "+result.getErrors().size()+"\n";
 				}
 				if(jobj.getJSONObject(i).getString("txtstatus").equalsIgnoreCase("close")){
 						logger.debug("Going to Modify Block");
 						UpdateData upd = new UpdateData();
-						result = upd.update(formname,jobj.getJSONObject(i), formname);
-						if(result.indexOf("SUCCESS")> -1)
-							resultHtml += "Records("+result.substring(8)+") Closed Successfully<br/>";
+						result = upd.update(screenName,formname,jobj.getJSONObject(i));
+						if(result.getMessages().size() > 0)
+							resultHtml += "Records("+result.getMessages().size()+") Closed Successfully<br/>";
 						else
-							resultHtml += "Request failed"+result+"\n";
+							resultHtml += "Request failed "+result.getErrors().size()+"\n";
 				}
 					
 				
@@ -105,6 +106,14 @@ private Logger logger = Logger.getLogger(getClass());
 
 	public void setDesc(String desc) {
 		this.desc = desc;
+	}
+
+	public String getScreenName() {
+		return screenName;
+	}
+
+	public void setScreenName(String screenName) {
+		this.screenName = screenName;
 	}
 
 	

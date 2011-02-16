@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilder;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.dom4j.DocumentException;
+import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -19,10 +20,12 @@ import org.xml.sax.SAXException;
 
 import actionclass.XMLResult;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.config.entities.ResultConfig;
 import com.ycs.fe.dao.FETranslatorDAO;
 import com.ycs.fe.dto.PrepstmtDTOArray;
+import com.ycs.fe.dto.ResultDTO;
 
 public abstract class HTMLProcessor {
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -71,6 +74,8 @@ public abstract class HTMLProcessor {
 				}
 				//preload selectonload queries
 				List selonloadnl = root.selectNodes("//selectonload");
+				Element elm = (Element) root.selectSingleNode("/root/screen");
+				String screenName = elm.attributeValue("name");
 				logger.debug("query selectonload list size:"+selonloadnl.size());
 				for (Iterator queryList = selonloadnl.iterator(); queryList.hasNext();) {
 					org.dom4j.Node node = (org.dom4j.Node) queryList.next();
@@ -81,9 +86,11 @@ public abstract class HTMLProcessor {
 					FETranslatorDAO feDAO = new FETranslatorDAO();
 					
 					PrepstmtDTOArray prepar = new PrepstmtDTOArray();
-					feDAO.executecrud(sqlquery,stackid,prepar );
+					ResultDTO resDTO = feDAO.executecrud(screenName,sqlquery,stackid, prepar );
+					ActionContext.getContext().getValueStack().set("resDTO",resDTO);
+					
 					org.dom4j.Element e = (org.dom4j.Element) node;
-				
+					System.out.println("HTMLProcessor **************** populating value stack");
 				}
 				
 			} catch (DocumentException e) {

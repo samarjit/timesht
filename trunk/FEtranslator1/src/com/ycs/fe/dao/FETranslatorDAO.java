@@ -18,6 +18,7 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
 import com.ycs.fe.dto.PrepstmtDTO.DataType;
 import com.ycs.fe.dto.PrepstmtDTOArray;
+import com.ycs.fe.dto.ResultDTO;
 
 public class FETranslatorDAO {
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -110,20 +111,21 @@ public class FETranslatorDAO {
 	}
 	
 	
-	public String executecrud(String sqlquery, String stackid, PrepstmtDTOArray prepar) {
+	public ResultDTO executecrud(String screenName, String sqlquery, String stackid, PrepstmtDTOArray prepar) {
 		ValueStack stack = ActionContext.getContext().getValueStack();
 		DBConnector dbconn = new DBConnector();
 		String retval = "";
+		ResultDTO resultDTO = new ResultDTO();
 		if(sqlquery!= null && sqlquery.trim().length() >0 ){
 	    	List<Map> values = new ArrayList<Map>();
 	    	Map<String, String> row ; 
-	    	Map<String, Object> context = new HashMap<String, Object>();
+	    	HashMap<String, Object> context = new HashMap<String, Object>();
 			
 			CachedRowSet crs = null;
 			int countrec = 0;
 			try {
 				//case i insensitive m multiline s doall  
-				if(sqlquery.matches("(?ims:select)[\\S\\s]*(?ims:from).*")){
+				if(sqlquery.matches("(?ims:select)[\\S\\s]*(?ims:from)[\\S\\s]*")){
 					logger.debug("valid query processing...");
 					
 					
@@ -148,18 +150,19 @@ public class FETranslatorDAO {
 							countrec++;	
 						}
 					}
-					retval = "SUCCESS:"+String.valueOf(countrec);
+					resultDTO.addMessage("SUCCESS:"+String.valueOf(countrec));
 				}else if(sqlquery.matches("[\\S\\s]*(?ims:insert)[\\S\\s]*(?ims:into)[\\S\\s]*")){
 					countrec = dbconn.executePreparedUpdate(sqlquery, prepar);
-					retval = "SUCCESS:"+String.valueOf(countrec);
+					resultDTO.addMessage("SUCCESS:"+String.valueOf(countrec));
 				}else if(sqlquery.matches("[\\S\\s]*(?ims:update|delete)[\\S\\s]*(?ims:where)[\\S\\s]*")){
 					countrec = dbconn.executePreparedUpdate(sqlquery, prepar);
-					retval = "SUCCESS:"+String.valueOf(countrec);
+					resultDTO.addMessage("SUCCESS:"+String.valueOf(countrec));
 				
 				}else{
 					logger.debug("invalid query skipping..."+sqlquery);
-					retval = "ERROR:Invalid Query";
-					return retval;
+					 
+					 resultDTO.addError("ERROR:Invalid Query");
+					 return resultDTO;
 				}
 				
 			} catch (Exception e) {
@@ -184,11 +187,14 @@ public class FETranslatorDAO {
 				logger.debug("JSON conversion exception preload selects",e);
 			}
 			
-			logger.debug(jobj.toString());
-			context.put("selectonload", jobj.toString());
-	    	stack.push(context);	
+			logger.debug(screenName+stackid+"="+jobj.toString());
+			context.put(screenName+stackid, jobj.toString());
+			
+			resultDTO.setData(jobj);
+	    	stack.getContext().put("resultDTO",resultDTO);	
+	    	logger.debug("ValueStack="+stack);
 	    }
-		return retval;
+		return resultDTO;
 	}
 	
 	
