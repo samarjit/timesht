@@ -205,6 +205,11 @@ color: white;
 padding: 4px 20px;
 cursor:pointer;
 }
+
+.buttonenabled[disabled]{
+	 
+	color: lightgrey;
+}
 .star
 {
 	font-family: Arial, Helvetica, sans-serif;

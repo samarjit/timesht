@@ -10,8 +10,8 @@
 		<scripts>
 			<scriptinclude></scriptinclude>
 			<![CDATA[    
-				 
-				var selonload='<@s.property value="resDTO.data" escape="false" />';
+				  
+				var selonload='<@s.property value="resDTO" escape="false" />';
 				 
 				]]>
 			<scriptinclude></scriptinclude>
@@ -28,16 +28,14 @@
 	<panels>
 		<panel id="form1">
 			<crud>
-				<jsonrpc>SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS 
-					where PROGNAME='NewProg'</jsonrpc>			
 			    <selectonload stackid="form1">SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS</selectonload>
 				<savefieldids>txtnewprogname,txtprogramdesc,countryofissue</savefieldids>
 				<sqlselect>select USER_ID userid, PASSWD password from USER_MASTER</sqlselect>
 				<sqlinsert>insert into PROGRAMDETAILS (PROGNAME,PROGDESC,COUNTRY_ISSUE)values(:txtnewprogname,:txtprogramdesc,:countryofissue)</sqlinsert>
-				<sqldelete>delete from PROGRAMDETAILS where PROGNAME=:form1[0].txtnewprogname AND COUNTRY_ISSUE=:form1[0].countryofissue</sqldelete>
+				<sqldelete>delete from PROGRAMDETAILS where PROGNAME=:form1.txtnewprogname AND COUNTRY_ISSUE=:form1.countryofissue</sqldelete>
 				<sqlselectcount>derive</sqlselectcount>
 				<sqlupdate>update PROGRAMDETAILS set PROGDESC=:txtprogramdesc,COUNTRY_ISSUE=:countryofissue
-				 where PROGNAME=:form1[0].txtnewprogname  
+				 where PROGNAME=:form1.txtnewprogname  
 				</sqlupdate>
 			</crud>
 			<fields>

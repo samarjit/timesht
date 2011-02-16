@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import map.ScreenMapRepo;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.dom4j.Element;
@@ -18,18 +20,18 @@ import com.ycs.fe.dao.FETranslatorDAO;
 import com.ycs.fe.dto.PrepstmtDTO;
 import com.ycs.fe.dto.PrepstmtDTO.DataType;
 import com.ycs.fe.dto.PrepstmtDTOArray;
+import com.ycs.fe.dto.ResultDTO;
 
 public class InsertData {
 private Logger logger = Logger.getLogger(getClass()); 
-	public String insert(String panelname, JSONObject jsonObject, String formname) {
+	public ResultDTO insert(String screenName, String panelname, JSONObject jsonObject) {
 		 
 		 
-		    String pageconfigxml =  ActionContext.getContext().getActionInvocation().getProxy().getConfig().getParams().get("pageconfigxml");
-			String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
+			String xmlconfigfile =  ScreenMapRepo.findMapXML(screenName);
 			String parsedquery = "";
-			String queryres = "";
+			ResultDTO resultDTO = new ResultDTO();
 			try {
-				org.dom4j.Document document1 = new SAXReader().read(new File(tplpath+"/"+pageconfigxml));
+				org.dom4j.Document document1 = new SAXReader().read(xmlconfigfile);
 				org.dom4j.Element root = document1.getRootElement();
 				Node crudnode = root.selectSingleNode("//panel[@id='"+panelname+"']/crud");
 				Node node = crudnode.selectSingleNode("sqlinsert");
@@ -72,7 +74,7 @@ private Logger logger = Logger.getLogger(getClass());
 				
 				//Where
 //				String updatewhere = crudnode.selectSingleNode("sqlwhere").getText();
-				Pattern   pattern = Pattern.compile("\\:(\\w*)(\\.?)(\\w*)",Pattern.DOTALL|Pattern.MULTILINE);
+				Pattern   pattern = Pattern.compile("\\:(\\w*)\\[(\\d*)\\]?\\.?(\\w*)",Pattern.DOTALL|Pattern.MULTILINE);
 				
 				PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
 				
@@ -93,7 +95,7 @@ private Logger logger = Logger.getLogger(getClass());
 			        			  propval = jsonObject.getString(propname);
 			        			  parsedquery += updatequery.substring(end,m1.start());//
 			        			  
-			        				  arparam.add(hmfielddbtype.get(propname),propval);
+			        			  arparam.add(hmfielddbtype.get(propname),propval);
 			        			   
 			        			  
 			        			  
@@ -112,7 +114,7 @@ private Logger logger = Logger.getLogger(getClass());
 			        		  propval = jsonObject.getString(m1.group(1));
 			        		  parsedquery += updatequery.substring(end,m1.start());//
 							 
-		        				  arparam.add(hmfielddbtype.get(propname),propval);
+		        			  arparam.add(hmfielddbtype.get(propname),propval);
 		        			   
 			        		  parsedquery += "?";
 			        	  }
@@ -127,11 +129,11 @@ private Logger logger = Logger.getLogger(getClass());
 			       
 			       logger.debug("INSERT query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
 			       FETranslatorDAO fetranslatorDAO = new FETranslatorDAO();
-			       queryres = fetranslatorDAO.executecrud(parsedquery, formname, arparam);
+			       resultDTO = fetranslatorDAO.executecrud(screenName, parsedquery, panelname, arparam);
 			}catch(Exception e){
 				logger.debug("Exception caught in InsertData",e);
 			}
-		return queryres;
+		return resultDTO;
 	}
 
 }

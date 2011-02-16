@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import map.ScreenMapRepo;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.dom4j.Element;
@@ -20,14 +22,12 @@ import com.ycs.fe.dto.PrepstmtDTOArray;
 
 public class SelectListData {
 private Logger logger = Logger.getLogger(getClass()); 
-	public String selectList(String panelname, JSONObject jsonObject) {
+	public String selectList(String screenName, String panelname, JSONObject jsonObject) {
 		 
-		 
-		    String pageconfigxml =  ActionContext.getContext().getActionInvocation().getProxy().getConfig().getParams().get("pageconfigxml");
-			String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
+		 	String xmlconfigfile =  ScreenMapRepo.findMapXML(screenName);
 			String parsedquery = "";
 			try {
-				org.dom4j.Document document1 = new SAXReader().read(new File(tplpath+"/"+pageconfigxml));
+				org.dom4j.Document document1 = new SAXReader().read(xmlconfigfile);
 				org.dom4j.Element root = document1.getRootElement();
 				Node crudnode = root.selectSingleNode("//panel[@id='"+panelname+"']/crud");
 				Node node = crudnode.selectSingleNode("sqlinsert");
@@ -70,7 +70,7 @@ private Logger logger = Logger.getLogger(getClass());
 				
 				//Where
 //				String updatewhere = crudnode.selectSingleNode("sqlwhere").getText();
-				Pattern   pattern = Pattern.compile("\\:(\\w*)(\\.?)(\\w*)",Pattern.DOTALL|Pattern.MULTILINE);
+				Pattern   pattern = Pattern.compile("\\:(\\w*)\\[(\\d*)\\]?\\.?(\\w*)",Pattern.DOTALL|Pattern.MULTILINE);
 				
 				PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
 				
