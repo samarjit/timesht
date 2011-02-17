@@ -145,7 +145,9 @@ function onCancel() {
 
 function onSearch(){
 	//Dummy data$('#multiplerows .trlightgrey').parent().append($('#searchtemp').find('tr').parent().html());
-	jQuery.get("jsrpc.action?screenName=ProgramSetup&panelName=form1&command=selectonload",function (data){
+	var submitdata = {whereval:"NewCard"};
+	var submitstring = JSONstring.make(submitdata);
+	jQuery.get("jsrpc.action?screenName=ProgramSetup&panelName=form1&command=jsonrpc&submitdata="+submitstring,function (data){
 		alert(data);
 	var json = jQuery.parseJSON(data);
 		if(json != null){

@@ -70,61 +70,8 @@ private Logger logger = Logger.getLogger(getClass());
 				//SET
 				List<Element> primarykeys = crudnode.selectNodes("../fields/field/*[@primarykey]");
 				
-				
-				//Where
-//				String updatewhere = crudnode.selectSingleNode("sqlwhere").getText();
-				Pattern   pattern = Pattern.compile("\\:(\\w*)\\[(\\d*)\\]?\\.?(\\w*)",Pattern.DOTALL|Pattern.MULTILINE);
-				
 				PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
-				
-				
-				Matcher m1 = pattern.matcher(updatequery); // get a matcher object
-			       int count = 0;
-			       int end = 0;
-			       while(m1.find()) {
-			          
-			          String prop =  m1.group();
-			          logger.debug("Start preparing:"+prop + m1.start() + " "+m1.end()+" "+m1.group(1)+" "+m1.group(2)+" "+m1.group(3));
-			          if(! "".equals(m1.group(2))){
-			        	  if(m1.group(1).equals(panelname)){
-			        		  //fill with present panel row object
-			        		  String propname = m1.group(3);
-			        		  String propval = "";
-			        		  if(jsonObject.has(propname)){
-			        			  propval = jsonObject.getString(propname);
-			        			  parsedquery += updatequery.substring(end,m1.start());//
-			        			  
-			        				  arparam.add(hmfielddbtype.get(propname),propval);
-			        			   
-			        			  
-			        			  
-			        			  parsedquery += "?";
-			        		  }
-			        		  end = m1.end(); 
-			        		  logger.debug("with dot"+m1.group(2)+"."+propname);
-			        	  }else{
-			        		  logger.debug("does it come here"+  m1.group(1));
-			        		  //TODO: implement for object filling from related panels.
-			        	  }
-			          }else{ //fill with present panel row object
-			        	  String propval;
-			        	  if(jsonObject.has(m1.group(1)) ){
-			        		  String propname = m1.group(1);
-			        		  propval = jsonObject.getString(m1.group(1));
-			        		  parsedquery += updatequery.substring(end,m1.start());//
-							 
-		        				  arparam.add(hmfielddbtype.get(propname),propval);
-		        			   
-			        		  parsedquery += "?";
-			        	  }
-			        	  
-		        		  end = m1.end(); 
-		        		  logger.debug("else no dot"+m1.group(1));
-			          }
-			          count++;
-			       }
-			       parsedquery += updatequery.substring(end);
-			       updatequery = parsedquery;
+				parsedquery = QueryParser.parseQuery(updatequery, panelname, jsonObject, arparam, hmfielddbtype);
 			       
 			       logger.debug("UPDATE query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
 			       

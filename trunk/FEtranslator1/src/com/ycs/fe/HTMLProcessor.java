@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import map.ScreenMapRepo;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.dom4j.DocumentException;
@@ -18,8 +20,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import actionclass.XMLResult;
+import actionclass.ProgramSetup;
 
+import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.config.entities.ResultConfig;
@@ -28,7 +31,7 @@ import com.ycs.fe.dto.PrepstmtDTOArray;
 import com.ycs.fe.dto.ResultDTO;
 
 public abstract class HTMLProcessor {
-	private Logger logger = Logger.getLogger(this.getClass());
+	private Logger logger = Logger.getLogger("com.ycs.fe.HTMLProcessor");
 	public HTMLProcessor() {
 		super();
 	}
@@ -51,12 +54,17 @@ public abstract class HTMLProcessor {
 	public void populateValueStack(ActionInvocation invocation, String resultCode) {
 		ResultConfig resultConfig = invocation.getProxy().getConfig().getResults().get(resultCode);
 		logger.debug("Result classname = "+resultConfig.getClassName()); 
-		if(XMLResult.class.getName().equals(resultConfig.getClassName())){
-			String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
-			String xmlFileName = resultConfig.getParams().get("resultxml");
-			
+		
+		String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
+		String xmlFileName = resultConfig.getParams().get("resultxml");
+	 
+		String screenName1 = (String) invocation.getInvocationContext().getValueStack().findValue("screenName",String.class);
+		logger.debug("For screenName:"+screenName1);
+		String xmlconfigfile =  ScreenMapRepo.findMapXML(screenName1);
+		//if(XMLResult.class.getName().equals(resultConfig.getClassName())){ Let it run for all actions that is coming from 
+		if(screenName1 != null && screenName1.length() >0)	
 			try {
-				org.dom4j.Document document1 = new SAXReader().read(new File(tplpath+"/"+xmlFileName));
+				org.dom4j.Document document1 = new SAXReader().read(xmlconfigfile);
 				org.dom4j.Element root = document1.getRootElement();
 				//preload select queries
 				List nodeList = root.selectNodes("//query");
@@ -87,8 +95,9 @@ public abstract class HTMLProcessor {
 					
 					PrepstmtDTOArray prepar = new PrepstmtDTOArray();
 					ResultDTO resDTO = feDAO.executecrud(screenName,sqlquery,stackid, prepar );
-					ActionContext.getContext().getValueStack().set("resDTO",resDTO);
-					
+					ActionContext.getContext().getValueStack().set("resDTO",new Gson().toJson(resDTO).toString());
+					ActionContext.getContext().getValueStack().getContext().put("ZHello", "World");
+					ActionContext.getContext().getValueStack().set("ZHello2", "World2");
 					org.dom4j.Element e = (org.dom4j.Element) node;
 					System.out.println("HTMLProcessor **************** populating value stack");
 				}
@@ -100,7 +109,7 @@ public abstract class HTMLProcessor {
 			 
 			 
 			
-		}
+		//}
 		
 		
 	}

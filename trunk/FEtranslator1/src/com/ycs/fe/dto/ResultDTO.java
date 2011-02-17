@@ -1,6 +1,7 @@
 package com.ycs.fe.dto;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -9,7 +10,7 @@ public class ResultDTO {
 
 private List<String> messages;
 private List<String> errors;
-private JSONObject data;
+private HashMap data;
 
  
 
@@ -29,11 +30,11 @@ public List<String> getErrors() {
 public void setErrors(List<String> errors) {
 	this.errors = errors;
 }
-public JSONObject getData() {
+public HashMap getData() {
 	return data;
 }
-public void setData(JSONObject data) {
-	this.data = data;
+public void setData(HashMap jobj) {
+	this.data = jobj;
 }
 
 public void addError(String e){

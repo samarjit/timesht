@@ -10,8 +10,10 @@
 		<scripts>
 			<scriptinclude></scriptinclude>
 			<![CDATA[    
-				  
-				var selonload='<@s.property value="resDTO" escape="false" />';
+				   ${ZHello}##<@s.property value="ZHello" escape="false" />
+				 ${ZHello2}##<@s.property value="ZHello2" escape="false" />|||
+				 ${resDTO.data}
+				var selonload='<@s.push value="resDTO"><@s.property value="data" escape="false" /></@s.push>';
 				 
 				]]>
 			<scriptinclude></scriptinclude>

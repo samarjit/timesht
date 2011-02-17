@@ -179,13 +179,9 @@ public class FETranslatorDAO {
 				}
 			}
 			
-			JSONObject jobj = new JSONObject();
-			try {
-				JSONArray jar = new JSONArray(values);
-				jobj.put(stackid, jar);
-			} catch (JSONException e) {
-				logger.debug("JSON conversion exception preload selects",e);
-			}
+			HashMap jobj = new HashMap();
+			ArrayList jar = new ArrayList(values);
+			jobj.put(stackid, jar);
 			
 			logger.debug(screenName+stackid+"="+jobj.toString());
 			context.put(screenName+stackid, jobj.toString());

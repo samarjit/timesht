@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.ycs.fe.crud.InsertData;
 import com.ycs.fe.crud.UpdateData;
@@ -32,6 +33,9 @@ private Logger logger = Logger.getLogger(getClass());
 
 	public String view() throws Exception {
 		System.out.println("Program Setup view ****************"); 
+		screenName = "ProgramSetup";
+//		ActionContext.getContext().getValueStack().getContext().put("ZHello", "World");
+//		ActionContext.getContext().getValueStack().set("ZHello2", "World2");
 		return "view";
 	}
 	
