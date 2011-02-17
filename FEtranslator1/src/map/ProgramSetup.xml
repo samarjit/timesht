@@ -10,9 +10,10 @@
 		<scripts>
 			<scriptinclude></scriptinclude>
 			<![CDATA[    
-				 
-				var selonload='<@s.property value="resDTO.data" escape="false" />';
-				 
+				  
+				<script> 
+				var selonload='<@s.property value="resDTO" escape="false" />';
+				</script>
 				]]>
 			<scriptinclude></scriptinclude>
 		</scripts>
@@ -29,7 +30,7 @@
 		<panel id="form1">
 			<crud>
 				<jsonrpc>SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS 
-					where PROGNAME='NewProg'</jsonrpc>			
+					where PROGNAME=:form1[0].whereval</jsonrpc>			
 			    <selectonload stackid="form1">SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS</selectonload>
 				<savefieldids>txtnewprogname,txtprogramdesc,countryofissue</savefieldids>
 				<sqlselect>select USER_ID userid, PASSWD password from USER_MASTER</sqlselect>
@@ -42,14 +43,15 @@
 			</crud>
 			<fields>
 				<field>
+					<sometype name="whereval" dbdatatype="STRING"></sometype>
+				</field>
+				<field>
 					<div id="alertmessage" forid="alertmessage">
 						<xpath position="prepend">/html/body</xpath>
 						<rule></rule>
 						<query></query>
 					</div>
 				</field>
-			</fields>
-			<fields>
 				<field>
 					<input type="text" class="userid" forid="txtnewprogname" value="dfgdfg" name="txtnewprogname" id="txtnewprogname" column="PROGNAME" dbdatatype="STRING" primarykey="YES" dbcolsize="" mask="" mandatory=""
 						hidden="" label="">

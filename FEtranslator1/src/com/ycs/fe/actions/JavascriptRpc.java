@@ -5,6 +5,10 @@ import java.io.StringBufferInputStream;
 
 import map.ScreenMapRepo;
 
+import ognl.Ognl;
+import ognl.OgnlContext;
+import ognl.OgnlException;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -32,15 +36,22 @@ public class JavascriptRpc extends ActionSupport {
 	private String screenName;
 	private InputStream inputStream;
 	private String panelName;
-	private String data = "{}";
+	private String submitdata = "{}";
+ 
 	
+	public JavascriptRpc() {
+		super();
+		screenName="ProgramSetup";
+		panelName="form1";
+		command="selectonload";
+	}
 	@Action(value="jsrpc",params={"configxml","ProductSetup.xml"},
 			results={@Result(name="success",type="stream",params={"contentType","text/html","inputName","inputStream","resultxml","ProductSetup.xml"})}
+	//results={@Result(name="success",location="/test.jsp")}
 	)
 	public String execute(){
 		System.out.println("js RPC called with command:"+command+" for screen:"+screenName);
-		screenName="ProgramSetup";
-		panelName="form1";
+		
 		 
 		String path = ScreenMapRepo.findMapXML(screenName);
 		String parsedquery = "";
@@ -52,7 +63,7 @@ public class JavascriptRpc extends ActionSupport {
 				Document doc = new SAXReader().read(path);
 				Element root = doc.getRootElement();
 				 
-				JSONObject jsonObject = new JSONObject(data);
+				JSONObject jsonObject = new JSONObject(getSubmitdata());
 				JsrpcPojo rpc = new JsrpcPojo();
 				 resDTO = rpc.selectData(  screenName,   panelName,command,   jsonObject);
 				  
@@ -71,12 +82,22 @@ public class JavascriptRpc extends ActionSupport {
 				
 		logger.debug(stack.getContext().get("resultDTO"));
 		 
-//		Gson gson = new Gson();
-//		String json = gson.toJson(stack.getContext().get("resultDTO"));
+		Gson gson = new Gson();
+		String json1 = gson.toJson(stack.getContext().get("resultDTO"));
+//		setResultDTO((ResultDTO)stack.getContext().get("resultDTO"));
+		
+//		try {
+//			OgnlContext context = new OgnlContext();
+//			Object expression = Ognl.parseExpression("resultDTO.data.form1[8].txtnewprogname");
+//			logger.debug(Ognl.getValue(expression,stack.getContext()));
+//			logger.debug(stack.findString("#resultDTO.data.form1[8].countryofissue" ));
+//		} catch (OgnlException e1) {
+//			e1.printStackTrace();
+//		}
 		 
 		JSONObject jobj = new JSONObject(resDTO);
 		try {
-			jobj .put("data",resDTO.getData());
+			jobj.put("data",resDTO.getData());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -114,6 +135,13 @@ public class JavascriptRpc extends ActionSupport {
 	public String getPanelName() {
 		return panelName;
 	}
-
+	public void setSubmitdata(String submitdata) {
+		this.submitdata = submitdata;
+	}
+	public String getSubmitdata() {
+		return submitdata;
+	}
+ 
+	
 	
 }

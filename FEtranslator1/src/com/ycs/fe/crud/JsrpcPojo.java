@@ -77,62 +77,10 @@ private Logger logger = Logger.getLogger(getClass());
 				List<Element> primarykeys = crudnode.selectNodes("../fields/field/*[@primarykey]");
 				
 				
-				//Where
-//				String updatewhere = crudnode.selectSingleNode("sqlwhere").getText();
-				Pattern   pattern = Pattern.compile("\\:(\\w*)\\[(\\d*)\\]?\\.?(\\w*)",Pattern.DOTALL|Pattern.MULTILINE);
-				
 				PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
+				parsedquery = QueryParser.parseQuery(updatequery, panelname, jsonObject, arparam, hmfielddbtype);
 				
-				
-				Matcher m1 = pattern.matcher(updatequery); // get a matcher object
-			       int count = 0;
-			       int end = 0;
-			       while(m1.find()) {
-			          
-			          String prop =  m1.group();
-			          logger.debug("Start preparing:"+prop + m1.start() + " "+m1.end()+" "+m1.group(1)+" "+m1.group(2)+" "+m1.group(3));
-			          if(! "".equals(m1.group(2))){
-			        	  if(m1.group(1).equals(panelname)){ //:form[0].param
-			        		  //fill with present panel row object
-			        		  String propname = m1.group(3);
-			        		  String propval = "";
-			        		  if(jsonObject.has(propname)){
-			        			  propval = jsonObject.getString(propname);
-			        			  parsedquery += updatequery.substring(end,m1.start());//
-			        			  
-			        			  arparam.add(hmfielddbtype.get(propname),propval);
-			        			   
-			        			  
-			        			  
-			        			  parsedquery += "?";
-			        		  }
-			        		  end = m1.end(); 
-			        		  logger.debug("with dot"+m1.group(2)+"."+propname);
-			        	  }else{ //:formx[0].param
-			        		  logger.debug("does it come here"+  m1.group(1));
-			        		  //TODO: implement for object filling from related panels.
-			        	  }
-			          }else{ //fill with present panel row object :formxparam
-			        	  String propval;
-			        	  if(jsonObject.has(m1.group(1)) ){
-			        		  String propname = m1.group(1);
-			        		  propval = jsonObject.getString(m1.group(1));
-			        		  parsedquery += updatequery.substring(end,m1.start());//
-							 
-		        				  arparam.add(hmfielddbtype.get(propname),propval);
-		        			   
-			        		  parsedquery += "?";
-			        	  }
-			        	  
-		        		  end = m1.end(); 
-		        		  logger.debug("else no dot"+m1.group(1));
-			          }
-			          count++;
-			       }
-			       parsedquery += updatequery.substring(end);
-			       updatequery = parsedquery;
-			       
-			       logger.debug("INSERT query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
+			       logger.debug("JsonRPC query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
 			       FETranslatorDAO fetranslatorDAO = new FETranslatorDAO();
 			       resultDTO = fetranslatorDAO.executecrud(screenName, parsedquery, panelname, arparam);
 			       
