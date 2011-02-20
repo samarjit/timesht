@@ -50,7 +50,11 @@
     <servlet-class>org.apache.struts2.views.JspSupportServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
 </servlet>
-    
+    <listener>
+	  	<listener-class>
+	  		com.ycs.fe.InitFE
+	  	</listener-class>
+    </listener>
     
   <welcome-file-list>
     <welcome-file>/index.jsp</welcome-file>

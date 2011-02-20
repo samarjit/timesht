@@ -119,7 +119,7 @@ public class FETranslatorDAO {
 		if(sqlquery!= null && sqlquery.trim().length() >0 ){
 	    	List<Map> values = new ArrayList<Map>();
 	    	Map<String, String> row ; 
-	    	HashMap<String, Object> context = new HashMap<String, Object>();
+	    	HashMap<String, ResultDTO> context = new HashMap<String, ResultDTO>();
 			
 			CachedRowSet crs = null;
 			int countrec = 0;
@@ -132,7 +132,7 @@ public class FETranslatorDAO {
 					crs = dbconn.executePreparedQuery(sqlquery, prepar);
 					ResultSetMetaData md = crs.getMetaData();
 					int colcount = md.getColumnCount();
-					if(colcount >= 2){
+					
 						while (crs.next()) {
 							row = new HashMap<String, String>();
 							for (int i = 1; i <= colcount; i++) {
@@ -142,14 +142,7 @@ public class FETranslatorDAO {
 							countrec++;	
 						}
 						retval = String.valueOf(countrec) ;
-					}else{
-						while (crs.next()) {
-							row = new HashMap<String, String>();
-							row.put("value",crs.getString(1));
-							values.add(row);
-							countrec++;	
-						}
-					}
+					
 					resultDTO.addMessage("SUCCESS:"+String.valueOf(countrec));
 				}else if(sqlquery.matches("[\\S\\s]*(?ims:insert)[\\S\\s]*(?ims:into)[\\S\\s]*")){
 					countrec = dbconn.executePreparedUpdate(sqlquery, prepar);
@@ -179,20 +172,76 @@ public class FETranslatorDAO {
 				}
 			}
 			
-			HashMap jobj = new HashMap();
-			ArrayList jar = new ArrayList(values);
-			jobj.put(stackid, jar);
+			HashMap hm = new HashMap();
+			ArrayList ar = new ArrayList(values);
+			hm.put(stackid, ar);
 			
-			logger.debug(screenName+stackid+"="+jobj.toString());
-			context.put(screenName+stackid, jobj.toString());
+			ResultDTO tempresDTO = (ResultDTO) stack.getContext().get("resultDTO");
+			if(tempresDTO != null){
+				HashMap tmphm = tempresDTO.getData();
+				if(tmphm != null ){ //create object pool for back reference in queries
+					tmphm.putAll(hm);
+				}else{
+					tmphm = hm;
+				}
+				resultDTO.setData(tmphm);
+			}else{//All first time queries will come here
+				resultDTO.setData(hm);
+			}
 			
-			resultDTO.setData(jobj);
-	    	stack.getContext().put("resultDTO",resultDTO);	
+			logger.debug(screenName+stackid+"="+resultDTO.getData().toString());
+			//context.put("resultDTO", resultDTO);
+			
+	    	stack.getContext().put("resultDTO",resultDTO);
+			//stack.set("resultDTO", resultDTO);
+			//stack.push(resultDTO);
+			
 	    	logger.debug("ValueStack="+stack);
 	    }
 		return resultDTO;
 	}
-	
+
+
+	public int executeCountQry(String screenName, String sqlquery, String panelname, PrepstmtDTOArray prepar) {
+		DBConnector dbconn = new DBConnector();
+		int returncount = -1;
+		if(sqlquery!= null && sqlquery.trim().length() >0 ){
+	    	CachedRowSet crs = null;
+			 
+			try {
+				//case i insensitive m multiline s doall  
+				if(sqlquery.matches("(?ims:select)[\\S\\s]*(?ims:from)[\\S\\s]*")){
+					logger.debug("valid query processing...");
+					
+					
+					crs = dbconn.executePreparedQuery(sqlquery, prepar);
+					
+						while (crs.next()) {
+							returncount = crs.getInt(1);
+							 
+						}
+						 
+				}else{
+					logger.debug("invalid query skipping..."+sqlquery);
+					 return -1;
+				}
+				
+			} catch (Exception e) {
+				logger.debug("DAO Exception:"+e);
+			} finally {
+				if (crs != null) {
+					try {
+						crs.close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					crs = null;
+				}
+			}
+		
+		}
+		return returncount;
+	}
 	
 
 }

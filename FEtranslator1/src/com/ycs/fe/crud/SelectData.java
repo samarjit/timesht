@@ -1,10 +1,8 @@
 package com.ycs.fe.crud;
 
-import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import map.ScreenMapRepo;
 
@@ -13,9 +11,9 @@ import org.apache.struts2.ServletActionContext;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.opensymphony.xwork2.ActionContext;
 import com.ycs.fe.dao.FETranslatorDAO;
 import com.ycs.fe.dto.PrepstmtDTO;
 import com.ycs.fe.dto.PrepstmtDTO.DataType;
@@ -45,24 +43,13 @@ private Logger logger = Logger.getLogger(getClass());
 				String updatequery = "";
 				updatequery += node.getText();
 				
+				
+				
 				List<Element> nodeList = crudnode.selectNodes("../fields/field/*");
 				logger.debug("fields size:"+nodeList.size());
 				HashMap<String, DataType> hmfielddbtype = new HashMap<String, PrepstmtDTO.DataType>();
-				for (Element nodeelm : nodeList) {
-					String col = nodeelm.attributeValue("column");
-					String fldname = nodeelm.attributeValue("name");
-					String dbtype = nodeelm.attributeValue("dbdatatype");
-					
-					if(fldname != null && !"".equals(fldname)){
-						if(dbtype != null  ){
-//							updatequery += " "+col+"= TO_DATE('"+jsonObject.getString(fldname)+"', 'DD/MM/YYYY')";
-							hmfielddbtype.put(fldname, PrepstmtDTO.getDataTypeFrmStr(dbtype)  );
-						}else{
-//							updatequery += " "+col+"='"+jsonObject.getString(fldname)+"',";
-							hmfielddbtype.put(fldname, PrepstmtDTO.getDataTypeFrmStr("STRING"));
-						}
-					}
-				}
+				QueryParser.populateFieldDBType(nodeList, hmfielddbtype);
+				
 				/*Pattern pattern  = Pattern.compile(":(\\w*)",Pattern.DOTALL|Pattern.MULTILINE);
 				Matcher m = pattern.matcher(updatequery);
 				while(m.find()){
@@ -76,11 +63,46 @@ private Logger logger = Logger.getLogger(getClass());
 				//SET
 				List<Element> primarykeys = crudnode.selectNodes("../fields/field/*[@primarykey]");
 				
+				FETranslatorDAO fetranslatorDAO = new FETranslatorDAO();
+				
+				Element countqrynode = (Element)crudnode.selectSingleNode("countquery");
+				if(countqrynode != null){
+					String strpagesize = countqrynode.attributeValue("pagesize");
+					int pagesize = 0;
+					if(strpagesize != null ){
+						pagesize = Integer.parseInt(strpagesize);
+					}
+					String countquery = countqrynode.getText();
+					if(countquery != null){
+						PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
+						parsedquery = QueryParser.parseQuery(updatequery, panelname, jsonObject, arparam, hmfielddbtype);
+						int reccount = fetranslatorDAO.executeCountQry(screenName, parsedquery, panelname, arparam);
+						
+						if(reccount > pagesize){
+							JSONObject jsonobject = jsonObject.getJSONObject("pagination");
+							int pageno = 0;
+							JSONObject	panel = jsonobject.getJSONObject(panelname);
+							pageno =  panel.getInt("currentpage");
+							int pagecount = (int) Math.ceil((double)reccount / pagesize); 
+							 
+							//pagination:{form1:{currentpage:1,pagecount:200}} 
+							 
+							
+							int recfrom = pageno * pagesize;
+							int recto = recfrom + pagesize;
+							jsonObject.put("recto", recto);
+							jsonObject.put("recfrom", recfrom);
+							hmfielddbtype.put("recto",PrepstmtDTO.getDataTypeFrmStr("INT") );
+							hmfielddbtype.put("recfrom",PrepstmtDTO.getDataTypeFrmStr("INT"));
+						}
+					}
+				}
+				
 				PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
 				parsedquery = QueryParser.parseQuery(updatequery, panelname, jsonObject, arparam, hmfielddbtype);
 			       
 			       logger.debug("INSERT query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
-			       FETranslatorDAO fetranslatorDAO = new FETranslatorDAO();
+			       
 			       resultDTO = fetranslatorDAO.executecrud(screenName, parsedquery, panelname, arparam);
 			       
 			}catch(Exception e){
