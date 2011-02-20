@@ -47,7 +47,7 @@ public class JavascriptRpc extends ActionSupport {
 	}
 	@Action(value="jsrpc",params={"configxml","ProductSetup.xml"},
 			results={@Result(name="success",type="stream",params={"contentType","text/html","inputName","inputStream","resultxml","ProductSetup.xml"})}
-	//results={@Result(name="success",location="/test.jsp")}
+//	results={@Result(name="success",location="/test.jsp")}
 	)
 	public String execute(){
 		System.out.println("js RPC called with command:"+command+" for screen:"+screenName);
@@ -64,6 +64,7 @@ public class JavascriptRpc extends ActionSupport {
 				Element root = doc.getRootElement();
 				 
 				JSONObject jsonObject = new JSONObject(getSubmitdata());
+				logger.debug("JsonRPC with submitdata="+submitdata);
 				JsrpcPojo rpc = new JsrpcPojo();
 				 resDTO = rpc.selectData(  screenName,   panelName,command,   jsonObject);
 				  
@@ -88,9 +89,9 @@ public class JavascriptRpc extends ActionSupport {
 		
 //		try {
 //			OgnlContext context = new OgnlContext();
-//			Object expression = Ognl.parseExpression("resultDTO.data.form1[8].txtnewprogname");
+//			Object expression = Ognl.parseExpression("resultDTO.data.form1[0].txtnewprogname");
 //			logger.debug(Ognl.getValue(expression,stack.getContext()));
-//			logger.debug(stack.findString("#resultDTO.data.form1[8].countryofissue" ));
+			logger.debug(stack.findString("#resultDTO.data.form1[0].countryofissue" ));
 //		} catch (OgnlException e1) {
 //			e1.printStackTrace();
 //		}

@@ -1,9 +1,9 @@
 package com.ycs.fe;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,17 +16,19 @@ import org.apache.struts2.ServletActionContext;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import actionclass.ProgramSetup;
 
 import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.config.entities.ResultConfig;
+import com.ycs.fe.crud.QueryParser;
 import com.ycs.fe.dao.FETranslatorDAO;
+import com.ycs.fe.dto.PrepstmtDTO.DataType;
 import com.ycs.fe.dto.PrepstmtDTOArray;
 import com.ycs.fe.dto.ResultDTO;
 
@@ -59,6 +61,7 @@ public abstract class HTMLProcessor {
 		String xmlFileName = resultConfig.getParams().get("resultxml");
 	 
 		String screenName1 = (String) invocation.getInvocationContext().getValueStack().findValue("screenName",String.class);
+		JSONObject jsonsubmitdata = (JSONObject) invocation.getInvocationContext().getValueStack().findValue("submitdata",JSONObject.class);
 		logger.debug("For screenName:"+screenName1);
 		String xmlconfigfile =  ScreenMapRepo.findMapXML(screenName1);
 		//if(XMLResult.class.getName().equals(resultConfig.getClassName())){ Let it run for all actions that is coming from 
@@ -91,10 +94,18 @@ public abstract class HTMLProcessor {
 					String stackid = ((org.dom4j.Element) node).attributeValue("stackid");
 					String type = ((org.dom4j.Element) node).attributeValue("type");
 					String sqlquery = node.getText();
-					FETranslatorDAO feDAO = new FETranslatorDAO();
 					
-					PrepstmtDTOArray prepar = new PrepstmtDTOArray();
-					ResultDTO resDTO = feDAO.executecrud(screenName,sqlquery,stackid, prepar );
+					List<Element> nl = root.selectNodes("//fields/field/*");
+					HashMap<String, DataType> hmfielddbtype= new HashMap<String, DataType>();
+					QueryParser.populateFieldDBType(nl, hmfielddbtype);
+					
+					PrepstmtDTOArray arparam = new PrepstmtDTOArray();
+					String parsedquery = QueryParser.parseQuery(sqlquery, null, jsonsubmitdata, arparam, hmfielddbtype);
+					logger.debug("selonload Query query:"+parsedquery+"\n Expanded prep:"+arparam.toString(parsedquery));
+					FETranslatorDAO feDAO = new FETranslatorDAO();
+					ResultDTO resDTO = feDAO.executecrud(screenName,parsedquery,stackid, arparam );
+					
+					logger.debug("resDTO= "+new Gson().toJson(resDTO).toString());
 					ActionContext.getContext().getValueStack().set("resDTO",new Gson().toJson(resDTO).toString());
 					ActionContext.getContext().getValueStack().getContext().put("ZHello", "World");
 					ActionContext.getContext().getValueStack().set("ZHello2", "World2");
@@ -104,6 +115,12 @@ public abstract class HTMLProcessor {
 				
 			} catch (DocumentException e) {
 				logger.debug("result xml file not readable --",e);
+			} catch (JSONException e) {
+				logger.debug("result xml file not readable --",e);
+				e.printStackTrace();
+			} catch (Exception e) {
+				logger.debug("result xml file not readable --",e);
+				e.printStackTrace();
 			}
 			
 			 

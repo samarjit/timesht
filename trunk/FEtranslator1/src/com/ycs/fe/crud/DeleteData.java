@@ -40,21 +40,8 @@ private Logger logger = Logger.getLogger(getClass());
 				List<Element> nodeList = crudnode.selectNodes("../fields/field/*");
 				logger.debug("fields size:"+nodeList.size());
 				HashMap<String, DataType> hmfielddbtype = new HashMap<String, PrepstmtDTO.DataType>();
-				for (Element nodeelm : nodeList) {
-					String col = nodeelm.attributeValue("column");
-					String fldname = nodeelm.attributeValue("name");
-					String dbtype = nodeelm.attributeValue("dbdatatype");
-					
-					if(fldname != null && !"".equals(fldname)){
-						if(dbtype != null  ){
-//							updatequery += " "+col+"= TO_DATE('"+jsonObject.getString(fldname)+"', 'DD/MM/YYYY')";
-							hmfielddbtype.put(fldname, PrepstmtDTO.getDataTypeFrmStr(dbtype)  );
-						}else{
-//							updatequery += " "+col+"='"+jsonObject.getString(fldname)+"',";
-							hmfielddbtype.put(fldname, PrepstmtDTO.getDataTypeFrmStr("STRING"));
-						}
-					}
-				}
+				QueryParser.populateFieldDBType(nodeList, hmfielddbtype);
+				
 				/*Pattern pattern  = Pattern.compile(":(\\w*)",Pattern.DOTALL|Pattern.MULTILINE);
 				Matcher m = pattern.matcher(updatequery);
 				while(m.find()){

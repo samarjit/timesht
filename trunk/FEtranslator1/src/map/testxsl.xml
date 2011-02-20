@@ -83,12 +83,14 @@
 
 	<panels>
 		<panel id="userpanel">
-			<savefieldids>userid,password,dateid,selcountry,selectmonth,jquerydatepicker,compositeaddress</savefieldids>
-			<sqlselect>select USER_ID userid, PASSWD password from USER_MASTER</sqlselect>
-			<sqlinsert>derive</sqlinsert>
-			<sqlselectcount>derive</sqlselectcount>
-			<sqlupdate>derive</sqlupdate>
-			<sqlwhere>USER_ID</sqlwhere>
+			<crud>
+				<savefieldids>userid,password,dateid,selcountry,selectmonth,jquerydatepicker,compositeaddress</savefieldids>
+				<sqlselect>select USER_ID userid, PASSWD password from USER_MASTER</sqlselect>
+				<sqlinsert>derive</sqlinsert>
+				<sqlselectcount>derive</sqlselectcount>
+				<sqlupdate>derive</sqlupdate>
+				<sqlwhere>USER_ID</sqlwhere>
+			</crud>
 			<fields>
 				<field>
 					<div id="alertmessage" forid="alertmessage">

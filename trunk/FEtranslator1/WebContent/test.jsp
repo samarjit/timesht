@@ -8,13 +8,15 @@
 <s:head/>
  
 <%String ctxstr = request.getContextPath(); %>
-alert(ctxstr);
+
  
 </head>
 <body>
 
- Property=<s:push  value="resultDTO" ><s:property value="data.form1[0]" /></s:push> 
+ Property=<s:push  value="resultDTO" ><s:property value="data.form1[0]" /></s:push>  <br/>
  
- 
+ Context()=<s:property value="#resultDTO.data.form1[0].countryofissue" /> <br/>
+ set()=<s:property value="resultDTO.data.form1[0].countryofissue" /> <br/>
+ stack.push() <s:property value="data.form1[0].countryofissue" /> <br/>
 </body>
 </html>
