@@ -63,10 +63,17 @@ public class JavascriptRpc extends ActionSupport {
 				Document doc = new SAXReader().read(path);
 				Element root = doc.getRootElement();
 				 
-				JSONObject jsonObject = new JSONObject(getSubmitdata());
+				JSONArray jsonArray = new JSONArray(getSubmitdata());
 				logger.debug("JsonRPC with submitdata="+submitdata);
 				JsrpcPojo rpc = new JsrpcPojo();
-				 resDTO = rpc.selectData(  screenName,   panelName,command,   jsonObject);
+				
+				for (int i = 0; i < jsonArray.length(); i++) {
+					JSONObject json = jsonArray.getJSONObject(i);
+					command = json.getString("command");
+					JSONObject jsonObject  = json.getJSONObject("data"); 
+					resDTO = rpc.selectData(  screenName,   panelName,command,   jsonObject);
+					
+				}
 				  
 			 
 		} catch (DocumentException e) {
