@@ -107,9 +107,12 @@ private boolean templateprocessed = false;
 		    String type = inputElm.attributeValue("type");
 		    String htmlid = inputElm.attributeValue("forid");
 			org.jsoup.nodes.Element n = dochtml.getElementById(htmlid);//("//*[@id=\""+htmlid+"\"]");//(Node) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+			String replace=inputElm.attributeValue("replace");
+			
 			logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 			if(n != null){
-				if(!n.tagName().equalsIgnoreCase("input")){	
+				if(replace != null && replace.equals("append")){
+				//if(!n.tagName().equalsIgnoreCase("input")){	
 					if(type.equalsIgnoreCase("text") || type.equalsIgnoreCase("password")){
 						org.jsoup.nodes.Element element = n.appendElement("input");
 						element.attr("name", inputElm.attributeValue("name"));
@@ -139,7 +142,8 @@ private boolean templateprocessed = false;
 							
 						}
 				    }
-				}else{ //this is an input element
+				//}
+				}else{ //this is an input element we just need to set the values
 					if(type.equalsIgnoreCase("text") || type.equalsIgnoreCase("password")){
 						n.attr("value", inputElm.attributeValue("value"));
 					}else if(type.equalsIgnoreCase("radio") || type.equalsIgnoreCase("checkbox")){
@@ -162,6 +166,7 @@ private boolean templateprocessed = false;
 			String htmlid = inputElm.attributeValue("forid");
 			org.jsoup.nodes.Element n =   dochtml.getElementById(htmlid);//.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 			logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
+			String replace=inputElm.attributeValue("replace");
 			if(n != null){
 //				List textnodenl = inputElm.selectNodes("text");
 				Element textelement = inputElm.element("text");
@@ -176,8 +181,8 @@ private boolean templateprocessed = false;
 				n.append((String)textelement.getData());
 				//appendXmlFragment(dbuild,n, (String)textelement.getData());
 				
-			}else{
-				//TODO: We need to insert in custom fields
+			}else{ //replace="modify" should not come
+				//TODO: We need to insert in custom fields 
 			}
 			
 		}
@@ -204,8 +209,10 @@ private boolean templateprocessed = false;
 			String htmlid = inputElm.attributeValue("forid");
 			String id = inputElm.attributeValue("id");
 			org.jsoup.nodes.Element n =   dochtml.getElementById(htmlid);// dochtml.selectSingleNode("//*[@id=\""+htmlid"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+			String replace=inputElm.attributeValue("replace");
+			
 			logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
-			if(n != null){
+			if(replace == null || replace.equals("modify")){
 				//List textnodenl = inputElm.selectNodes("text");
 				Element textelement = inputElm.element("text");
 //				if(textnodenl != null){
@@ -226,6 +233,10 @@ private boolean templateprocessed = false;
 					n.append(textelement.getText());
 					
 				}
+			}else{
+				//TODO: We need to insert in custom fields
+				n.append("<select />").attr("id", id);
+			}
 				//appendXmlFragment(dbuild,n,textelement.getText());
 
 				
@@ -270,9 +281,7 @@ private boolean templateprocessed = false;
 //				}
 
 					
-			}else{
-				//TODO: We need to insert in custom fields
-			}
+			
 			
 		}
 	}
@@ -354,24 +363,18 @@ private boolean templateprocessed = false;
 			String htmlid = inputElm.attributeValue("forid");
 			org.jsoup.nodes.Element n =     dochtml.getElementById(htmlid);//.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 			logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
-			if(n != null){
-				n.text(inputElm.attributeValue("value"));
-			}else{
+			String replace=inputElm.attributeValue("replace");
+			if(replace == null || replace.equals("append")){
+				
 				//TODO: We need to insert in custom fields
 				org.jsoup.nodes.Element body = dochtml.getElementsByTag("body").first();
 				org.jsoup.nodes.Element div = dochtml.createElement("div");
 //				logger.debug("To Remove"+inputElm.attributeValue("id"));
 				div.attr("id",inputElm.attributeValue("id"));
- 				body.prependChild(div);
-				
-				//					org.w3c.dom.Element e = ((org.w3c.dom.Document)dochtml).createElement("div");
-//				e.setAttribute("id", inputElm.attributeValue("id"));
-//				org.jsoup.nodes.Element body = (org.jsoup.nodes.Element) dochtml.selectSingleNode("//body");
-//				Node xpathnode = (Node) inputElm.selectNodes("xpath").get(0);
-//				if(xpathnode.getText().length() >0 )
-//					body = (Element) dochtml.selectSingleNode("/html/body");//(Element) xp.evaluate("/html/body", dochtml, XPathConstants.NODE);
-//				((org.w3c.dom.Node) body).insertBefore((org.w3c.dom.Element)e, (org.w3c.dom.Element)body.elements().get(0));
-				 
+				body.prependChild(div);
+			}else{
+				n.text(inputElm.attributeValue("value"));
+			  
 			}
 			
 		}
@@ -387,6 +390,8 @@ private boolean templateprocessed = false;
 			String dfname=datafield.attributeValue("name");
 			String dfvalue=datafield.attributeValue("value");
 			String dftype=datafield.attributeValue("type");
+			String replace=datafield.attributeValue("replace");
+			
 			if(dfvalue.length() == 0){
 				dfvalue="{}";
 			}
@@ -399,7 +404,7 @@ private boolean templateprocessed = false;
 			datafldhtm.attr("value", dfvalue);
 			org.jsoup.nodes.Element dfnode =   (org.jsoup.nodes.Element)dochtml.getElementById(dfforid);//.selectSingleNode("//*[@id=\""+dfforid+"\"]");// xp.evaluate("//*[@id=\""+dfforid+"\"]", dochtml, XPathConstants.NODE);
 			boolean dfforidfound = false;
-			if(dfforid == null){
+			if(dfforid == null && replace != null && replace.equals("append")){
 				dfforidfound = true;
 				dfnode.appendChild(datafldhtm);
 			}

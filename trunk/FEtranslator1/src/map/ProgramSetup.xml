@@ -62,19 +62,19 @@
 				</field>
 				<field>
 					<input type="text" class="userid" forid="txtnewprogname" value="dfgdfg" name="txtnewprogname" id="txtnewprogname" column="PROGNAME" dbdatatype="STRING" primarykey="YES" dbcolsize="" mask="" mandatory=""
-						hidden="" label="">
+						hidden="" label="" replace="modify">
 						<rule></rule>
 					</input>
 				</field>
 				<field>
 					<input type="text" class="userid" forid="txtprogramdesc" value="dfgdfg" name="txtprogramdesc" id="txtprogramdesc" column="PROGDESC" dbdatatype="STRING" dbcolsize="" mask="" mandatory=""
-						hidden="" label="">
+						hidden="" label="" replace="modify">
 						<rule></rule>
 					</input>
 				</field>
 				<field>
 					<select type="text" class="userid" forid="countryofissue" value="" name="countryofissue" id="countryofissue" column="COUNTRY_ISSUE" dbdatatype="STRING"  dbcolsize="" mask="" mandatory=""
-						hidden="" label="">
+						hidden="" label="" replace="modify">
 						<text>
 						<![CDATA[<select name="countryofissue" maxlength="50" class="field" id="countryofissue">
 				        <option value="" selected="selected">Select</option>
