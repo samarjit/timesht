@@ -19,8 +19,16 @@
 				<interceptor-ref name="decorator" />
 			</interceptor-stack>
 		</interceptors>
+		<global-results>
+	        <result name="exception">pages/globalerror.jsp</result>
+	    </global-results>
+	
+	    <global-exception-mappings>
+	        <exception-mapping exception="java.lang.Exception"
+	            result="exception" />
+	    </global-exception-mappings>
 	</package>
-
+    
 	<package name="ProductSetup" extends="yidefaultPackage" namespace="/html">
 		<action name="programsetupview" class="actionclass.ProgramSetup" method="view">
 			<interceptor-ref name="myCustomStack" />
@@ -149,4 +157,6 @@
 			<result name="input">/xslinterceptorinp.jsp</result>
 		</action>
 	</package>
+	
+	
 </struts>

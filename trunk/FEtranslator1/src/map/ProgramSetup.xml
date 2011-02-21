@@ -40,7 +40,7 @@
 			      <countquery pagesize="10" >SELECT count('x') from PROGRAMDETAILS where  PROGNAME=:form2[0].txtnewprogname </countquery>
 			    </selectonload>
 			       
-				<savefieldids >txtnewprogname,txtprogramdesc,countryofissue</savefieldids>
+				<savefieldids ></savefieldids>
 				<sqlselect type="DM" stackid="list1">select USER_ID userid, PASSWD password from USER_MASTER</sqlselect>
 				<sqlinsert>insert into PROGRAMDETAILS (PROGNAME,PROGDESC,COUNTRY_ISSUE)values(:txtnewprogname,:txtprogramdesc,:countryofissue)</sqlinsert>
 				<sqldelete>delete from PROGRAMDETAILS where PROGNAME=:form1[0].txtnewprogname AND COUNTRY_ISSUE=:form1[0].countryofissue</sqldelete>
