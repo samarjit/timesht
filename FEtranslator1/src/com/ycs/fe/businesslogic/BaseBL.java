@@ -1,5 +1,6 @@
 package com.ycs.fe.businesslogic;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import com.opensymphony.xwork2.ActionInvocation;
@@ -9,7 +10,7 @@ import com.opensymphony.xwork2.ActionInvocation;
  * @author Samarjit
  *
  */
-public interface BaseBL {
+public interface BaseBL extends Serializable {
 	
 HashMap preJsRPCListerner(ActionInvocation invocation);
 HashMap postJsRPCListerner(ActionInvocation invocation);

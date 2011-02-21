@@ -5,10 +5,6 @@ import java.io.StringBufferInputStream;
 
 import map.ScreenMapRepo;
 
-import ognl.Ognl;
-import ognl.OgnlContext;
-import ognl.OgnlException;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -24,6 +20,8 @@ import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.util.ValueStack;
+import com.ycs.fe.businesslogic.BaseBL;
+import com.ycs.fe.cache.BusinessLogicFactory;
 import com.ycs.fe.crud.JsrpcPojo;
 import com.ycs.fe.dto.ResultDTO;
 
@@ -51,8 +49,9 @@ public class JavascriptRpc extends ActionSupport {
 	)
 	public String execute(){
 		System.out.println("js RPC called with command:"+command+" for screen:"+screenName);
+		BaseBL bl = BusinessLogicFactory.getBusinessLogic(screenName);
+		bl.preJsRPCListerner(ActionContext.getContext().getActionInvocation());
 		
-		 
 		String path = ScreenMapRepo.findMapXML(screenName);
 		String parsedquery = "";
 		ResultDTO resDTO = new ResultDTO();
@@ -89,7 +88,9 @@ public class JavascriptRpc extends ActionSupport {
 		
 				
 		logger.debug(stack.getContext().get("resultDTO"));
-		 
+		
+		bl.postJsRPCListerner(ActionContext.getContext().getActionInvocation());
+		
 		Gson gson = new Gson();
 		String json1 = gson.toJson(stack.getContext().get("resultDTO"));
 //		setResultDTO((ResultDTO)stack.getContext().get("resultDTO"));
