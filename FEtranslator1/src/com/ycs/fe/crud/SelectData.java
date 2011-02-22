@@ -101,7 +101,7 @@ private Logger logger = Logger.getLogger(getClass());
 				PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
 				parsedquery = QueryParser.parseQuery(updatequery, panelname, jsonObject, arparam, hmfielddbtype);
 			       
-			       logger.debug("INSERT query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
+			       logger.debug("INSERT query:"+parsedquery+"\n Expanded prep:"+arparam.toString(parsedquery));
 			       
 			       resultDTO = fetranslatorDAO.executecrud(screenName, parsedquery, panelname, arparam);
 			       

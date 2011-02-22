@@ -55,10 +55,12 @@ public class QueryParser{
 	public static String parseQuery(String updatequery,String panelname,JSONObject jsonObject, PrepstmtDTOArray  arparam, HashMap<String, DataType> hmfielddbtype) throws Exception{
 		//Where
 //		String updatewhere = crudnode.selectSingleNode("sqlwhere").getText();
-		Pattern   pattern = Pattern.compile("\\:(\\w*)\\[?(\\d*)\\]?\\.?([^\\s\\|]*)\\|?(\\S*)",Pattern.DOTALL|Pattern.MULTILINE);
+		String PATTERN = "\\:(\\w*)\\[?(\\d*)\\]?\\.?([^,\\s\\|]*)\\|?([^,\\s]*)";
 		
+		Pattern   pattern = Pattern.compile(PATTERN,Pattern.DOTALL|Pattern.MULTILINE);
 		
-		
+		logger.debug("Input Query:"+updatequery+" \nlength:"+updatequery.length());
+		logger.debug("PATTERN="+PATTERN);
 		
 		Matcher m1 = pattern.matcher(updatequery); // get a matcher object
 	       int count = 0;
@@ -84,7 +86,7 @@ public class QueryParser{
 	        			  }
 	        				   
 	        			  
-	        			  
+	        			 
 	        			  parsedquery += "?";
 	        		  }
 	        		  end = m1.end(); 
@@ -127,12 +129,14 @@ public class QueryParser{
 	        	  }
 	        	  
         		  end = m1.end(); 
-        		  logger.debug("else no dot"+m1.group(1));
+        		  logger.debug("else no dot "+m1.group(1));
 	          }
 	          count++;
 	       }
+		   logger.debug("Last part end="+end);
 	       parsedquery += updatequery.substring(end);
 	       updatequery = parsedquery;
+	       logger.debug("Parsed Query:"+ parsedquery);
 	       return parsedquery;
 	}
 	

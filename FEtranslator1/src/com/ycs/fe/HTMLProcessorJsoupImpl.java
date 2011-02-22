@@ -111,7 +111,7 @@ private boolean templateprocessed = false;
 			
 			logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 			if(n != null){
-				if(replace != null && replace.equals("append")){
+				if(replace.equals("append")){
 				//if(!n.tagName().equalsIgnoreCase("input")){	
 					if(type.equalsIgnoreCase("text") || type.equalsIgnoreCase("password")){
 						org.jsoup.nodes.Element element = n.appendElement("input");
@@ -193,9 +193,15 @@ private boolean templateprocessed = false;
 			Element inputElm = (Element) nl.get(i);
 			String htmlid = inputElm.attributeValue("forid");
 			org.jsoup.nodes.Element n =  dochtml.getElementById(htmlid);//.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+			String replace=inputElm.attributeValue("replace");
 			logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
-			if(n != null){
+			if(n != null  ){
+				if( replace.equals("append"))
 				n.appendText(inputElm.attributeValue("value"));
+				else{
+					n.getAllElements().remove();
+					n.appendText(inputElm.attributeValue("value"));
+				}
 			}else{
 				//TODO: We need to insert in custom fields
 			}
@@ -364,7 +370,7 @@ private boolean templateprocessed = false;
 			org.jsoup.nodes.Element n =     dochtml.getElementById(htmlid);//.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 			logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
 			String replace=inputElm.attributeValue("replace");
-			if(replace == null || replace.equals("append")){
+			if(replace.equals("append")){
 				
 				//TODO: We need to insert in custom fields
 				org.jsoup.nodes.Element body = dochtml.getElementsByTag("body").first();
