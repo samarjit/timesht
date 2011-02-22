@@ -67,7 +67,7 @@ private Logger logger = Logger.getLogger(getClass());
 				PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
 				parsedquery = QueryParser.parseQuery(updatequery, panelname, jsonObject, arparam, hmfielddbtype);
 				
-			       logger.debug("JsonRPC query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
+			       logger.debug("JsonRPC query:"+parsedquery+"\n Expanded prep:"+arparam.toString(parsedquery));
 			       FETranslatorDAO fetranslatorDAO = new FETranslatorDAO();
 			       resultDTO = fetranslatorDAO.executecrud(screenName, parsedquery, panelname, arparam);
 			       

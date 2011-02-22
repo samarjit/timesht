@@ -57,7 +57,7 @@ private Logger logger = Logger.getLogger(getClass());
 				PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
 				parsedquery = QueryParser.parseQuery(updatequery, panelname, jsonObject, arparam, hmfielddbtype);
 			       
-			       logger.debug("UPDATE query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
+			       logger.debug("UPDATE query:"+parsedquery+"\n Expanded prep:"+arparam.toString(parsedquery));
 			}catch(Exception e){
 				logger.debug("Exception caught in InsertData",e);
 			}

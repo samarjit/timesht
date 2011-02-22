@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<root>
+<root  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vb0.xsd">
 	<screen name="ProgramSetup">
 		<htmltempalte>
 			html/ProgramSetup.html
@@ -32,8 +32,8 @@
 	<panels>
 		<panel id="form1">
 			<crud>
-				<jsonrpc>SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS 
-					where PROGNAME=:whereval|STRING</jsonrpc>			
+				<jsonrpc id="1">SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",ISSUERNAME "issuername", COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS 
+					where PROGNAME=:whereval|STRING order by 1</jsonrpc>			
 			    <selectonload stackid="form2" id="selqery1">SELECT 'LOYCARD' "txtnewprogname" from DUAL </selectonload>
 			    <selectonload stackid="form1" >SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS
 			       where PROGNAME=:form2[0].txtnewprogname order by 1
@@ -45,16 +45,15 @@
 				<sqlinsert>insert into PROGRAMDETAILS (PROGNAME,PROGDESC,COUNTRY_ISSUE)values(:txtnewprogname,:txtprogramdesc,:countryofissue)</sqlinsert>
 				<sqldelete>delete from PROGRAMDETAILS where PROGNAME=:form1[0].txtnewprogname AND COUNTRY_ISSUE=:form1[0].countryofissue</sqldelete>
 				<sqlselectcount refselectid="selqery1">derive</sqlselectcount>
-				<sqlupdate>update PROGRAMDETAILS set PROGDESC=:txtprogramdesc,COUNTRY_ISSUE=:countryofissue
-				 where PROGNAME=:form1[0].txtnewprogname  
-				</sqlupdate>
+				<sqlupdate>update PROGRAMDETAILS set PROGDESC=:txtprogramdesc,COUNTRY_ISSUE=:countryofissue, ISSUERNAME=:issuername|STRING 	
+						 where PROGNAME=:form1[0].txtnewprogname</sqlupdate>
 			</crud>
 			<fields>
 				<field>
 					<sometype name="whereval" dbdatatype="STRING"></sometype>
 				</field>
 				<field>
-					<div id="alertmessage" forid="alertmessage">
+					<div id="alertmessage" forid="alertmessage" replace="append">
 						<xpath position="prepend">/html/body</xpath>
 						<rule></rule>
 						<query></query>
@@ -62,7 +61,7 @@
 				</field>
 				<field>
 					<input type="text" class="userid" forid="txtnewprogname" value="dfgdfg" name="txtnewprogname" id="txtnewprogname" column="PROGNAME" dbdatatype="STRING" primarykey="YES" dbcolsize="" mask="" mandatory=""
-						hidden="" label="" replace="modify">
+						hidden="" label="" replace="modify" >
 						<rule></rule>
 					</input>
 				</field>
@@ -73,7 +72,7 @@
 					</input>
 				</field>
 				<field>
-					<select type="text" class="userid" forid="countryofissue" value="" name="countryofissue" id="countryofissue" column="COUNTRY_ISSUE" dbdatatype="STRING"  dbcolsize="" mask="" mandatory=""
+					<select  type="text" class="userid" forid="countryofissue" value="" name="countryofissue" id="countryofissue" column="COUNTRY_ISSUE" dbdatatype="STRING"  dbcolsize="" mask="" mandatory=""
 						hidden="" label="" replace="modify">
 						<text>
 						<![CDATA[<select name="countryofissue" maxlength="50" class="field" id="countryofissue">
@@ -84,7 +83,7 @@
 				        <option value="PHILIPPINES">Philippines</option>
 				        <option value="UAE">UAE</option>
 				        </select>]]> 
-				        </text>
+				        </text> 
 						<rule></rule>
 						<query></query>
 					</select>
@@ -97,8 +96,8 @@
 
 		</panel>
 		<panel id="userpanellist">
-			<sqlselectall></sqlselectall>
-			<sqlwhere></sqlwhere>
+			<crud> 
+			</crud>
 			<fields>
 				<field>
 					<customfield forid="displayuserlist">

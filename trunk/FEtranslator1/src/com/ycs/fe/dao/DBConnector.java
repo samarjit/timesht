@@ -119,7 +119,7 @@ public Connection getConnection()
 		
 		if(envContext == null || fallaback ){
 		///Running in standalone mode
-		 debug(3, "Database connection Running in standalone mode");
+		 debug(3, "Database connection Running in standalone mode# "+DBURL);
 //		 conn = DriverManager.getConnection (url, userName, password);
 		 Class.forName (driverName); 
 		  

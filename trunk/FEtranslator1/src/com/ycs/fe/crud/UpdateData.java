@@ -60,7 +60,7 @@ private Logger logger = Logger.getLogger(getClass());
 				PrepstmtDTOArray  arparam = new PrepstmtDTOArray();
 				parsedquery = QueryParser.parseQuery(updatequery, panelname, jsonObject, arparam, hmfielddbtype);
 			       
-			       logger.debug("UPDATE query:"+parsedquery+"\n Expanded prep:"+arparam.toString(updatequery));
+			       logger.debug("UPDATE query:"+parsedquery+"\n Expanded prep:"+arparam.toString(parsedquery));
 			       
 			       FETranslatorDAO fetranslatorDAO = new FETranslatorDAO();
 			       queryres  = fetranslatorDAO.executecrud(screenName, parsedquery, panelname, arparam);
