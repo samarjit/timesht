@@ -62,26 +62,28 @@
   </xs:element>
   <xs:element name="button">
     <xs:complexType>
-      <xs:attribute name="forid" use="required" type="xs:NCName"/>
-      <xs:attribute name="onclick" use="required"/>
+    	<xs:attribute name="forid" use="required" type="xs:NCName" />
+    	<xs:attribute name="onclick" use="required" />
+    	<xs:attribute name="replace" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="crud">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="jsonrpc"/>
+       
         <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="jsonrpc"/>
           <xs:element ref="selectonload"/>
           <xs:element ref="sqlselect"/>
-        </xs:choice>
-        <xs:sequence minOccurs="0">
+        
+        
           <xs:element ref="savefieldids"/>
           <xs:element ref="sqlinsert"/>
           <xs:element ref="sqldelete"/>
           <xs:element ref="sqlselectcount"/>
           <xs:element ref="sqlupdate"/>
-        </xs:sequence>
-      </xs:sequence>
+          
+        </xs:choice>
+     
     </xs:complexType>
   </xs:element>
   <xs:element name="jsonrpc">

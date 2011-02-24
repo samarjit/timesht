@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-<root  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vb0.xsd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="config.xsl" ?>
+<root  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="config.xsd">
 	<screen name="ProgramSetup">
 		<htmltempalte>
 			html/ProgramSetup.html
@@ -13,7 +14,6 @@
 		<scripts>
 			<scriptinclude></scriptinclude>
 			<![CDATA[    
-				  
 				<script> 
 				var selonload='<@s.property value="resDTO" escape="false" />';
 				</script>
@@ -41,7 +41,7 @@
 			    </selectonload>
 			       
 				<savefieldids ></savefieldids>
-				<sqlselect type="DM" stackid="list1">select USER_ID userid, PASSWD password from USER_MASTER</sqlselect>
+				<sqlselect type="DM" stackid="list1">select USER_ID userid, PASSWD password from USER_MASTER </sqlselect>
 				<sqlinsert>insert into PROGRAMDETAILS (PROGNAME,PROGDESC,COUNTRY_ISSUE)values(:txtnewprogname,:txtprogramdesc,:countryofissue)</sqlinsert>
 				<sqldelete>delete from PROGRAMDETAILS where PROGNAME=:form1[0].txtnewprogname AND COUNTRY_ISSUE=:form1[0].countryofissue</sqldelete>
 				<sqlselectcount refselectid="selqery1">derive</sqlselectcount>
@@ -89,14 +89,14 @@
 					</select>
 				</field>
 			</fields>
-			<button forid="loginbutton" onclick=""></button>
-			<button forid="reset" onclick=""></button>
+			<button forid="loginbutton" onclick="" replace="append"  ></button>
+			<button forid="reset" onclick="" replace="append"  ></button>
 			 
 			property <![CDATA[<@s.property value="selectmonthl"/> ]]>
 
 		</panel>
 		<panel id="userpanellist">
-			<crud> 
+			<crud>
 			</crud>
 			<fields>
 				<field>

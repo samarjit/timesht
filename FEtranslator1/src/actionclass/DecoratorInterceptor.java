@@ -3,7 +3,6 @@ package actionclass;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
@@ -18,6 +17,9 @@ import com.ycs.fe.HTMLProcessorDom4jImpl;
 import com.ycs.fe.HTMLProcessorJsoupImpl;
  
 public class DecoratorInterceptor implements Interceptor {
+ 
+	private static final long serialVersionUID = 1L;
+
 	private Logger logger = Logger.getLogger(this.getClass());
 	
 	private HttpServletResponse responseParent;
@@ -26,7 +28,7 @@ public class DecoratorInterceptor implements Interceptor {
 	public String intercept(ActionInvocation invocation) throws Exception {
 		logger.debug("DecoratorInterceptor:Intercepted ... ");
 		final ActionContext context = invocation.getInvocationContext ();
-		HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
+		//HttpServletRequest request = (HttpServletRequest) context.get(ServletActionContext.HTTP_REQUEST);
 		 responseParent = (HttpServletResponse) context.get(ServletActionContext.HTTP_RESPONSE);
 		 CharResponseWrapper wrapper = new CharResponseWrapper(responseParent);
 		 ServletActionContext.setResponse(wrapper);
@@ -61,7 +63,7 @@ public class DecoratorInterceptor implements Interceptor {
 			resulthtml = processor.process(wrapper.toString(), invocation);
 			
 			
-			CharResponseWrapper newrsp = new CharResponseWrapper(wrapper);
+			//CharResponseWrapper newrsp = new CharResponseWrapper(wrapper);
 			PrintWriter out = responseParent.getWriter();
 			CharArrayWriter car = new CharArrayWriter();
 			logger.debug("Processing Error in HTMLProcessor last result(false means not processed):"+processor.getLastResult());

@@ -1,12 +1,8 @@
 package com.ycs.fe;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,27 +13,18 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.dom4j.Branch;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.dom.DOMDocumentFactory;
-import org.dom4j.io.HTMLWriter;
-import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,10 +48,11 @@ private boolean templateprocessed = false;
 	}
 
 	 
-	public   void appendXmlFragment(DocumentBuilder docBuilder, Node parent, List fragment) throws IOException, SAXException {
+	public   void appendXmlFragment(DocumentBuilder docBuilder, Node parent, List<?> fragment) throws IOException, SAXException {
 //		logger.debug("still coming here");
 		//Document doc = parent.getOwnerDocument();
 //		Node fragmentNode = docBuilder.parse(new InputSource(new StringReader("<root>"+fragment+"</root>"))).getDocumentElement();
+		@SuppressWarnings("rawtypes")
 		List nl = fragment;
 		if(((Node) fragment.get(0)).getNodeType() == Node.CDATA_SECTION_NODE){
 			appendXmlFragment( docBuilder,  parent,  ((Element) fragment.get(0)).getText());
@@ -100,7 +88,8 @@ private boolean templateprocessed = false;
 	}
 
 	public void processInputElm(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode){
-		List nl =  xmlelmNode.selectNodes("//fields/field/input");// xp.evaluate("//fields/field/input", xmlelmNode, XPathConstants.NODESET);
+		@SuppressWarnings("unchecked")
+		List<Node> nl =  xmlelmNode.selectNodes("//fields/field/input");// xp.evaluate("//fields/field/input", xmlelmNode, XPathConstants.NODESET);
 		for (int i = 0; i < nl.size(); i++) {
 			Element inputElm = (Element) nl.get(i);
 //		    logger.debug(" .. found input type = ..");
@@ -160,23 +149,17 @@ private boolean templateprocessed = false;
 		}
 	}
 	public void processCustomElm(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode){
-		List nl = xmlelmNode.selectNodes("//fields/field/customfield");//(List) xp.evaluate("//fields/field/customfield", xmlelmNode, XPathConstants.NODESET);
+		@SuppressWarnings("unchecked")
+		List<Node> nl = xmlelmNode.selectNodes("//fields/field/customfield");//(List) xp.evaluate("//fields/field/customfield", xmlelmNode, XPathConstants.NODESET);
 		for (int i = 0; i < nl.size(); i++) {
 			Element inputElm = (Element) nl.get(i);
 			String htmlid = inputElm.attributeValue("forid");
 			org.jsoup.nodes.Element n =   dochtml.getElementById(htmlid);//.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
 			logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
-			String replace=inputElm.attributeValue("replace");
+			//String replace=inputElm.attributeValue("replace");
 			if(n != null){
 //				List textnodenl = inputElm.selectNodes("text");
 				Element textelement = inputElm.element("text");
-//				if(textnodenl != null){
-//					textelement = (Element) textnodenl.get(0);
-//				}
-				//CDATASection cdata = dochtml.createCDATASection(textelement.getText());
-				//element.appendContent(cdata);
-				//n.appendText(textelement.get);
-				List l = textelement.elements();
 //				logger.debug("TO Remove"+(String)textelement.getData());
 				n.append((String)textelement.getData());
 				//appendXmlFragment(dbuild,n, (String)textelement.getData());
@@ -188,7 +171,8 @@ private boolean templateprocessed = false;
 		}
 	}
 	public void processDisplayField(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode){
-		List nl = xmlelmNode.selectNodes("//fields/field/display");//(List) xp.evaluate("//fields/field/display", xmlelmNode, XPathConstants.NODESET);
+		@SuppressWarnings("unchecked")
+		List<Node> nl = xmlelmNode.selectNodes("//fields/field/display");//(List) xp.evaluate("//fields/field/display", xmlelmNode, XPathConstants.NODESET);
 		for (int i = 0; i < nl.size(); i++) {
 			Element inputElm = (Element) nl.get(i);
 			String htmlid = inputElm.attributeValue("forid");
@@ -209,7 +193,9 @@ private boolean templateprocessed = false;
 		}
 	}
 	public void processSelectElm(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode){
-		List nl =xmlelmNode.selectNodes("//fields/field/select");// (List) xp.evaluate("//fields/field/select", xmlelmNode, XPathConstants.NODESET);
+		 
+		@SuppressWarnings("unchecked")
+		List<Node> nl =xmlelmNode.selectNodes("//fields/field/select");// (List) xp.evaluate("//fields/field/select", xmlelmNode, XPathConstants.NODESET);
 		for (int i = 0; i < nl.size(); i++) {
 			Element inputElm = (Element) nl.get(i);
 			String htmlid = inputElm.attributeValue("forid");
@@ -271,6 +257,7 @@ private boolean templateprocessed = false;
 //				}else{ //if hard coded values are not there then look for filling up from action context
 //3. Fill from ValueStack
 					ValueStack stack = ActionContext.getContext().getValueStack();
+					@SuppressWarnings("unchecked")
 					Map<String,String>opts = (Map<String, String>) stack.findValue(htmlid);
 					if(opts != null){
 //						List list = dochtml.selectNodes("select");
@@ -293,7 +280,7 @@ private boolean templateprocessed = false;
 	}
 	public void processScripts(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode){
 		///multiple scriptincludes and scripts tags
-		Iterator scriptsnl =   ((Element)xmlelmNode.selectSingleNode("//scripts")).nodeIterator();
+		Iterator<?> scriptsnl =   ((Element)xmlelmNode.selectSingleNode("//scripts")).nodeIterator();
 		
 		for (int i = 0;  scriptsnl.hasNext(); i++) {
 			Node scriptnode = (Node) scriptsnl.next();
@@ -338,7 +325,7 @@ private boolean templateprocessed = false;
 	}
 	public void processStyles(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode){
 	//////
-		Iterator stylenl =   ((Element) xmlelmNode.selectSingleNode("//stylesheets")).nodeIterator();		
+		Iterator<?> stylenl =   ((Element) xmlelmNode.selectSingleNode("//stylesheets")).nodeIterator();		
 		for (int i = 0; stylenl.hasNext(); i++) {
 			Node scriptnode = (Node) stylenl.next();
 //			logger.debug("Adding styles"+scriptnode.getText());
@@ -363,7 +350,8 @@ private boolean templateprocessed = false;
 	}
 	public void processDivElm(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode){
 
-		List nl = xmlelmNode.selectNodes("//fields/field/div");// xp.evaluate("//fields/field/div", xmlelmNode, XPathConstants.NODESET);
+		@SuppressWarnings("unchecked")
+		List<Node> nl = xmlelmNode.selectNodes("//fields/field/div");// xp.evaluate("//fields/field/div", xmlelmNode, XPathConstants.NODESET);
 		for (int i = 0; i < nl.size(); i++) {
 			Element inputElm = (Element) nl.get(i);
 			String htmlid = inputElm.attributeValue("forid");
@@ -387,7 +375,8 @@ private boolean templateprocessed = false;
 	}
 	public void processCompositeElm(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode) throws JSONException{
 		//compositefield for DataElements
-		List nl = xmlelmNode.selectNodes("//fields/field/compositefield");//(List) xp.evaluate("//fields/field/compositefield", xmlelmNode, XPathConstants.NODESET);
+		@SuppressWarnings("unchecked")
+		List<Node> nl = xmlelmNode.selectNodes("//fields/field/compositefield");//(List) xp.evaluate("//fields/field/compositefield", xmlelmNode, XPathConstants.NODESET);
 		for (int i = 0; i < nl.size(); i++) {
 			Element compositefield = (Element) nl.get(i);
 			Element datafield = (Element) compositefield.selectNodes("datafield").get(0);
@@ -402,7 +391,8 @@ private boolean templateprocessed = false;
 				dfvalue="{}";
 			}
 			JSONObject dfjson = new JSONObject(dfvalue);
-			List displayfield = compositefield.selectNodes("displayfield");
+			@SuppressWarnings("unchecked")
+			List<Node> displayfield = compositefield.selectNodes("displayfield");
 			org.jsoup.nodes.Element datafldhtm = dochtml.createElement("input");
 			datafldhtm.attr("type", dftype);
 			datafldhtm.attr("id", dfid);
@@ -438,9 +428,34 @@ private boolean templateprocessed = false;
 		}
 		//compositefield for DataElements end
 	}
+	
+	public void processButtonElm(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode){
+
+		@SuppressWarnings("unchecked")
+		List<Node> nl = xmlelmNode.selectNodes("//button");// xp.evaluate("//fields/field/div", xmlelmNode, XPathConstants.NODESET);
+		for (int i = 0; i < nl.size(); i++) {
+			Element inputElm = (Element) nl.get(i);
+			String htmlid = inputElm.attributeValue("forid");
+			org.jsoup.nodes.Element n =     dochtml.getElementById(htmlid);//.selectSingleNode("//*[@id=\""+htmlid+"\"]");//(Element) xp.evaluate("//*[@id=\""+htmlid+"\"]", dochtml, XPathConstants.NODE);
+			logger.debug("setting values forid:"+"//*[@id=\""+htmlid+"\"]");
+			String replace=inputElm.attributeValue("replace");
+			if(replace.equals("append")){
+				org.jsoup.nodes.Element button =   n.appendElement("button");
+			    
+				button.attr("id",inputElm.attributeValue("id"));
+				button.attr("onclick", inputElm.attributeValue("onclick")); 
+			}else{//replace=modify
+				n.html(inputElm.getText());
+			    n.attr("onclick", inputElm.attributeValue("onclick")); 
+			}
+			
+		}
+	}
+	
 	public void processValidation(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode, StringBuffer globaljs){
 		//Append all validations
-		List nl =xmlelmNode.selectNodes("//validation");// (List) xp.evaluate("//validation", xmlelmNode, XPathConstants.NODESET);
+		@SuppressWarnings("unchecked")
+		List<Node> nl =xmlelmNode.selectNodes("//validation");// (List) xp.evaluate("//validation", xmlelmNode, XPathConstants.NODESET);
 		for (int i = 0; i < nl.size(); i++) {
 			String validation = ((Element) nl.get(i)).getText();
 			
@@ -451,7 +466,8 @@ private boolean templateprocessed = false;
 	}
 	public void processRules(Node xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode, StringBuffer globaljs) throws JSONException{
 		//JSON rule begin
-		List nl = xmlelmNode.selectNodes("//rule");//(List) xp.evaluate("//rule", xmlelmNode, XPathConstants.NODESET);
+		@SuppressWarnings("unchecked")
+		List<Node> nl = xmlelmNode.selectNodes("//rule");//(List) xp.evaluate("//rule", xmlelmNode, XPathConstants.NODESET);
 		JSONObject rulejson = new JSONObject("{rules:{},messages:{}}");
 		for (int i = 0; i < nl.size(); i++) {
 			Element ruleElm = (Element) nl.get(i);
@@ -480,6 +496,7 @@ private boolean templateprocessed = false;
 	}
 	private void processSaveFields(Element xmlelmNode, org.jsoup.nodes.Document dochtml, org.jsoup.nodes.Element headNode, StringBuffer globaljs) {
 		//savefieldids begin
+		@SuppressWarnings("unchecked")
 		List<Node> panels = xmlelmNode.selectNodes("/root/panels/panel/crud");
 		for (Node panel : panels) {
 			Node savefield = panel.selectSingleNode("savefieldids");
@@ -514,18 +531,15 @@ private boolean templateprocessed = false;
 	
 	@Override
 	public String process(String inputXML, ActionInvocation invocation){
-		ClassLoader loader = this.getClass().getClassLoader();	
+		//ClassLoader loader = this.getClass().getClassLoader();	
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dbuild ;
 		String xmlString ="";
     
 		 
 		try {
 			dbf.setIgnoringElementContentWhitespace(true); 
-			dbuild = dbf.newDocumentBuilder();
-			
 			DOMDocumentFactory factory = new DOMDocumentFactory(); //d4j
-			InputStream reader = new ByteArrayInputStream(inputXML.getBytes());
+			//InputStream reader = new ByteArrayInputStream(inputXML.getBytes());
 			SAXReader reader2 = new SAXReader();//d4j
 			reader2.setDocumentFactory(factory);//d4j
 			StringReader strreader = new StringReader(inputXML);
@@ -547,17 +561,12 @@ private boolean templateprocessed = false;
 				templateprocessed= false;
 				return "HTMLProcessor: no template found in "+inputXML.substring(0,20)+"...";
 			}
-			XPath  xp = XPathFactory.newInstance().newXPath(); 
-		 
-		
-
-			
 			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
 			pathhtml = ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
 //			logger.debug("HTMLProcessor: HTML TemplatePath="+ServletActionContext.getServletContext().getRealPath("/"+pathhtml));
 //			pathhtml = "C:/Eclipse/workspace1/FEtranslator1/WebContent/pages/logintpl.xml";//ServletActionContext.getServletContext().getRealPath("/"+pathhtml);
 			if(new File(pathhtml).exists())logger.debug("The html exists");
-			FileInputStream fin = new FileInputStream(new File(pathhtml));
+			//FileInputStream fin = new FileInputStream(new File(pathhtml));
 			//InputStream is = loader.getResourceAsStream("log4j.properties");
 			logger.debug("HTMLProcessor: before html parsing");
 			org.jsoup.nodes.Document dochtml = Jsoup.parse(new File(pathhtml), "UTF-8", "");
@@ -641,9 +650,7 @@ private boolean templateprocessed = false;
 			e.printStackTrace();
 		} catch (TransformerFactoryConfigurationError e) {			
 			e.printStackTrace();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		}catch(Exception e){
+		} catch(Exception e){
 			e.printStackTrace();
 		}
 		

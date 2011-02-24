@@ -36,7 +36,9 @@ public class InitFE implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent contextEvent) {
 		context = contextEvent.getServletContext();
 		System.out.println("FE Servlet context shutting down...");
+		if(webserver != null)
 		webserver.stop();
+		if(tcpserver != null)
 		tcpserver.stop();
 	}
 
@@ -70,7 +72,43 @@ public class InitFE implements ServletContextListener {
         try {
         	tcpserver =  Server.createTcpServer().start();
         	webserver = Server.createWebServer().start();
+        	
+        	/*List<String> command = Arrays.asList(new String[] {
+	                "C:\\Program Files\\Java\\jdk1.6.0_23\\jre\\bin\\java.exe",
+	                "-Xmx128m",
+	                "-cp", "C:/Eclipse/workspace1/FEtranslator1/WebContent/WEB-INF/lib/h2-1.3.148.jar",
+	                "org.h2.tools.Server"
+	        });
+        	for (String str : command) {
+				System.out.println(str);
+			}
+        	
+			ProcessBuilder builder = new ProcessBuilder(command );
+			builder.redirectErrorStream(true);
+			final Process process = builder.start();
+			process.getOutputStream();
+		    
+			new Thread(new Runnable(){
 
+				@Override
+				public void run() {
+					byte[] buf = new byte[1024];
+					InputStream is = process.getInputStream();
+					int nr;
+					try {
+						nr = is.read(buf);
+						while (nr != -1)
+						{
+							System.out.write(buf, 0, nr);
+							nr = is.read(buf);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+		    	
+		    }).start();
+			 */
         	Class.forName("org.h2.Driver");
 			Connection conn = DriverManager.getConnection("jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1","SA","");
 			InputStream in = getClass().getResourceAsStream("script.sql");
@@ -95,16 +133,7 @@ public class InitFE implements ServletContextListener {
 	                "org.h2.tools.Server"
 	        });*/
 			 
-			/*List command = Arrays.asList(new String[] {
-	                "C:\\Program Files\\Java\\jdk1.6.0_23\\jre\\bin\\java.exe",
-	                "-Xmx128m",
-	                "-cp", "WebContent/WEB-INF/lib/h2-1.3.148.jar;",
-	                "org.h2.tools.Server"
-	        });
-			ProcessBuilder builder = new ProcessBuilder(command );
-			builder.redirectErrorStream(true);
-			Process process = builder.start();*/
-			 
+			
 			
 			 
 			
