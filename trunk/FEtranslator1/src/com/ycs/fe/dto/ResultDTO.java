@@ -17,9 +17,9 @@ public ResultDTO() {
 	messages = new ArrayList<String>();
 	pagination = new HashMap<String, HashMap<String,Integer>>();
 	HashMap<String, Integer> hm = new HashMap<String, Integer>();
-	hm.put("currentpage",0);
-	hm.put("totalrec",0);
-	hm.put("pagesize",0);
+	hm.put("currentpage",1);
+	hm.put("totalrec",1);
+	hm.put("pagesize",1);
 	pagination.put("formx", hm);
 }
 

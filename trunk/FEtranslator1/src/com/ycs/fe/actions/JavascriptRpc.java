@@ -34,7 +34,7 @@ public class JavascriptRpc extends ActionSupport {
 	private String screenName;
 	private InputStream inputStream;
 	private String panelName;
-	private String submitdata = "{}";
+	private String submitdata = "[]";
  
 	
 	public JavascriptRpc() {
@@ -62,8 +62,8 @@ public class JavascriptRpc extends ActionSupport {
 				Document doc = new SAXReader().read(path);
 				Element root = doc.getRootElement();
 				 
-				JSONArray jsonArray = new JSONArray(getSubmitdata());
 				logger.debug("JsonRPC with submitdata="+submitdata);
+				JSONArray jsonArray = new JSONArray(getSubmitdata());
 				JsrpcPojo rpc = new JsrpcPojo();
 				
 				for (int i = 0; i < jsonArray.length(); i++) {
@@ -93,6 +93,7 @@ public class JavascriptRpc extends ActionSupport {
 		
 		Gson gson = new Gson();
 		String json1 = gson.toJson(stack.getContext().get("resultDTO"));
+		logger.debug("Gson result(not sent back to client):"+json1);
 //		setResultDTO((ResultDTO)stack.getContext().get("resultDTO"));
 		
 //		try {
@@ -107,11 +108,12 @@ public class JavascriptRpc extends ActionSupport {
 		JSONObject jobj = new JSONObject(resDTO);
 		try {
 			jobj.put("data",resDTO.getData());
+			jobj.put("pagination",resDTO.getPagination());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		String json = jobj.toString();
-		logger.debug(json);
+		logger.debug("Sent back to client:"+json);
 		inputStream = new StringBufferInputStream(json);
 		 
 		return "success";
