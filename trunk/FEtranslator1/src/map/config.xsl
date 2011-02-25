@@ -42,7 +42,10 @@
 		Scripts:
 		 <xsl:for-each select="child::node()">
 		   <xsl:choose>
+		    
 		     <xsl:when test="name()='scriptinclude'">
+		     <xsl:variable name="mytxt"><xsl:value-of select="self::text()"></xsl:value-of> </xsl:variable>
+		     <xsl:variable name="myname"><xsl:value-of select="name()"></xsl:value-of> </xsl:variable>
 		       Included Scripts: <xsl:value-of select="text()"></xsl:value-of><br/>
 		      </xsl:when>
 		      <xsl:when test="self::text()">

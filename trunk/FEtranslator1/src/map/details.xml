@@ -28,31 +28,31 @@
 
 			<field>
 				<display type="text" class="password" forid="password"
-					value="${LastName}" name="LastName" id="LastName" validation=""
+					value="${LastName}" name="LastName" id="LastName" validationattr=""
 					column="PASSWD" rulemessage="" dbcolsize="" mask="">
 				</display>
 			</field>
 			<field>
 				<display type="text" class="password" forid="dateid"
-					value="${orderdate}" name="LastName" id="LastName" validation=""
+					value="${orderdate}" name="LastName" id="LastName" validationattr=""
 					column="PASSWD" rulemessage="" dbcolsize="" mask="">
 				</display>
 			</field>
 			<field>
 				<display type="text" class="password" forid="gender"
-					value="${gender}" name="LastName" id="LastName" validation=""
+					value="${gender}" name="LastName" id="LastName" validationattr=""
 					column="PASSWD" rulemessage="" dbcolsize="" mask="">
 				</display>
 			</field>
 			<field>
 				<display type="text" class="password" forid="list"
-					value="${country}" name="LastName" id="LastName" validation=""
+					value="${country}" name="LastName" id="LastName" validationattr=""
 					column="PASSWD" rulemessage="" dbcolsize="" mask="">
 				</display>
 			</field>
 			<field>
 				<display type="text" class="password" forid="check"
-					value="${check}" name="LastName" id="LastName" validation=""
+					value="${check}" name="LastName" id="LastName" validationattr=""
 					column="PASSWD" rulemessage="" dbcolsize="" mask="">
 				</display>
 			</field>

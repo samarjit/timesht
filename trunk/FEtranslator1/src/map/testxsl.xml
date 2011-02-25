@@ -116,14 +116,14 @@
 				</field>
 
 				<field>
-					<input type="text" class="password" forid="password" value="${testFooter}" name="LastName" id="LastName" validation="" column="PASSWD" dbcolsize="" mask="">
+					<input type="text" class="password" forid="password" value="${testFooter}" name="LastName" id="LastName" validationattr="" column="PASSWD" dbcolsize="" mask="">
 						<rule>[{fieldname:"LastName",rules:{required:true},messages:{required:"Last Name is required"}}]</rule>
 						<validation></validation>
 						<query></query>
 					</input>
 				</field>
 				<field>
-					<input class="radiobutton" forid="gender" value="${genderlist}" name="gender" type="radio" id="genderlist" validation="" column="PASSWD" dbcolsize="" mask="">
+					<input class="radiobutton" forid="gender" value="${genderlist}" name="gender" type="radio" id="genderlist" validationattr="" column="PASSWD" dbcolsize="" mask="">
 						<rule></rule>
 						<validation></validation>
 						<query></query>
@@ -131,14 +131,14 @@
 				</field>
 
 				<field>
-					<input class="check" forid="check" value="${checklist}" name="check" type="checkbox" id="checklist" validation="" column="PASSWD" dbcolsize="" mask="">
+					<input class="check" forid="check" value="${checklist}" name="check" type="checkbox" id="checklist" validationattr="" column="PASSWD" dbcolsize="" mask="">
 						<rule></rule>
 						<validation></validation>
 						<query></query>
 					</input>
 				</field>
 				<field>
-					<customfield type="datepicker" class=" " forid="dateid" validation="" column="PASSWD" dbcolsize="" mask="">
+					<customfield type="datepicker" class=" " forid="dateid" validationattr="" column="PASSWD" dbcolsize="" mask="">
 						<!-- will need to experiment to see if dojo tags of struts2 like datepicker can be added? -->
 						<text><![CDATA[<sx.datetimepicker name="dateid"  displayFormat="dd-MMM-yyyy" />]]></text>
 						<!-- rule>[{fieldname:"dateid",rules:{required:true},messages:{required: "Dojo Date is mandatory field"}}]</rule -->
@@ -147,7 +147,7 @@
 					</customfield>
 				</field>
 				<field>
-					<select class="" forid="selcountry" value="${list}" validation="" column="PASSWD" dbcolsize="" mask=""  id="selcountry2">
+					<select class="" forid="selcountry" value="${list}" validationattr="" column="PASSWD" dbcolsize="" mask=""  id="selcountry2">
 						<text>
 							<![CDATA[
 							<select name="country" id="selcountry2">
@@ -165,7 +165,7 @@
 					</select>
 				</field>
 				<field>
-					<customfield type="select" class=" " forid="selectmonth" validation="" column="PASSWD" dbcolsize="" mask="">
+					<customfield type="select" class=" " forid="selectmonth" validationatt="" column="PASSWD" dbcolsize="" mask="">
 						<text><![CDATA[
 							<@s.select label="Months"
 					       name="selectmonth"
@@ -182,7 +182,7 @@
 					</customfield>
 				</field>
 				<field>
-					<customfield type="select" class=" " forid="jquerydatepicker" validation="" column="PASSWD" dbcolsize="" mask="">
+					<customfield type="select" class=" " forid="jquerydatepicker" validationattr="" column="PASSWD" dbcolsize="" mask="">
 						<text><![CDATA[
 							<@sj.datepicker id="date0" name="date0" label="With Button Panel" changeMonth="true" changeYear="true" />
 
@@ -194,7 +194,7 @@
 					</customfield>
 				</field>
 				<field>
-					<compositefield type="" class="" forid="compositeaddress" validation="" column="" dbcolsize="" mask="">
+					<compositefield type="" class="" forid="compositeaddress" validationattr="" column="" dbcolsize="" mask="">
 						<datafield type="text" value="{&quot;firstline&quot;:&quot;701&quot;}" name="address" id="address" column="ADDRESS" forid="address" />
 						<displayfield type="text" name="firstline" forid="firstline" />
 						<displayfield type="text" name="street" forid="street" />

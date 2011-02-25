@@ -3,50 +3,20 @@
   <xs:element name="root" type="rootType"/>
   <xs:complexType name="scriptsType" mixed="true">
     <xs:sequence>
-      <xs:element name="styleinclude" minOccurs="0">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value=""/>
-            <xs:enumeration value="css/home.css"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
-      <xs:element name="scriptinclude" maxOccurs="unbounded" minOccurs="0">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value=""/>
-            <xs:enumeration value="js/iadtframework.js,js/json2.js,js/jsonStringify.js"/>
-            <xs:enumeration value="js/jquery.validate.js"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element type="xs:string" name="styleinclude" minOccurs="0"/>
+      <xs:element type="xs:string" name="scriptinclude" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="stylesheetsType" mixed="true">
     <xs:sequence>
-      <xs:element name="styleinclude" minOccurs="0">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value=""/>
-            <xs:enumeration value="css/home.css"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
-      <xs:element name="scriptinclude" maxOccurs="unbounded" minOccurs="0">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value=""/>
-            <xs:enumeration value="js/iadtframework.js,js/json2.js,js/jsonStringify.js"/>
-            <xs:enumeration value="js/jquery.validate.js"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element type="xs:string" name="styleinclude" minOccurs="0"/>
+      <xs:element type="xs:string" name="scriptinclude" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="screenType">
     <xs:choice maxOccurs="unbounded" minOccurs="0">
       <xs:element type="xs:string" name="htmltempalte"/>
-      <xs:element type="xs:string" name="includedjsp"/>
+      <xs:element type="xs:string" name="includedjsp" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="xs:string" name="callbackclass"/>
       <xs:element type="scriptsType" name="scripts"/>
       <xs:element type="stylesheetsType" name="stylesheets"/>
@@ -139,23 +109,9 @@
   </xs:complexType>
   <xs:complexType name="inputType">
     <xs:sequence>
-      <xs:element name="rule">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value=""/>
-            <xs:enumeration value="[{fieldname:&quot;LastName&quot;,rules:{required:true},messages:{required:&quot;Last Name is required&quot;}}]"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element type="xs:string" name="rule"/>
       <xs:element type="xs:string" name="validation" minOccurs="0"/>
-      <xs:element name="query" minOccurs="0">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="&lt;@s.text name=&quot;details.firstname&quot; />"/>
-            <xs:enumeration value=""/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element type="xs:string" name="query" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="type" use="optional"/>
     <xs:attribute type="xs:string" name="class" use="optional"/>
@@ -172,13 +128,11 @@
     <xs:attribute type="xs:string" name="hidden" use="optional"/>
     <xs:attribute type="xs:string" name="label" use="optional"/>
     <xs:attribute type="xs:string" name="replace" use="optional"/>
-    <xs:attribute type="xs:string" name="validation" use="optional"/>
+    <xs:attribute type="xs:string" name="validationattr" use="optional"/>
   </xs:complexType>
   <xs:complexType name="selectType">
     <xs:sequence>
-      <xs:element name="text" type="xs:string">
-  		
-      </xs:element>
+      <xs:element type="xs:string" name="text"/>
       <xs:element type="xs:string" name="rule"/>
       <xs:element type="xs:string" name="validation" minOccurs="0"/>
       <xs:element name="query">
@@ -206,7 +160,7 @@
     <xs:attribute type="xs:string" name="hidden" use="optional"/>
     <xs:attribute type="xs:string" name="label" use="optional"/>
     <xs:attribute type="xs:string" name="replace" use="optional"/>
-    <xs:attribute type="xs:string" name="validation" use="optional"/>
+    <xs:attribute type="xs:string" name="validationattr" use="optional"/>
   </xs:complexType>
   <xs:complexType name="fieldsType">
     <xs:sequence>
@@ -218,6 +172,7 @@
       <xs:extension base="xs:string">
         <xs:attribute type="xs:string" name="forid" use="optional"/>
         <xs:attribute type="xs:string" name="onclick" use="optional"/>
+        <xs:attribute type="xs:string" name="replace" use="optional"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -231,39 +186,12 @@
   </xs:complexType>
   <xs:complexType name="customfieldType" mixed="true">
     <xs:sequence>
-      <xs:element name="text" minOccurs="0">
+      <xs:element type="xs:string" name="text" minOccurs="0">
         <xs:annotation>
           <xs:documentation>will need to experiment to see if dojo tags of struts2 like datepicker can be added?</xs:documentation>
         </xs:annotation>
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="&lt;sx.datetimepicker name=&quot;dateid&quot;  displayFormat=&quot;dd-MMM-yyyy&quot; />"/>
-            <xs:enumeration value="
-							&lt;@s.select label=&quot;Months&quot;
-					       name=&quot;selectmonth&quot;
-					       headerKey=&quot;&quot; headerValue=&quot;Select Month&quot;
-					      list=&quot;selectmonth&quot;
-					       value=r&quot;#{'2010-10-11'}&quot;
-					       required=&quot;true&quot;
-					       
-							/>
-						"/>
-            <xs:enumeration value="
-							&lt;@sj.datepicker id=&quot;date0&quot; name=&quot;date0&quot; label=&quot;With Button Panel&quot; changeMonth=&quot;true&quot; changeYear=&quot;true&quot; />
-
-							
-						"/>
-          </xs:restriction>
-        </xs:simpleType>
       </xs:element>
-      <xs:element name="rule" minOccurs="0">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="[{fieldname:&quot;selectmonth&quot;,rules:{required:true},messages:{required: &quot;Month is mandatory field&quot;}}]"/>
-            <xs:enumeration value="[{fieldname:&quot;date0&quot;,rules:{required:true},messages:{required: &quot;Date is mandatory field&quot;}}] "/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element type="xs:string" name="rule" minOccurs="0"/>
       <xs:element type="xs:string" name="validation" minOccurs="0">
         <xs:annotation>
           <xs:documentation>rule>[{fieldname:"dateid",rules:{required:true},messages:{required: "Dojo Date is mandatory field"}}]&lt;/rule</xs:documentation>
@@ -283,7 +211,7 @@
     <xs:attribute type="xs:string" name="type" use="optional"/>
     <xs:attribute type="xs:string" name="class" use="optional"/>
     <xs:attribute type="xs:string" name="forid" use="optional"/>
-    <xs:attribute type="xs:string" name="validation" use="optional"/>
+    <xs:attribute type="xs:string" name="validationattr" use="optional"/>
     <xs:attribute type="xs:string" name="column" use="optional"/>
     <xs:attribute type="xs:string" name="dbcolsize" use="optional"/>
     <xs:attribute type="xs:string" name="mask" use="optional"/>
@@ -298,16 +226,12 @@
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="datafieldType">
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
         <xs:attribute type="xs:string" name="type"/>
         <xs:attribute type="xs:string" name="value"/>
         <xs:attribute type="xs:string" name="name"/>
         <xs:attribute type="xs:string" name="id"/>
         <xs:attribute type="xs:string" name="column"/>
         <xs:attribute type="xs:string" name="forid"/>
-      </xs:extension>
-    </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="displayfieldType">
     <xs:simpleContent>
@@ -330,7 +254,7 @@
     <xs:attribute type="xs:string" name="type"/>
     <xs:attribute type="xs:string" name="class"/>
     <xs:attribute type="xs:string" name="forid"/>
-    <xs:attribute type="xs:string" name="validation"/>
+    <xs:attribute type="xs:string" name="validationattr"/>
     <xs:attribute type="xs:string" name="column"/>
     <xs:attribute type="xs:string" name="dbcolsize"/>
     <xs:attribute type="xs:string" name="mask"/>
