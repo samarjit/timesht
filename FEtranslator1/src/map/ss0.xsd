@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="scriptinclude">
-    <xs:simpleType>
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="js/iadtframework.js,js/json2.js,js/jsonStringify.js"/>
-        <xs:enumeration value="js/jquery.validate.js"/>
-      </xs:restriction>
-    </xs:simpleType>
-  </xs:element>
+  <xs:element name="scriptinclude" type="xs:string"/>
   <xs:element name="styleinclude" type="xs:string"/>
   <xs:element name="htmltempalte" type="xs:string"/>
   <xs:element name="includedjsp" type="xs:string"/>
@@ -22,7 +15,8 @@
   <xs:element name="stylesheets">
     <xs:complexType mixed="true">
       <xs:sequence>
-        <xs:element ref="styleinclude"/>
+        <xs:element ref="styleinclude" minOccurs="0"/>
+        <xs:element ref="scriptinclude" maxOccurs="unbounded" minOccurs="0"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -58,8 +52,8 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="xs:string">
-          <xs:attribute type="xs:string" name="type"/>
-          <xs:attribute type="xs:string" name="stackid"/>
+          <xs:attribute type="xs:string" name="type" use="optional"/>
+          <xs:attribute type="xs:string" name="stackid" use="optional"/>
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
@@ -95,17 +89,7 @@
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  <xs:element name="rule">
-    <xs:simpleType>
-      <xs:restriction base="xs:string">
-        <xs:enumeration value=""/>
-        <xs:enumeration value="[{fieldname:&quot;LastName&quot;,rules:{required:true},messages:{required:&quot;Last Name is required&quot;}}]"/>
-        <xs:enumeration value="[{fieldname:&quot;selectmonth&quot;,rules:{required:true},messages:{required: &quot;Month is mandatory field&quot;}}]"/>
-        <xs:enumeration value="[{fieldname:&quot;date0&quot;,rules:{required:true},messages:{required: &quot;Date is mandatory field&quot;}}] "/>
-        <xs:enumeration value="[{fieldname:&quot;address&quot;,rules:{required:true},messages:{required: &quot;Address is mandatory field&quot;}}] "/>
-      </xs:restriction>
-    </xs:simpleType>
-  </xs:element>
+  <xs:element name="rule" type="xs:string"/>
   <xs:element name="query">
     <xs:complexType>
       <xs:simpleContent>
@@ -151,54 +135,10 @@
       <xs:attribute type="xs:string" name="hidden" use="optional"/>
       <xs:attribute type="xs:string" name="label" use="optional"/>
       <xs:attribute type="xs:string" name="replace" use="optional"/>
-      <xs:attribute type="xs:string" name="validation" use="optional"/>
+      <xs:attribute type="xs:string" name="validationattr" use="optional"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="text">
-    <xs:simpleType>
-      <xs:restriction base="xs:string">
-        <xs:enumeration value="
-						&lt;select name=&quot;countryofissue&quot; maxlength=&quot;50&quot; class=&quot;field&quot; id=&quot;countryofissue&quot;>
-				        &lt;option value=&quot;&quot; selected=&quot;selected&quot;>Select&lt;/option>
-				        &lt;option value=&quot;INDIA&quot;>India&lt;/option>
-				        &lt;option value=&quot;SINGAPORE&quot;>Singapore&lt;/option>
-				        &lt;option value=&quot;AUSTRALIA&quot;>Australia&lt;/option>
-				        &lt;option value=&quot;PHILIPPINES&quot;>Philippines&lt;/option>
-				        &lt;option value=&quot;UAE&quot;>UAE&lt;/option>
-				        &lt;/select> 
-				        "/>
-        <xs:enumeration value="&lt;sx.datetimepicker name=&quot;dateid&quot;  displayFormat=&quot;dd-MMM-yyyy&quot; />"/>
-        <xs:enumeration value="
-							
-							&lt;select name=&quot;country&quot; id=&quot;selcountry2&quot;>
-								&lt;@s.iterator value=&quot;list1&quot;>
-	 								&lt;option value=&quot;&lt;@s.property value=&quot;key&quot;/>&quot; >&lt;@s.property value=&quot;value&quot;/>&lt;/option>
-								&lt;/@s.iterator>
-								
-						 	&lt;/select>
-	
-						 	
-						"/>
-        <xs:enumeration value="
-							&lt;@s.select label=&quot;Months&quot;
-					       name=&quot;selectmonth&quot;
-					       headerKey=&quot;&quot; headerValue=&quot;Select Month&quot;
-					      list=&quot;selectmonth&quot;
-					       value=r&quot;#{'2010-10-11'}&quot;
-					       required=&quot;true&quot;
-					       
-							/>
-						"/>
-        <xs:enumeration value="
-							&lt;@sj.datepicker id=&quot;date0&quot; name=&quot;date0&quot; label=&quot;With Button Panel&quot; changeMonth=&quot;true&quot; changeYear=&quot;true&quot; />
-
-							
-						"/>
-        <xs:enumeration value="
-						"/>
-      </xs:restriction>
-    </xs:simpleType>
-  </xs:element>
+  <xs:element name="text" type="xs:string"/>
   <xs:element name="select">
     <xs:complexType>
       <xs:sequence>
@@ -221,7 +161,7 @@
       <xs:attribute type="xs:string" name="hidden" use="optional"/>
       <xs:attribute type="xs:string" name="label" use="optional"/>
       <xs:attribute type="xs:string" name="replace" use="optional"/>
-      <xs:attribute type="xs:string" name="validation" use="optional"/>
+      <xs:attribute type="xs:string" name="validationattr" use="optional"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="field">
@@ -238,16 +178,16 @@
   </xs:element>
   <xs:element name="crud">
     <xs:complexType mixed="true">
-      <xs:sequence>
-        <xs:element ref="jsonrpc" maxOccurs="unbounded" minOccurs="0"/>
-        <xs:element ref="selectonload" maxOccurs="unbounded" minOccurs="0"/>
-        <xs:element ref="savefieldids" minOccurs="0"/>
-        <xs:element ref="sqlselect" minOccurs="0"/>
-        <xs:element ref="sqlinsert" minOccurs="0"/>
-        <xs:element ref="sqldelete" minOccurs="0"/>
-        <xs:element ref="sqlselectcount" minOccurs="0"/>
-        <xs:element ref="sqlupdate" minOccurs="0"/>
-      </xs:sequence>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="jsonrpc"/>
+        <xs:element ref="selectonload"/>
+        <xs:element ref="savefieldids"/>
+        <xs:element ref="sqlselect"/>
+        <xs:element ref="sqlinsert"/>
+        <xs:element ref="sqldelete"/>
+        <xs:element ref="sqlselectcount"/>
+        <xs:element ref="sqlupdate"/>
+      </xs:choice>
     </xs:complexType>
   </xs:element>
   <xs:element name="fields">
@@ -263,22 +203,12 @@
         <xs:extension base="xs:string">
           <xs:attribute type="xs:string" name="forid" use="optional"/>
           <xs:attribute type="xs:string" name="onclick" use="optional"/>
+          <xs:attribute type="xs:string" name="replace" use="optional"/>
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  <xs:element name="validation">
-    <xs:simpleType>
-      <xs:restriction base="xs:string">
-        <xs:enumeration value=""/>
-        <xs:enumeration value="
-						
-
-						
-						"/>
-      </xs:restriction>
-    </xs:simpleType>
-  </xs:element>
+  <xs:element name="validation" type="xs:string"/>
   <xs:element name="customfield">
     <xs:complexType mixed="true">
       <xs:sequence>
@@ -298,7 +228,7 @@
       <xs:attribute type="xs:string" name="type" use="optional"/>
       <xs:attribute type="xs:string" name="class" use="optional"/>
       <xs:attribute type="xs:string" name="forid" use="optional"/>
-      <xs:attribute type="xs:string" name="validation" use="optional"/>
+      <xs:attribute type="xs:string" name="validationattr" use="optional"/>
       <xs:attribute type="xs:string" name="column" use="optional"/>
       <xs:attribute type="xs:string" name="dbcolsize" use="optional"/>
       <xs:attribute type="xs:string" name="mask" use="optional"/>
@@ -307,16 +237,12 @@
   </xs:element>
   <xs:element name="datafield">
     <xs:complexType>
-      <xs:simpleContent>
-        <xs:extension base="xs:string">
-          <xs:attribute type="xs:string" name="type"/>
-          <xs:attribute type="xs:string" name="value"/>
-          <xs:attribute type="xs:string" name="name"/>
-          <xs:attribute type="xs:string" name="id"/>
-          <xs:attribute type="xs:string" name="column"/>
-          <xs:attribute type="xs:string" name="forid"/>
-        </xs:extension>
-      </xs:simpleContent>
+      <xs:attribute name="column" use="required" type="xs:NCName"/>
+      <xs:attribute name="forid" use="required" type="xs:NCName"/>
+      <xs:attribute name="id" use="required" type="xs:NCName"/>
+      <xs:attribute name="name" use="required" type="xs:NCName"/>
+      <xs:attribute name="type" use="required" type="xs:NCName"/>
+      <xs:attribute name="value" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="displayfield">
@@ -343,7 +269,7 @@
       <xs:attribute type="xs:string" name="type"/>
       <xs:attribute type="xs:string" name="class"/>
       <xs:attribute type="xs:string" name="forid"/>
-      <xs:attribute type="xs:string" name="validation"/>
+      <xs:attribute type="xs:string" name="validationattr"/>
       <xs:attribute type="xs:string" name="column"/>
       <xs:attribute type="xs:string" name="dbcolsize"/>
       <xs:attribute type="xs:string" name="mask"/>
@@ -362,13 +288,13 @@
   </xs:element>
   <xs:element name="screen">
     <xs:complexType>
-      <xs:sequence>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element ref="htmltempalte"/>
-        <xs:element ref="includedjsp"/>
+        <xs:element ref="includedjsp" maxOccurs="unbounded" minOccurs="0"/>
         <xs:element ref="callbackclass"/>
         <xs:element ref="scripts"/>
         <xs:element ref="stylesheets"/>
-      </xs:sequence>
+      </xs:choice>
       <xs:attribute type="xs:string" name="name"/>
     </xs:complexType>
   </xs:element>
