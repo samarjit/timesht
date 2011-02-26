@@ -12,7 +12,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="htmltempalte"/>
-        <xs:element maxOccurs="unbounded" ref="includedjsp"/>
+        <xs:element ref="includedjsp"  />
         <xs:element ref="callbackclass"/>
         <xs:choice maxOccurs="unbounded">
           <xs:element ref="scripts"/>
@@ -23,7 +23,9 @@
     </xs:complexType>
   </xs:element>
   <xs:element name="htmltempalte" type="xs:string"/>
-  <xs:element name="includedjsp" type="xs:string"/>
+  <xs:element name="includedjsp" type="xs:string">
+     
+  </xs:element>
   <xs:element name="callbackclass" type="xs:string"/>
   <xs:element name="scripts">
     <xs:complexType mixed="true">
@@ -60,27 +62,28 @@
   </xs:element>
   <xs:element name="button">
     <xs:complexType>
-      <xs:attribute name="forid" use="required" type="xs:NCName"/>
-      <xs:attribute name="onclick" use="required"/>
-      <xs:attribute name="replace" type="xs:NCName"/>
+    	<xs:attribute name="forid" use="required" type="xs:NCName" />
+    	<xs:attribute name="onclick" use="required" />
+    	<xs:attribute name="replace" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="crud">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="jsonrpc"/>
+       
         <xs:choice minOccurs="0" maxOccurs="unbounded">
-          <xs:element ref="savefieldids"/>
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="jsonrpc"/>
           <xs:element ref="selectonload"/>
           <xs:element ref="sqlselect"/>
-        </xs:choice>
-        <xs:sequence minOccurs="0">
+        
+        
+          <xs:element ref="savefieldids"/>
           <xs:element ref="sqlinsert"/>
           <xs:element ref="sqldelete"/>
           <xs:element ref="sqlselectcount"/>
           <xs:element ref="sqlupdate"/>
-        </xs:sequence>
-      </xs:sequence>
+          
+        </xs:choice>
+     
     </xs:complexType>
   </xs:element>
   <xs:element name="jsonrpc">
@@ -278,7 +281,9 @@
   <xs:element name="text" type="xs:string"/>
   <xs:element name="rule" type="xs:string"/>
   <xs:element name="validation">
-    <xs:complexType/>
+    <xs:complexType>
+    
+    </xs:complexType> 
   </xs:element>
   <xs:element name="query">
     <xs:complexType mixed="true">
