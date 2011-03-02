@@ -46,9 +46,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class Panel {
 
     @XmlElementRefs({
+        @XmlElementRef(name = "button", type = Button.class),
         @XmlElementRef(name = "fields", type = Fields.class),
-        @XmlElementRef(name = "crud", type = Crud.class),
-        @XmlElementRef(name = "button", type = Button.class)
+        @XmlElementRef(name = "crud", type = Crud.class)
     })
     @XmlMixed
     protected List<Object> content;
@@ -75,10 +75,10 @@ public class Panel {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Crud }
+     * {@link Button }
      * {@link String }
      * {@link Fields }
-     * {@link Button }
+     * {@link Crud }
      * 
      * 
      */

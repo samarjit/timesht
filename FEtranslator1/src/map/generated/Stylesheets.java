@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -22,9 +23,10 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
+ *       &lt;choice maxOccurs="unbounded">
  *         &lt;element ref="{}styleinclude" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
+ *         &lt;element ref="{}text" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/choice>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -39,7 +41,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "stylesheets")
 public class Stylesheets {
 
-    @XmlElementRef(name = "styleinclude", type = JAXBElement.class)
+    @XmlElementRefs({
+        @XmlElementRef(name = "text", type = JAXBElement.class),
+        @XmlElementRef(name = "styleinclude", type = JAXBElement.class)
+    })
     @XmlMixed
     protected List<Serializable> content;
 
@@ -62,6 +67,7 @@ public class Stylesheets {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
+     * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * 
      * 

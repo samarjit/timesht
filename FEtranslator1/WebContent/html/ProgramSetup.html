@@ -250,7 +250,7 @@ function onSubmit (args) {
 //	$('#form2').append("<input type='hidden' id='submitdata' name='submitdata' />");
 //	$('#submitdata').val(submitdata);
 	 
-	$.post("programsetupsave.action",submitdata, prgsubmitCallback);
+	$.get("programsetupsave.action",submitdata, prgsubmitCallback);
 	 
 }
 

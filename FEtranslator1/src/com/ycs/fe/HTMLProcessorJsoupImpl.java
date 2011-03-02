@@ -284,7 +284,8 @@ private boolean templateprocessed = false;
 		
 		for (int i = 0;  scriptsnl.hasNext(); i++) {
 			Node scriptnode = (Node) scriptsnl.next();
-			if(scriptnode.getNodeType() == Node.CDATA_SECTION_NODE){
+			if(scriptnode.getNodeType() == Node.ELEMENT_NODE && "text".equals(scriptnode.getName())){
+				logger.debug("To Remove:script:"+scriptnode.getText());
 				headNode.append(scriptnode.getText());
 				//appendXmlFragment(dbuild,headNode,scriptnode.getText());
 			}
@@ -553,8 +554,8 @@ private boolean templateprocessed = false;
 			
 			String pathhtml = null;
 			
-			if(xmlelmNode.selectNodes("//htmltempalte").size() > 0){
-				pathhtml = xmlelmNode.selectSingleNode("//htmltempalte").getText().trim();
+			if(xmlelmNode.selectNodes("//htmltemplate").size() > 0){
+				pathhtml = xmlelmNode.selectSingleNode("//htmltemplate").getText().trim();
 				logger.debug("htmltemplate:"+pathhtml);
 			}else{
 				logger.debug("HTMLProcessor: no template found in "+inputXML.substring(0,20)+"..." ); 
