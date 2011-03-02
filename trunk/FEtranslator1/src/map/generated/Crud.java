@@ -46,14 +46,14 @@ import javax.xml.bind.annotation.XmlType;
 public class Crud {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "selectonload", type = Selectonload.class),
-        @XmlElementRef(name = "savefieldids", type = Savefieldids.class),
         @XmlElementRef(name = "sqlselect", type = Sqlselect.class),
+        @XmlElementRef(name = "savefieldids", type = Savefieldids.class),
+        @XmlElementRef(name = "selectonload", type = Selectonload.class),
         @XmlElementRef(name = "jsonrpc", type = Jsonrpc.class),
-        @XmlElementRef(name = "sqldelete", type = JAXBElement.class),
+        @XmlElementRef(name = "sqlinsert", type = JAXBElement.class),
         @XmlElementRef(name = "sqlselectcount", type = Sqlselectcount.class),
         @XmlElementRef(name = "sqlupdate", type = JAXBElement.class),
-        @XmlElementRef(name = "sqlinsert", type = JAXBElement.class)
+        @XmlElementRef(name = "sqldelete", type = JAXBElement.class)
     })
     protected List<Object> jsonrpcOrSelectonloadOrSqlselect;
 
@@ -75,9 +75,9 @@ public class Crud {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Selectonload }
-     * {@link Savefieldids }
      * {@link Sqlselect }
+     * {@link Savefieldids }
+     * {@link Selectonload }
      * {@link Jsonrpc }
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link Sqlselectcount }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet type="text/xsl" href="config.xsl" ?>
-<root  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="config.xsd">
+<root >
 	<screen name="ProgramSetup">
-		<htmltempalte>
+		<htmltemplate>
 			html/ProgramSetup.html
-		</htmltempalte>
+		</htmltemplate>
 		<includedjsp>
  
 		</includedjsp>
@@ -13,41 +13,48 @@
 		</callbackclass>
 		<scripts>
 			<scriptinclude></scriptinclude>
-			<![CDATA[    
+			 <text><![CDATA[    
 				<script> 
 				var selonload='<@s.property value="resDTO" escape="false" />';
 				</script>
 				]]>
+			 </text>
 			<scriptinclude>hello.js</scriptinclude>
 		</scripts>
 		<stylesheets>
 			<styleinclude></styleinclude>
-			<![CDATA[
+			<text><![CDATA[
 				 jQuery.get("jsrpc.action?screenName=ProgramSetup&panelName=form1&command=selectonload",function (data){alert(data);});
 			]]>
-
+			</text>
 		</stylesheets>
 	</screen>
 
 	<panels>
 		<panel id="form1">
 			<crud>
-				<jsonrpc id="1">SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",ISSUERNAME "issuername", COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS 
+				<jsonrpc id="1"  stackid="form1">SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",ISSUERNAME "issuername", COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS 
 					where PROGNAME=:whereval|STRING order by 1</jsonrpc>			
-			    <selectonload stackid="form2" id="selqery1">SELECT 'LOYCARD' "txtnewprogname" from DUAL </selectonload>
-			    <selectonload stackid="form1" >SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS
+			    <selectonload stackid="form2" id="selqry1">SELECT 'LOYCARD' "txtnewprogname" from DUAL </selectonload>
+			    <selectonload stackid="form1" id="selqry2">SELECT PROGNAME "txtnewprogname",PROGDESC "txtprogramdesc",COUNTRY_ISSUE "countryofissue" FROM PROGRAMDETAILS
 			       where PROGNAME=:form2[0].txtnewprogname order by 1
 			      <countquery pagesize="10" >SELECT count('x') from PROGRAMDETAILS where  PROGNAME=:form2[0].txtnewprogname </countquery>
 			    </selectonload>
 			       
-				<savefieldids ></savefieldids>
-				<sqlselect type="DM" stackid="list1">select USER_ID userid, PASSWD password from USER_MASTER </sqlselect>
-				<sqlinsert>insert into PROGRAMDETAILS (PROGNAME,PROGDESC,COUNTRY_ISSUE)values(:txtnewprogname,:txtprogramdesc,:countryofissue)</sqlinsert>
-				<sqldelete>delete from PROGRAMDETAILS where PROGNAME=:form1[0].txtnewprogname AND COUNTRY_ISSUE=:form1[0].countryofissue</sqldelete>
-				<sqlselectcount refselectid="selqery1">derive</sqlselectcount>
-				<sqlupdate>update PROGRAMDETAILS set PROGDESC=:txtprogramdesc,COUNTRY_ISSUE=:countryofissue, ISSUERNAME=:issuername|STRING 	
+				 
+				<sqlselect id="selSpl1" type="DM" stackid="list1">select USER_ID userid, PASSWD password from USER_MASTER 
+					<error message="Select Failed {userid} "></error>
+				</sqlselect>
+				<sqlinsert id="ins1" stackid="frmIns1">insert into PROGRAMDETAILS (PROGNAME,PROGDESC,COUNTRY_ISSUE)values(:txtnewprogname,:txtprogramdesc,:countryofissue )</sqlinsert>
+				<sqldelete id="del1" stackid="frmDel1">delete from PROGRAMDETAILS where PROGNAME=:form1[0].txtnewprogname AND COUNTRY_ISSUE=:form1[0].countryofissue</sqldelete>
+				<sqlupdate id="del1" stackid="frmUpd1">update PROGRAMDETAILS set PROGDESC=:txtprogramdesc,COUNTRY_ISSUE=:countryofissue, ISSUERNAME=:issuername|STRING 	
 						 where PROGNAME=:form1[0].txtnewprogname</sqlupdate>
 			</crud>
+			<commands>
+			  <cmd name="merge" opt="jsrpc:1|selectonload:1"  result="ajax|{screenName}"  ></cmd>
+			  <cmd name="selectlist" opt="jsrpc:2|jsonrpc:1"  result="ajax|{screenName}"  ></cmd>
+			</commands>
+			
 			<fields>
 				<field>
 					<sometype name="whereval" dbdatatype="STRING"></sometype>

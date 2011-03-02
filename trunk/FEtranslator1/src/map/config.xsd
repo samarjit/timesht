@@ -11,35 +11,35 @@
   <xs:element name="screen">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="htmltempalte"/>
+        <xs:element ref="htmltemplate"/>
         <xs:element ref="includedjsp"  />
         <xs:element ref="callbackclass"/>
-        <xs:choice maxOccurs="unbounded">
-          <xs:element ref="scripts"/>
-          <xs:element ref="stylesheets"/>
-        </xs:choice>
+        <xs:element ref="scripts"  />
+        <xs:element ref="stylesheets"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:NCName"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="htmltempalte" type="xs:string"/>
+  <xs:element name="htmltemplate" type="xs:string"/>
   <xs:element name="includedjsp" type="xs:string">
      
   </xs:element>
   <xs:element name="callbackclass" type="xs:string"/>
   <xs:element name="scripts">
     <xs:complexType mixed="true">
-      <xs:sequence>
+      <xs:choice maxOccurs="unbounded">
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="scriptinclude"/>
-      </xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="text"/>
+      </xs:choice>
     </xs:complexType>
   </xs:element>
   <xs:element name="scriptinclude" type="xs:string"/>
   <xs:element name="stylesheets">
     <xs:complexType mixed="true">
-      <xs:sequence>
+      <xs:choice  maxOccurs="unbounded"> 
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="styleinclude"/>
-      </xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="text"/>
+      </xs:choice>
     </xs:complexType>
   </xs:element>
   <xs:element name="styleinclude" type="xs:string"/>

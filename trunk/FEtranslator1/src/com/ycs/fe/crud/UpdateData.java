@@ -32,7 +32,7 @@ private Logger logger = Logger.getLogger(getClass());
 			try {
 				org.dom4j.Document document1 = new SAXReader().read( pageconfigxml);
 				org.dom4j.Element root = document1.getRootElement();
-				Node crudnode = root.selectSingleNode("//panel[@id='"+panelname+"']/crud");
+				Node crudnode = root.selectSingleNode("//crud");
 				Node node = crudnode.selectSingleNode("sqlupdate");
 				if(node == null)throw new Exception("<sqlupdate> node not defined");
 				

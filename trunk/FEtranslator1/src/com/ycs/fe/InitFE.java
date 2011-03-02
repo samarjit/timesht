@@ -60,7 +60,10 @@ public class InitFE implements ServletContextListener {
 			e.printStackTrace();
 		}
 	 	System.out.println("FE Servlet context Started!!!");
+	 	//remove all the below lines in production
 	 	initDb();
+	 	//init some variables
+	 	
 	}
 	
 	/**

@@ -1,13 +1,10 @@
 
 package map.generated;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
@@ -25,13 +22,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{}htmltempalte"/>
+ *         &lt;element ref="{}htmltemplate"/>
  *         &lt;element ref="{}includedjsp"/>
  *         &lt;element ref="{}callbackclass"/>
- *         &lt;choice maxOccurs="unbounded">
- *           &lt;element ref="{}scripts"/>
- *           &lt;element ref="{}stylesheets"/>
- *         &lt;/choice>
+ *         &lt;element ref="{}scripts"/>
+ *         &lt;element ref="{}stylesheets"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" />
  *     &lt;/restriction>
@@ -43,52 +38,52 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "htmltempalte",
+    "htmltemplate",
     "includedjsp",
     "callbackclass",
-    "scriptsOrStylesheets"
+    "scripts",
+    "stylesheets"
 })
 @XmlRootElement(name = "screen")
 public class Screen {
 
     @XmlElement(required = true)
-    protected String htmltempalte;
+    protected String htmltemplate;
     @XmlElement(required = true)
     protected String includedjsp;
     @XmlElement(required = true)
     protected String callbackclass;
-    @XmlElements({
-        @XmlElement(name = "stylesheets", type = Stylesheets.class),
-        @XmlElement(name = "scripts", type = Scripts.class)
-    })
-    protected List<Object> scriptsOrStylesheets;
+    @XmlElement(required = true)
+    protected Scripts scripts;
+    @XmlElement(required = true)
+    protected Stylesheets stylesheets;
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "NCName")
     protected String name;
 
     /**
-     * Gets the value of the htmltempalte property.
+     * Gets the value of the htmltemplate property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getHtmltempalte() {
-        return htmltempalte;
+    public String getHtmltemplate() {
+        return htmltemplate;
     }
 
     /**
-     * Sets the value of the htmltempalte property.
+     * Sets the value of the htmltemplate property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setHtmltempalte(String value) {
-        this.htmltempalte = value;
+    public void setHtmltemplate(String value) {
+        this.htmltemplate = value;
     }
 
     /**
@@ -140,33 +135,51 @@ public class Screen {
     }
 
     /**
-     * Gets the value of the scriptsOrStylesheets property.
+     * Gets the value of the scripts property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the scriptsOrStylesheets property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getScriptsOrStylesheets().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Stylesheets }
-     * {@link Scripts }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link Scripts }
+     *     
      */
-    public List<Object> getScriptsOrStylesheets() {
-        if (scriptsOrStylesheets == null) {
-            scriptsOrStylesheets = new ArrayList<Object>();
-        }
-        return this.scriptsOrStylesheets;
+    public Scripts getScripts() {
+        return scripts;
+    }
+
+    /**
+     * Sets the value of the scripts property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Scripts }
+     *     
+     */
+    public void setScripts(Scripts value) {
+        this.scripts = value;
+    }
+
+    /**
+     * Gets the value of the stylesheets property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Stylesheets }
+     *     
+     */
+    public Stylesheets getStylesheets() {
+        return stylesheets;
+    }
+
+    /**
+     * Sets the value of the stylesheets property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Stylesheets }
+     *     
+     */
+    public void setStylesheets(Stylesheets value) {
+        this.stylesheets = value;
     }
 
     /**
