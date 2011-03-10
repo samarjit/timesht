@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{}error" minOccurs="0"/>
- *         &lt;element ref="{}message" minOccurs="0"/>
+ *         &lt;element ref="{}error" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{}message" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="outstack" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "content"
 })
-@XmlRootElement(name = "jsonrpc")
-public class Jsonrpc {
+@XmlRootElement(name = "sqlinsert")
+public class Sqlinsert {
 
     @XmlElementRefs({
         @XmlElementRef(name = "error", type = Error.class),
