@@ -43,6 +43,7 @@ public class QueryParser{
 				}
 			}
 		}
+		logger.debug("populateFieldDBType():"+hmfielddbtype);
 	}
 	
 	/**
@@ -63,9 +64,9 @@ public class QueryParser{
 		String PATTERN = "\\:(inp|res|vs)?\\.?([^,\\s\\|]*)\\|?([^,\\s]*)";//"\\:(\\w*)\\[?(\\d*)\\]?\\.?([^,\\s\\|]*)\\|?([^,\\s]*)";
 		
 		Pattern   pattern = Pattern.compile(PATTERN,Pattern.DOTALL|Pattern.MULTILINE);
-		
+		updatequery = updatequery.trim();
 		logger.debug("Input Query:"+updatequery+" \nlength:"+updatequery.length());
-		logger.debug("JSON ="+jsonObject);
+		logger.debug("InputJSON record part="+jsonObject);
 		logger.debug("PATTERN="+PATTERN);
 		
 		Matcher m1 = pattern.matcher(updatequery); // get a matcher object

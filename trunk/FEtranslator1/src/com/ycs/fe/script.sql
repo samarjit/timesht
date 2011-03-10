@@ -1,18 +1,19 @@
 CREATE TABLE test(name varchar(20), bday timestamp);
 create table test2(name varchar(20), bday date);
-CREATE MEMORY TABLE PUBLIC.PROGRAMDETAILS(PROGNAME VARCHAR(20),PROGDESC VARCHAR(30), issuername varchar(20),COUNTRY_ISSUE VARCHAR(30));
+CREATE   TABLE  PROGRAMDETAILS(PROGNAME VARCHAR(20),PROGDESC VARCHAR(30), issuername varchar(20),COUNTRY_ISSUE VARCHAR(30), STATUS VARCHAR(30));
 
 INSERT INTO TEST VALUES('sam','2010-12-12 00:00:00.000000')                        ;
 INSERT INTO TEST2 VALUES('sam','2010-12-12')                                       ;
 INSERT INTO TEST2 VALUES('sam sam','2011-02-14')                                   ;
-INSERT INTO PROGRAMDETAILS VALUES('NewProg','NwProg desc',null,'SINGAPORE')             ;
-INSERT INTO PROGRAMDETAILS VALUES('NewProg','NwProg desc',null,'SINGAPORE')             ;
-INSERT INTO PROGRAMDETAILS VALUES('NewProg','NwProg desc',null,'SINGAPORE')             ;
-INSERT INTO PROGRAMDETAILS VALUES('NewProg','NwProg desc',null,'SINGAPORE')             ;
-INSERT INTO PROGRAMDETAILS VALUES('NewCard','Some desc',null,'AUSTRALIA')               ;
-INSERT INTO PROGRAMDETAILS VALUES('TRACARD','Travel Card Program',null,'INDIA')         ;
-INSERT INTO PROGRAMDETAILS VALUES('NewCard','Some desc',null,'AUSTRALIA')               ;
-INSERT INTO PROGRAMDETAILS VALUES('LOYCARD','Loyalty Card Program',null,'PHILIPPINES')  ;
+INSERT INTO  PROGRAMDETAILS(PROGNAME, PROGDESC, ISSUERNAME, COUNTRY_ISSUE) VALUES
+('NewProg', 'NwProg desc', NULL, 'SINGAPORE'),
+('NewProg', 'NwProg desc', NULL, 'SINGAPORE'),
+('NewProg', 'NwProg desc', NULL, 'SINGAPORE'),
+('NewProg', 'NwProg desc', NULL, 'SINGAPORE'),
+('NewCard', 'Some desc', NULL, 'AUSTRALIA'),
+('TRACARD', 'Travel Card Program', NULL, 'INDIA'),
+('NewCard', 'Some desc', NULL, 'AUSTRALIA'),
+('LOYCARD', 'Loyalty Card Program', NULL, 'PHILIPPINES');
 
 
 

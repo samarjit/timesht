@@ -18,12 +18,11 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="column" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="forid" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="instack" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="type" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
+ *       &lt;attribute name="opt" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="processor" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="result" use="required" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -33,93 +32,43 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-@XmlRootElement(name = "datafield")
-public class Datafield {
+@XmlRootElement(name = "cmd")
+public class Cmd {
 
     @XmlAttribute(required = true)
-    protected String column;
-    @XmlAttribute(required = true)
-    protected String forid;
-    @XmlAttribute(required = true)
-    protected String id;
+    protected String instack;
     @XmlAttribute(required = true)
     protected String name;
     @XmlAttribute(required = true)
-    protected String type;
+    protected String opt;
+    @XmlAttribute(required = true)
+    protected String processor;
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "anySimpleType")
-    protected String value;
+    protected String result;
 
     /**
-     * Gets the value of the column property.
+     * Gets the value of the instack property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getColumn() {
-        return column;
+    public String getInstack() {
+        return instack;
     }
 
     /**
-     * Sets the value of the column property.
+     * Sets the value of the instack property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setColumn(String value) {
-        this.column = value;
-    }
-
-    /**
-     * Gets the value of the forid property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getForid() {
-        return forid;
-    }
-
-    /**
-     * Sets the value of the forid property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setForid(String value) {
-        this.forid = value;
-    }
-
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setId(String value) {
-        this.id = value;
+    public void setInstack(String value) {
+        this.instack = value;
     }
 
     /**
@@ -147,51 +96,75 @@ public class Datafield {
     }
 
     /**
-     * Gets the value of the type property.
+     * Gets the value of the opt property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getType() {
-        return type;
+    public String getOpt() {
+        return opt;
     }
 
     /**
-     * Sets the value of the type property.
+     * Sets the value of the opt property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setType(String value) {
-        this.type = value;
+    public void setOpt(String value) {
+        this.opt = value;
     }
 
     /**
-     * Gets the value of the value property.
+     * Gets the value of the processor property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getValue() {
-        return value;
+    public String getProcessor() {
+        return processor;
     }
 
     /**
-     * Sets the value of the value property.
+     * Sets the value of the processor property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
-        this.value = value;
+    public void setProcessor(String value) {
+        this.processor = value;
+    }
+
+    /**
+     * Gets the value of the result property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getResult() {
+        return result;
+    }
+
+    /**
+     * Sets the value of the result property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setResult(String value) {
+        this.result = value;
     }
 
 }
