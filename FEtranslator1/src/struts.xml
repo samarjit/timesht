@@ -7,7 +7,7 @@
 	<constant name="struts.devMode" value="true" />
 	<constant name="struts.convention.classes.reload" value="false" />
 	
-		 <package name="debug-default" abstract="true" extends="struts-default"> 
+    <package name="debug-default" abstract="true" extends="struts-default"> 
         <interceptors> 
             <interceptor-stack name="debug-stack"> 
                 <interceptor-ref name="exception"/> 
@@ -38,6 +38,7 @@
         </interceptors> 
         <default-interceptor-ref name="debug-stack"/> 
     </package> 
+ 
 	
 	<package name="yidefaultPackage" extends="struts-default">
 		<result-types>
