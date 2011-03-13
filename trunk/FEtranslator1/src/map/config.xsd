@@ -10,7 +10,7 @@
   </xs:element>
   <xs:element name="screen">
 	<xs:complexType>
-		<xs:sequence>
+		<xs:sequence >
 			<xs:element ref="htmltemplate" />
 			<xs:element ref="includedjsp" />
 			<xs:element ref="callbackclass" />
@@ -92,7 +92,7 @@
   <xs:element name="jsonrpc">
     <xs:complexType mixed="true">
       <xs:sequence>
-      	 <xs:element minOccurs="0" maxOccurs="unbounded" ref="countquery"/>
+      	 <xs:element minOccurs="0" maxOccurs="1" ref="countquery"/>
          <xs:element minOccurs="0" maxOccurs="1" ref="error"/>
          <xs:element minOccurs="0" maxOccurs="1" ref="message"/>
       </xs:sequence>
@@ -241,7 +241,7 @@
   
   <xs:element name="field">
     <xs:complexType>
-      <xs:choice>
+      <xs:choice minOccurs="0" maxOccurs="2"> 
         <xs:element ref="compositefield"/>
         <xs:element ref="customfield"/>
         <xs:element ref="div"/>

@@ -42,8 +42,8 @@ import javax.xml.bind.annotation.XmlType;
 public class Panel {
 
     @XmlElements({
-        @XmlElement(name = "button", type = Button.class),
         @XmlElement(name = "testscriptlet", type = String.class),
+        @XmlElement(name = "button", type = Button.class),
         @XmlElement(name = "fields", type = Fields.class)
     })
     protected List<Object> buttonOrFieldsOrTestscriptlet;
@@ -68,8 +68,8 @@ public class Panel {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Button }
      * {@link String }
+     * {@link Button }
      * {@link Fields }
      * 
      * 
