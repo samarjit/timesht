@@ -71,9 +71,9 @@ public class Sqldelete {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
+     * {@link String }
      * {@link Message }
      * {@link Error }
-     * {@link String }
      * 
      * 
      */

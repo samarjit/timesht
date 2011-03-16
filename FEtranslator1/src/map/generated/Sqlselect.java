@@ -44,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
 public class Sqlselect {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "countquery", type = Countquery.class),
         @XmlElementRef(name = "message", type = Message.class),
+        @XmlElementRef(name = "countquery", type = Countquery.class),
         @XmlElementRef(name = "error", type = Error.class)
     })
     @XmlMixed
@@ -73,10 +73,10 @@ public class Sqlselect {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Countquery }
      * {@link Message }
-     * {@link Error }
      * {@link String }
+     * {@link Countquery }
+     * {@link Error }
      * 
      * 
      */
