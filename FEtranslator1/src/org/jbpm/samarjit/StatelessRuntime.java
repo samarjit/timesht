@@ -2,6 +2,8 @@ package org.jbpm.samarjit;
 
 import org.drools.event.ProcessEventSupport;
 import org.drools.time.impl.JDKTimerService;
+import org.jbpm.process.instance.ProcessInstanceManager;
+import org.jbpm.process.instance.impl.DefaultProcessInstanceManager;
 import org.jbpm.process.instance.timer.TimerManager;
 
 public class StatelessRuntime {
@@ -12,6 +14,13 @@ public class StatelessRuntime {
 	
 	private StatelessRuntime(){}
 	private ProcessEventSupport eventSupport;
+	private StatelessWorkItemManager workItemMananger = new StatelessWorkItemManager();
+	private ProcessInstanceManager processInstanceManager  = null; // we are stateless
+	
+	public void setProcessInstanceManager(ProcessInstanceManager processInstanceManager) {
+		System.out.println("We are stateless this should not come!!");
+		this.processInstanceManager = processInstanceManager;
+	}
 
 	public ProcessEventSupport getEventSupport() {
 		return eventSupport;
@@ -29,6 +38,20 @@ public class StatelessRuntime {
 		 //Part of Runtime ProcessContext which has Runtime
 	}
 
-	 
+	public StatelessWorkItemManager getWorkItemManager(){
+		return this.workItemMananger ;
+	}
+
+	public void setSignalManager(StatelessSignalManager signalManager) {
+		this.signalManager = signalManager;
+	}
+
+	public StatelessSignalManager getSignalManager() {
+		return signalManager;
+	}
+
+	public ProcessInstanceManager getProcessInstanceManager() {
+		return (DefaultProcessInstanceManager )processInstanceManager ;
+	}
 	
 }

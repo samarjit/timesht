@@ -1,17 +1,20 @@
 package org.jbpm.samarjit;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.drools.common.InternalKnowledgeRuntime;
 import org.drools.definition.process.Process;
 import org.drools.runtime.process.EventListener;
 import org.drools.runtime.process.WorkflowProcessInstance;
  
 
 import org.jbpm.process.instance.InternalProcessRuntime;
+import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.node.StartNode;
 import org.jbpm.workflow.instance.NodeInstance;
@@ -22,8 +25,9 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	private Process currentProcess;
 	private Map<String, List<EventListener>> eventListeners = new HashMap<String, List<EventListener>>();
 	private Map<String, List<EventListener>> externalEventListeners = new HashMap<String, List<EventListener>>();
-
-
+	private int state = STATE_PENDING;
+	private final List<NodeInstance> nodeInstances = new ArrayList<NodeInstance>();
+	
 	public StatelessProcessInstance(Process p){
 		currentProcess = p;
 	}
@@ -181,13 +185,42 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 			listeners.remove(listener);
 			if (listeners.isEmpty()) {
 				eventListeners.remove(type);
-				if (external) {throw new UnsupportedOperationException("External Events ");
-//					((InternalProcessRuntime) getKnowledgeRuntime().getProcessRuntime())
-//						.getSignalManager().removeEventListener(type, this);
+				if (external) {
+					StatelessRuntime.eINSTANCE.getSignalManager().removeEventListener(type, this);
 				}
 			}
 		}
 	}
+	public void setState(int stateAborted) {
+		 internalSetState(state);
+		// TODO move most of this to ProcessInstanceImpl
+		if (state == ProcessInstance.STATE_COMPLETED
+				|| state == ProcessInstance.STATE_ABORTED) {
+			StatelessRuntime.eINSTANCE.getEventSupport().fireBeforeProcessCompleted(this, null/*kruntime*/);
+			// deactivate all node instances of this process instance
+			while (!nodeInstances.isEmpty()) {
+				NodeInstance nodeInstance = nodeInstances.get(0);
+				((org.jbpm.workflow.instance.NodeInstance) nodeInstance)
+						.cancel();
+			}
+			removeEventListeners();
+			StatelessRuntime.eINSTANCE.getProcessInstanceManager().removeProcessInstance(this);
+			StatelessRuntime.eINSTANCE.getEventSupport().fireAfterProcessCompleted(this, null/*kruntime*/);
+
+			StatelessRuntime.eINSTANCE.getSignalManager().signalEvent("processInstanceCompleted:" + getId(), this);
+		}
+	}
 	
+	private void removeEventListeners() {
+		for (String type : externalEventListeners.keySet()) {
+			StatelessRuntime.eINSTANCE.getSignalManager().removeEventListener(type, this);
+		}
+	}
+	
+	
+	    
+	    public void internalSetState(final int state) {
+	    	this.state = state;
+	    }
 	
 }
