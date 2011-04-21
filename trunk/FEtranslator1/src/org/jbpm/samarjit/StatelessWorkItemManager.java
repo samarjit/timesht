@@ -3,14 +3,22 @@ package org.jbpm.samarjit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.drools.WorkItemHandlerNotFoundException;
+import org.drools.common.InternalKnowledgeRuntime;
 import org.drools.process.instance.WorkItem;
 import org.drools.process.instance.WorkItemManager;
 import org.drools.process.instance.impl.WorkItemImpl;
 import org.drools.runtime.process.WorkItemHandler;
 
 public class StatelessWorkItemManager implements WorkItemManager{
-	private Map<String, WorkItemHandler> workItemHandlers = new HashMap();
+	private static final long serialVersionUID = 510L;
+	/*     */   private long workItemCounter;
+	/*  41 */   private Map<Long, WorkItem> workItems = new ConcurrentHashMap();
+	/*     */   private InternalKnowledgeRuntime kruntime;
+	/*  43 */   private Map<String, WorkItemHandler> workItemHandlers = new HashMap();
+	
 	//DefaultWorkItemManager
 	@Override
 	public void internalExecuteWorkItem(WorkItem workItem) {

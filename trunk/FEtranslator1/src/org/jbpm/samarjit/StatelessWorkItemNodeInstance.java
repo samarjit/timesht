@@ -1,8 +1,10 @@
 package org.jbpm.samarjit;
 
-public class StatelessWorkItemNodeInstance {
+import org.drools.runtime.process.NodeInstance;
 
-	 public void internalTrigger(final NodeInstance from, String type) {
+public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
+
+	 public void internalTrigger(final StatelessNodeInstance from, String type) {
 	    	super.internalTrigger(from, type);
 	        // TODO this should be included for ruleflow only, not for BPEL
 //	        if (!Node.CONNECTION_DEFAULT_TYPE.equals(type)) {
@@ -49,6 +51,12 @@ public class StatelessWorkItemNodeInstance {
 					timerInstances.add(timerInstance.getId());
 				}
 			}
+		}
+
+		@Override
+		protected void internalTrigger(NodeInstance from, String type) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 }
