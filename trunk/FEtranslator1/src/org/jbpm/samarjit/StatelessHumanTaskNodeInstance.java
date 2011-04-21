@@ -8,7 +8,7 @@ import org.jbpm.workflow.core.node.WorkItemNode;
 
  
 
-public class StatelessHumanTaskNodeInstance extends StatelessNodeInstanceImpl {
+public class StatelessHumanTaskNodeInstance extends StatelessWorkItemNodeInstance {
 	 
 	private transient SwimlaneContextInstance swimlaneContextInstance;
 	
