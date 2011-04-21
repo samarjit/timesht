@@ -1,17 +1,27 @@
 package org.jbpm.samarjit;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.drools.definition.process.Process;
+import org.drools.runtime.process.EventListener;
+import org.drools.runtime.process.WorkflowProcessInstance;
  
 
+import org.jbpm.process.instance.InternalProcessRuntime;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.node.StartNode;
 import org.jbpm.workflow.instance.NodeInstance;
 import org.jbpm.workflow.instance.impl.NodeInstanceFactoryRegistry;
 
 
-public class StatelessProcessInstance  implements WorkflowProcessInstance, org.drools.runtime.process.ProcessInstance {
+public class StatelessProcessInstance  implements StatelessWorkflowEvent,WorkflowProcessInstance, org.drools.runtime.process.ProcessInstance {
 	private Process currentProcess;
-
+	private Map<String, List<EventListener>> eventListeners = new HashMap<String, List<EventListener>>();
+	private Map<String, List<EventListener>> externalEventListeners = new HashMap<String, List<EventListener>>();
 
 
 	public StatelessProcessInstance(Process p){
@@ -28,7 +38,7 @@ public class StatelessProcessInstance  implements WorkflowProcessInstance, org.d
 
 	
 	private StatelessProcessInstance getRuleFlowProcess() {
-		return getProcess();
+		return (StatelessProcessInstance) getProcess();
 	}
 
 
@@ -119,6 +129,64 @@ public class StatelessProcessInstance  implements WorkflowProcessInstance, org.d
 	public int getState() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public Collection<org.drools.runtime.process.NodeInstance> getNodeInstances() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public org.drools.runtime.process.NodeInstance getNodeInstance(long paramLong) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object getVariable(String paramString) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setVariable(String paramString, Object paramObject) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl
+	@Override
+	public void addEventListener(String type, EventListener listener, boolean external) {
+		Map<String, List<EventListener>> eventListeners = 
+			external ? this.externalEventListeners : this.eventListeners;
+		List<EventListener> listeners = eventListeners.get(type);
+		if (listeners == null) {
+			listeners = new CopyOnWriteArrayList<EventListener>();
+			eventListeners.put(type, listeners);
+			if (external) { throw new UnsupportedOperationException("External Events ");
+//				((InternalProcessRuntime) getKnowledgeRuntime().getProcessRuntime())
+//					.getSignalManager().addEventListener(type, this);
+			}
+		}
+		listeners.add(listener);
+	}
+
+	@Override
+	public void removeEventListener(String type, EventListener listener, boolean external) {
+		Map<String, List<EventListener>> eventListeners = external ? this.externalEventListeners
+				: this.eventListeners;
+		List<EventListener> listeners = eventListeners.get(type);
+		if (listeners != null) {
+			listeners.remove(listener);
+			if (listeners.isEmpty()) {
+				eventListeners.remove(type);
+				if (external) {throw new UnsupportedOperationException("External Events ");
+//					((InternalProcessRuntime) getKnowledgeRuntime().getProcessRuntime())
+//						.getSignalManager().removeEventListener(type, this);
+				}
+			}
+		}
 	}
 	
 	

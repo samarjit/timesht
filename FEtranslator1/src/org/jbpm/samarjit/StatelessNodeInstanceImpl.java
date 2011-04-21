@@ -8,30 +8,45 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.drools.RuntimeDroolsException;
 import org.drools.definition.process.Connection;
 import org.drools.definition.process.Node;
 import org.drools.event.ProcessEventSupport;
 import org.drools.process.core.Work;
 import org.drools.process.instance.impl.WorkItemImpl;
+import org.drools.runtime.process.EventListener;
 import org.drools.runtime.process.NodeInstance;
 import org.drools.runtime.process.NodeInstanceContainer;
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkflowProcessInstance;
+import org.drools.spi.ProcessContext;
+import org.drools.time.TimeUtils;
 import org.jbpm.process.core.Context;
 import org.jbpm.process.core.ContextContainer;
+import org.jbpm.process.core.context.exception.ExceptionScope;
 import org.jbpm.process.core.context.exclusive.ExclusiveGroup;
 import org.jbpm.process.core.context.variable.VariableScope;
+import org.jbpm.process.core.timer.Timer;
 import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ContextInstanceContainer;
+import org.jbpm.process.instance.InternalProcessRuntime;
 import org.jbpm.process.instance.ProcessInstance;
+import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
 import org.jbpm.process.instance.context.exclusive.ExclusiveGroupInstance;
 import org.jbpm.process.instance.context.variable.VariableScopeInstance;
+import org.jbpm.process.instance.impl.Action;
+import org.jbpm.process.instance.timer.TimerInstance;
+import org.jbpm.process.instance.timer.TimerManager;
+import org.jbpm.workflow.core.DroolsAction;
+import org.jbpm.workflow.core.impl.ExtendedNodeImpl;
 import org.jbpm.workflow.core.impl.NodeImpl;
+import org.jbpm.workflow.core.node.StateBasedNode;
 import org.jbpm.workflow.core.node.WorkItemNode;
 import org.jbpm.workflow.instance.impl.NodeInstanceResolverFactory;
+import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.mvel2.MVEL;
  
-public class StatelessNodeInstanceImpl implements org.jbpm.workflow.instance.NodeInstance {
+public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBasedNodeInstanceInterface, EventListener  {
 
 	private static final long serialVersionUID = 511l;
 	private static final Pattern PARAMETER_MATCHER = Pattern.compile("#\\{(\\S+)\\}", Pattern.DOTALL);
@@ -40,7 +55,7 @@ public class StatelessNodeInstanceImpl implements org.jbpm.workflow.instance.Nod
     private StatelessProcessInstance processInstance;
     private org.jbpm.workflow.instance.NodeInstanceContainer nodeInstanceContainer;
     private transient WorkItem workItem;
-
+    private List<Long> timerInstances;
 	 
 	
 	public final void trigger(NodeInstance from, String type) {
@@ -62,14 +77,109 @@ public class StatelessNodeInstanceImpl implements org.jbpm.workflow.instance.Nod
 		return StatelessRuntime.eINSTANCE.getEventSupport();
 	}
 
-
-	private   void internalTrigger(NodeInstance from, String type) {
-		throw new UnsupportedOperationException(" internamTrigger(): StatelessNodeInstance ");
+	//internalTrigger implementation is required to be done
+	public void internalTrigger(NodeInstance from, String type){
+		triggerEvent(ExtendedNodeImpl.EVENT_NODE_ENTER);
+		//StateBasedNodeInstance // activate timers
+		Map<Timer, DroolsAction> timers = getEventBasedNode().getTimers();
+		if (timers != null) {
+			addTimerListener();
+			timerInstances = new ArrayList<Long>(timers.size());
+			TimerManager timerManager = StatelessRuntime.eINSTANCE.getTimerManager();
+			for (Timer timer: timers.keySet()) {
+				TimerInstance timerInstance = createTimerInstance(timer); 
+				timerManager.registerTimer(timerInstance, (ProcessInstance) getProcessInstance());
+				timerInstances.add(timerInstance.getId());
+			}
+		}
 	}
 
+	 protected TimerInstance createTimerInstance(Timer timer) {
+	    	TimerInstance timerInstance = new TimerInstance();
+	    	timerInstance.setDelay(resolveValue(timer.getDelay()));
+	    	if (timer.getPeriod() == null) {
+	    		timerInstance.setPeriod(0);
+	    	} else {
+	    		timerInstance.setPeriod(resolveValue(timer.getPeriod()));
+	    	}
+	    	timerInstance.setTimerId(timer.getId());
+	    	return timerInstance;
+	    }
+	
+	 private long resolveValue(String s) {
+	    	try {
+	    		return TimeUtils.parseTimeString(s);
+	    	} catch (RuntimeDroolsException e) {
+	    		// cannot parse delay, trying to interpret it
+	    		Map<String, String> replacements = new HashMap<String, String>();
+	    		Matcher matcher = PARAMETER_MATCHER.matcher(s);
+	            while (matcher.find()) {
+	            	String paramName = matcher.group(1);
+	            	if (replacements.get(paramName) == null) {
+	                	VariableScopeInstance variableScopeInstance = (VariableScopeInstance)
+	                    	resolveContextInstance(VariableScope.VARIABLE_SCOPE, paramName);
+	                    if (variableScopeInstance != null) {
+	                        Object variableValue = variableScopeInstance.getVariable(paramName);
+	                    	String variableValueString = variableValue == null ? "" : variableValue.toString(); 
+	    	                replacements.put(paramName, variableValueString);
+	                    } else {
+	                    	try {
+	                    		Object variableValue = MVEL.eval(paramName, new NodeInstanceResolverFactory(this));
+	    	                	String variableValueString = variableValue == null ? "" : variableValue.toString();
+	    	                	replacements.put(paramName, variableValueString);
+	                    	} catch (Throwable t) {
+	    	                    System.err.println("Could not find variable scope for variable " + paramName);
+	    	                    System.err.println("when trying to replace variable in processId for sub process " + getNodeName());
+	    	                    System.err.println("Continuing without setting process id.");
+	                    	}
+	                    }
+	            	}
+	            }
+	            for (Map.Entry<String, String> replacement: replacements.entrySet()) {
+	            	s = s.replace("#{" + replacement.getKey() + "}", replacement.getValue());
+	            }
+	            return TimeUtils.parseTimeString(s);
+	    	}
+	    }
+	 
+	protected void triggerEvent(String type) {
+		NodeImpl extendedNode = (NodeImpl) getNode();
+		if (extendedNode == null) {
+			return;
+		}
+		List<DroolsAction> actions = extendedNode.getActions(type);
+		if (actions != null) {
+			for (DroolsAction droolsAction: actions) {
+				executeAction(droolsAction);
+			}
+		}
+	}
+	
+	protected void executeAction(DroolsAction droolsAction) {
+		Action action = (Action) droolsAction.getMetaData("Action");
+		ProcessContext context = new ProcessContext(null/*getProcessInstance().getKnowledgeRuntime()*/);
+		StatelessRuntime.eINSTANCE.setNodeInstance(this);
+		try {
+			action.execute(context); //????????????samarjit how does this works?
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			String exceptionName = exception.getClass().getName();
+			ExceptionScopeInstance exceptionScopeInstance = (ExceptionScopeInstance)
+				resolveContextInstance(ExceptionScope.EXCEPTION_SCOPE, exceptionName);
+			if (exceptionScopeInstance == null) {
+				exception.printStackTrace();
+				throw new IllegalArgumentException(
+					"Could not find exception handler for " + exceptionName + " while executing node " + getNodeId());
+			}
+			exceptionScopeInstance.handleException(exceptionName, exception);
+		}
+	}
+	//extended node impl end
 
 	protected void triggerCompleted(String type, boolean remove) {
-        if (remove) {
+		cancelTimers();
+		
+		if (remove) {
             ((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer())
             	.removeNodeInstance(this);
         }
@@ -192,6 +302,10 @@ public class StatelessNodeInstanceImpl implements org.jbpm.workflow.instance.Nod
 
 	@Override
 	public void cancel() {
+		//statebasedNodeInstance 
+		cancelTimers();
+	     removeEventListeners(); 
+	     //NodeInstanc
 		nodeInstanceContainer.removeNodeInstance(this);
 	}
 
@@ -314,7 +428,65 @@ public class StatelessNodeInstanceImpl implements org.jbpm.workflow.instance.Nod
         }
         return workItem;
 	}
+	///////Events//////////
+
+
+	@Override
+	public void signalEvent(String type, Object event) {
+		if ("timerTriggered".equals(type)) {
+    		TimerInstance timerInstance = (TimerInstance) event;
+            if (timerInstances.contains(timerInstance.getId())) {
+                triggerTimer(timerInstance);
+            }
+    	}
+	}
+
+	private void triggerTimer(TimerInstance timerInstance) {
+	    	for (Map.Entry<Timer, DroolsAction> entry: getEventBasedNode().getTimers().entrySet()) {
+	    		if (entry.getKey().getId() == timerInstance.getTimerId()) {
+	    			executeAction(entry.getValue());
+	    			return;
+	    		}
+	    	}
+	 }
 	
+	private StateBasedNode getEventBasedNode() {
+		 return (StateBasedNode) getNode();
+	}
+
+
+	@Override
+	public String[] getEventTypes() {
+		return new String[] { "timerTriggered" };
+	}
+
+
+	@Override
+	public void addEventListeners() {
+		if (timerInstances != null && timerInstances.size() > 0) {
+    		addTimerListener();
+    	}
+	}
 	
+    protected void addTimerListener() {
+    	getProcessInstance().addEventListener("timerTriggered", this, false);
+    }
+
+	@Override
+	public void removeEventListeners() {
+		 getProcessInstance().removeEventListener("timerTriggered", this, false);
+	}
 	
+	private void cancelTimers() {
+		// deactivate still active timers
+		if (timerInstances != null) {
+			TimerManager timerManager = StatelessRuntime.eINSTANCE.getTimerManager();
+			for (Long id: timerInstances) {
+				timerManager.cancelTimer(id);
+			}
+		}
+	}
+
+
+	 
 }
