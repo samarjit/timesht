@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+<link rel="stylesheet" href="file:///E:/Backup/desktop/jQuery/raphael/demo.css" type="text/css" media="screen">
+<link rel="stylesheet" href="file:///E:/Backup/desktop/jQuery/raphael/demo-print.css" type="text/css" media="print">
+<script type="text/javascript" src="file:///E:/Backup/desktop/jQuery/raphael/raphael.js" ></script>
+<script type="text/javascript" src="file:///E:/Backup/desktop/jQuery/jquery.js"  ></script>
+<script type="text/javascript">
+function fnLoadBpmn(){
+alert(
+$('#bpmnname').val());
+//	$('#bpmndiv').load($('#bpmnname').val(),{command:'load',bpmnnname:$('#bpmnname').val()});
+	var jqXHR = $.get($('#bpmnname').val(), function (data,status, jqXHR1) {
+	alert(data);
+		var xmlDoc =   jqXHR.responseText;
+		$xml = $( jqXHR1 );
+        $processType = $xml.find( 'rootcontainer' );  
+		alert($processType.length );
+	 
+	},"xml");
+}
+</script>
+</head>
+<body>
+<h3>BPMN viewer - raphael</h3>
+File Name:<input type="text" id="bpmnname" name="bpmnname" /><input type="button" value="Load BPMN" onclick="fnLoadBpmn()" /><br/>
+File:<input type="file" ><br/>
+<div id="bpmndiv" class="">
+	
+</div>
+
+</body>
+</html>
