@@ -1,7 +1,7 @@
 package org.jbpm.samarjit;
 
+import org.drools.runtime.process.NodeInstance;
 import org.jbpm.workflow.core.node.StartNode;
-import org.jbpm.workflow.instance.NodeInstance;
 
 public class StatelessStartNodeInstance extends StatelessNodeInstanceImpl {
 	public void internalTrigger(final NodeInstance from, String type) {
@@ -21,4 +21,5 @@ public class StatelessStartNodeInstance extends StatelessNodeInstanceImpl {
 	public void triggerCompleted() {
 		triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, true);
 	}
+
 }
