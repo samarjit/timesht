@@ -48,7 +48,7 @@ public class StatelessNodeInstanceFactoryRegistry {
 
 	    private StatelessNodeInstanceFactoryRegistry() {
 	        this.registry = new HashMap<Class< ? extends Node>, StatelessNodeInstanceFactory>();
-
+	        System.out.println("StatelessNodeInstanceFactoryRegistry.class Samarjit Registering different NodeInstances");
 	        // hard wired nodes:
 	        register( RuleSetNode.class,
 	                  new StatelessNodeInstanceFactory( RuleSetNodeInstance.class ) );
@@ -57,7 +57,7 @@ public class StatelessNodeInstanceFactoryRegistry {
 	        register( Join.class,
 	                  new StatelessNodeInstanceFactory( JoinInstance.class ) );
 	        register( StartNode.class,
-	                  new StatelessNodeInstanceFactory( StartNodeInstance.class ) );
+	                  new StatelessNodeInstanceFactory( StatelessStartNodeInstance.class ) );
 	        register( EndNode.class,
 	                  new StatelessNodeInstanceFactory( EndNodeInstance.class ) );
 	        register( MilestoneNode.class,
@@ -77,7 +77,7 @@ public class StatelessNodeInstanceFactoryRegistry {
 	        register( CompositeContextNode.class,
 	                  new StatelessNodeInstanceFactory( CompositeContextNodeInstance.class ) );
 	        register( HumanTaskNode.class,
-	                  new StatelessNodeInstanceFactory( HumanTaskNodeInstance.class ) );
+	                  new StatelessNodeInstanceFactory( StatelessHumanTaskNodeInstance.class ) );
 	        register( ForEachNode.class,
 	                  new StatelessNodeInstanceFactory( ForEachNodeInstance.class ) );
 	        register( EventNode.class,

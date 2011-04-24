@@ -5,18 +5,25 @@ import org.drools.time.impl.JDKTimerService;
 import org.jbpm.process.instance.ProcessInstanceManager;
 import org.jbpm.process.instance.impl.DefaultProcessInstanceManager;
 import org.jbpm.process.instance.timer.TimerManager;
+import org.drools.definition.process.Process;
+
 
 public class StatelessRuntime {
 
 	public static StatelessRuntime eINSTANCE = new StatelessRuntime();
 	private StatelessSignalManager signalManager; 
 	private TimerManager timerManager = new TimerManager(null/*kruntime*/, new JDKTimerService());
+	private StatelessProcessInstance processInstance = null;
 	
-	private StatelessRuntime(){}
+	
 	private ProcessEventSupport eventSupport;
 	private StatelessWorkItemManager workItemMananger = new StatelessWorkItemManager();
 	private ProcessInstanceManager processInstanceManager  = null; // we are stateless
 	
+	private StatelessRuntime(){
+		eventSupport = new ProcessEventSupport();
+	}
+
 	public void setProcessInstanceManager(ProcessInstanceManager processInstanceManager) {
 		System.out.println("We are stateless this should not come!!");
 		this.processInstanceManager = processInstanceManager;
@@ -53,5 +60,15 @@ public class StatelessRuntime {
 	public ProcessInstanceManager getProcessInstanceManager() {
 		return (DefaultProcessInstanceManager )processInstanceManager ;
 	}
+	//use factory
+	@Deprecated 
+	public void createProcessInstance(Process process){
+	//I think registry is required;
+		processInstance = new StatelessProcessInstance(process);
+	}
 	
+	public void startProcess(Process process){
+		processInstance = new StatelessProcessInstance(process); //later on make it static to have only one instance
+		processInstance.start();
+	}
 }

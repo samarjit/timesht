@@ -20,7 +20,7 @@ public class StatelessWorkItemManager implements WorkItemManager{
 	/*  43 */   private Map<String, WorkItemHandler> workItemHandlers = new HashMap();
 	
 	//DefaultWorkItemManager
-	@Override
+	
 	public void internalExecuteWorkItem(WorkItem workItem) {
 		/*  65 */     ((WorkItemImpl)workItem).setId(++this.workItemCounter);
 		/*  66 */     internalAddWorkItem(workItem);
@@ -37,39 +37,39 @@ public class StatelessWorkItemManager implements WorkItemManager{
 		/*  77 */     if (workItem.getId() > this.workItemCounter)
 		/*  78 */       this.workItemCounter = workItem.getId();
 		/*     */   }
-		@Override
+		
 		public void completeWorkItem(long paramLong, Map<String, Object> paramMap) {
 			// TODO Auto-generated method stub
 			
 		}
-		@Override
+		
 		public void abortWorkItem(long paramLong) {
 			// TODO Auto-generated method stub
 			
 		}
-		@Override
+		
 		public void registerWorkItemHandler(String paramString, WorkItemHandler paramWorkItemHandler) {
 			// TODO Auto-generated method stub
 			
 		}
 		 
 		 
-		@Override
+		
 		public void internalAbortWorkItem(long paramLong) {
 			// TODO Auto-generated method stub
 			
 		}
-		@Override
+		
 		public Set<WorkItem> getWorkItems() {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		@Override
+		
 		public WorkItem getWorkItem(long paramLong) {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		@Override
+		
 		public void clear() {
 			// TODO Auto-generated method stub
 			

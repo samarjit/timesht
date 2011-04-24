@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import org.drools.WorkItemHandlerNotFoundException;
 import org.drools.process.core.Work;
 import org.drools.process.instance.impl.WorkItemImpl;
+import org.drools.runtime.KnowledgeRuntime;
 import org.drools.runtime.process.NodeInstance;
 import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItem;
@@ -22,6 +23,7 @@ import org.jbpm.process.instance.timer.TimerManager;
 import org.jbpm.workflow.core.DroolsAction;
 import org.jbpm.workflow.core.node.WorkItemNode;
 import org.jbpm.workflow.instance.impl.NodeInstanceResolverFactory;
+import org.jbpm.workflow.instance.impl.WorkItemResolverFactory;
 import org.mvel2.MVEL;
 
 public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
@@ -150,5 +152,35 @@ public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
 	        }
 	        return workItem;
 		}
+
+	public void triggerCompleted(WorkItem workItem) {
+    	this.workItem = workItem;
+    	WorkItemNode workItemNode = getWorkItemNode();
+    	if (workItemNode != null) {
+	        for (Iterator<Map.Entry<String, String>> iterator = getWorkItemNode().getOutMappings().entrySet().iterator(); iterator.hasNext(); ) {
+	            Map.Entry<String, String> mapping = iterator.next();
+	            VariableScopeInstance variableScopeInstance = (VariableScopeInstance)
+	                resolveContextInstance(VariableScope.VARIABLE_SCOPE, mapping.getValue());
+	            if (variableScopeInstance != null) {
+	            	Object value = workItem.getResult(mapping.getKey());
+	            	if (value == null) {
+	            		try {
+	                		value = MVEL.eval(mapping.getKey(), new WorkItemResolverFactory(workItem));
+	                	} catch (Throwable t) {
+	                		// do nothing
+	                	}
+	            	}
+	                variableScopeInstance.setVariable(mapping.getValue(), value);
+	            } else {
+	                System.err.println("Could not find variable scope for variable " + mapping.getValue());
+	                System.err.println("when trying to complete Work Item " + workItem.getName());
+	                System.err.println("Continuing without setting variable.");
+	            }
+	        }
+    	}
+         
+            triggerCompleted();
+         
+    }
 		
 }

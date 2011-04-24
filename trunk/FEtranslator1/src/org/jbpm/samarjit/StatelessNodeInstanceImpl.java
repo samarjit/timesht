@@ -46,7 +46,7 @@ import org.jbpm.workflow.instance.impl.NodeInstanceResolverFactory;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.mvel2.MVEL;
  
-public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBasedNodeInstanceInterface, EventListener  {
+public abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBasedNodeInstanceInterface, EventListener  {
 
 	private static final long serialVersionUID = 511l;
 	private static final Pattern PARAMETER_MATCHER = Pattern.compile("#\\{(\\S+)\\}", Pattern.DOTALL);
@@ -65,7 +65,7 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
     	}
     	if (!hidden) {
     		getProcessEventSupport().fireBeforeNodeTriggered(this, null /*kruntime*/);
-    	}
+    	}System.out.println("StatelessNodeInstance():trigger..."+from);
         internalTrigger(from, type);
         if (!hidden) {
         	getProcessEventSupport().fireAfterNodeTriggered(this,null /*kruntime*/);
@@ -77,21 +77,26 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
 		return StatelessRuntime.eINSTANCE.getEventSupport();
 	}
 
+//	public abstract void internalTrigger(NodeInstance from, String type);
 	//internalTrigger implementation is required to be done
 	public void internalTrigger(NodeInstance from, String type){
 		triggerEvent(ExtendedNodeImpl.EVENT_NODE_ENTER);
 		//StateBasedNodeInstance // activate timers
-		Map<Timer, DroolsAction> timers = getEventBasedNode().getTimers();
-		if (timers != null) {
-			addTimerListener();
-			timerInstances = new ArrayList<Long>(timers.size());
-			TimerManager timerManager = StatelessRuntime.eINSTANCE.getTimerManager();
-			for (Timer timer: timers.keySet()) {
-				TimerInstance timerInstance = createTimerInstance(timer); 
-				timerManager.registerTimer(timerInstance, (ProcessInstance) getProcessInstance());
-				timerInstances.add(timerInstance.getId());
+		if(getNode() instanceof StateBasedNode){
+			Map<Timer, DroolsAction> timers = getEventBasedNode().getTimers();
+			if (timers != null) {
+				addTimerListener();
+				timerInstances = new ArrayList<Long>(timers.size());
+				TimerManager timerManager = StatelessRuntime.eINSTANCE.getTimerManager();
+				for (Timer timer: timers.keySet()) {
+					TimerInstance timerInstance = createTimerInstance(timer); 
+					timerManager.registerTimer(timerInstance, (ProcessInstance) getProcessInstance());
+					timerInstances.add(timerInstance.getId());
+				}
 			}
 		}
+		System.out.println("StatelessNodeInstance.. internalTrigger() trigger!");
+		
 	}
 
 	 protected TimerInstance createTimerInstance(Timer timer) {
@@ -178,7 +183,7 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
 
 	protected void triggerCompleted(String type, boolean remove) {
 		cancelTimers();
-		
+		System.out.println("StatelessNodeInstance():Trigger completed:"+type);
 		if (remove) {
             ((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer())
             	.removeNodeInstance(this);
@@ -232,7 +237,8 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
     	}
     	// trigger next node
         ((org.jbpm.workflow.instance.NodeInstance) ((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer())
-        	.getNodeInstance(connection.getTo())).trigger(this, connection.getToType());
+        	.getNodeInstance(connection.getTo()))
+        	.trigger(this, connection.getToType());
         if (!hidden) {
         	 getProcessEventSupport().fireAfterNodeLeft(this, null);
         }
@@ -242,7 +248,7 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
         this.id = id;
     }
 	
-	@Override
+	
 	public long getId() {
 		 return this.id;
 	}
@@ -251,13 +257,13 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
 		this.nodeId = nodeId;
 	}
 
-	@Override
+	
 	public long getNodeId() {
 		return this.nodeId;
 	}
 
 
-	@Override
+	
 	public String getNodeName() {
 		Node node = getNode();
     	return node == null ? "" : node.getName();
@@ -267,13 +273,13 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
 	    this.processInstance = processInstance;
 	}
 
-	@Override
+	
 	public StatelessProcessInstance getProcessInstance() {
 		  return this.processInstance;
 	}
 
 
-	@Override
+	
 	public NodeInstanceContainer getNodeInstanceContainer() {
 		 return this.nodeInstanceContainer;
 	}
@@ -285,13 +291,13 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
         }
     }
 	
-	@Override
+	
 	public Object getVariable(String paramString) {
 		return null;
 	}
 
 
-	@Override
+	
 	public void setVariable(String paramString, Object paramObject) {
 		// TODO Auto-generated method stub
 		
@@ -300,7 +306,7 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
 
 
 
-	@Override
+	
 	public void cancel() {
 		//statebasedNodeInstance 
 		cancelTimers();
@@ -310,7 +316,7 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
 	}
 
 
-	@Override
+	
 	public Node getNode() {
 		 return ((org.jbpm.workflow.core.NodeContainer)
 		    		this.nodeInstanceContainer.getNodeContainer()).internalGetNode( this.nodeId );
@@ -351,7 +357,7 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
 	    	}
 	    }
 	 
-	@Override
+	
 	public ContextInstance resolveContextInstance(String contextId, Object param) {
 		 Context context = resolveContext(contextId, param);
 	        if (context == null) {
@@ -371,7 +377,7 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
 	///////Events//////////
 
 
-	@Override
+	
 	public void signalEvent(String type, Object event) {
 		if ("timerTriggered".equals(type)) {
     		TimerInstance timerInstance = (TimerInstance) event;
@@ -395,13 +401,13 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
 	}
 
 
-	@Override
+	
 	public String[] getEventTypes() {
 		return new String[] { "timerTriggered" };
 	}
 
 
-	@Override
+	
 	public void addEventListeners() {
 		if (timerInstances != null && timerInstances.size() > 0) {
     		addTimerListener();
@@ -412,7 +418,7 @@ public class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBa
     	getProcessInstance().addEventListener("timerTriggered", this, false);
     }
 
-	@Override
+	
 	public void removeEventListeners() {
 		 getProcessInstance().removeEventListener("timerTriggered", this, false);
 	}
