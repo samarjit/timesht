@@ -1,6 +1,7 @@
 package org.jbpm.samarjit;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,6 +11,7 @@ import org.drools.common.InternalKnowledgeRuntime;
 import org.drools.process.instance.WorkItem;
 import org.drools.process.instance.WorkItemManager;
 import org.drools.process.instance.impl.WorkItemImpl;
+import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItemHandler;
 
 public class StatelessWorkItemManager implements WorkItemManager{
@@ -38,40 +40,66 @@ public class StatelessWorkItemManager implements WorkItemManager{
 		/*  78 */       this.workItemCounter = workItem.getId();
 		/*     */   }
 		
-		public void completeWorkItem(long paramLong, Map<String, Object> paramMap) {
-			// TODO Auto-generated method stub
-			
+		public void completeWorkItem(long id, Map<String, Object> results) {
+			/* 107 */     WorkItem workItem = (WorkItem)this.workItems.get(new Long(id));
+			/*     */ 
+			/* 109 */     if (workItem != null) {
+			/* 110 */       workItem.setResults(results);
+			/* 111 */       ProcessInstance processInstance = StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(workItem.getProcessInstanceId());
+			/* 112 */       workItem.setState(2);
+			/*     */ 
+			/* 114 */       if (processInstance != null) {
+			/* 115 */         processInstance.signalEvent("workItemCompleted", workItem);
+			/*     */       }
+			/* 117 */       this.workItems.remove(new Long(id));
+			/*     */     }
 		}
 		
-		public void abortWorkItem(long paramLong) {
-			// TODO Auto-generated method stub
-			
+		public void abortWorkItem(long id) {
+			/* 122 */     WorkItemImpl workItem = (WorkItemImpl)this.workItems.get(new Long(id));
+			/*     */ 
+			/* 124 */     if (workItem != null) {
+			/* 125 */       ProcessInstance processInstance = StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(workItem.getProcessInstanceId());
+			/* 126 */       workItem.setState(3);
+			/*     */ 
+			/* 128 */       if (processInstance != null) {
+			/* 129 */         processInstance.signalEvent("workItemAborted", workItem);
+			/*     */       }
+			/* 131 */       this.workItems.remove(new Long(id));
+			/*     */     }
 		}
 		
-		public void registerWorkItemHandler(String paramString, WorkItemHandler paramWorkItemHandler) {
-			// TODO Auto-generated method stub
-			
+		public void registerWorkItemHandler(String workItemName, WorkItemHandler handler) {
+			/* 136 */     this.workItemHandlers.put(workItemName, handler);
 		}
 		 
 		 
 		
-		public void internalAbortWorkItem(long paramLong) {
-			// TODO Auto-generated method stub
-			
+		public void internalAbortWorkItem(long id) {
+			/*  83 */     WorkItemImpl workItem = (WorkItemImpl)this.workItems.get(new Long(id));
+			/*     */ 
+			/*  85 */     if (workItem != null) {
+			/*  86 */       WorkItemHandler handler = (WorkItemHandler)this.workItemHandlers.get(workItem.getName());
+			/*  87 */       if (handler != null) {
+			/*  88 */         handler.abortWorkItem(workItem, this);
+			/*     */       } else {
+			/*  90 */         this.workItems.remove(Long.valueOf(workItem.getId()));
+			/*  91 */         throw new WorkItemHandlerNotFoundException("Could not find work item handler for " + workItem.getName(), workItem.getName());
+			/*     */       }
+			/*     */ 
+			/*  94 */       this.workItems.remove(Long.valueOf(workItem.getId()));
+			/*     */     }
 		}
 		
 		public Set<WorkItem> getWorkItems() {
-			// TODO Auto-generated method stub
-			return null;
+			/*  99 */     return new HashSet(this.workItems.values());
 		}
 		
-		public WorkItem getWorkItem(long paramLong) {
-			// TODO Auto-generated method stub
-			return null;
+		public WorkItem getWorkItem(long id) {
+			/* 103 */     return ((WorkItem)this.workItems.get(Long.valueOf(id)));
 		}
 		
 		public void clear() {
-			// TODO Auto-generated method stub
-			
+			/* 140 */     this.workItems.clear();
 		}	
 }
