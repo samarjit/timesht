@@ -19,6 +19,13 @@ import org.drools.definition.KnowledgePackage;
 import org.drools.definition.process.Process;
 import org.drools.definition.process.WorkflowProcess;
 import org.drools.definitions.impl.KnowledgePackageImp;
+import org.drools.event.process.ProcessCompletedEvent;
+import org.drools.event.process.ProcessEvent;
+import org.drools.event.process.ProcessEventListener;
+import org.drools.event.process.ProcessNodeLeftEvent;
+import org.drools.event.process.ProcessNodeTriggeredEvent;
+import org.drools.event.process.ProcessStartedEvent;
+import org.drools.event.process.ProcessVariableChangedEvent;
 import org.drools.io.ResourceFactory;
 import org.drools.lang.descr.PackageDescr;
 import org.drools.rule.Package;
@@ -102,7 +109,51 @@ public class Mytest2 {
 		}
 //		procc
 		StatelessWorkflowManager swflMgr = new StatelessWorkflowManager();
-		swflMgr.startProcess(procc);
+		final List<ProcessEvent> processEventList = new ArrayList<ProcessEvent>();
+		final ProcessEventListener processEventListener = new ProcessEventListener() {
+			public void afterNodeLeft(ProcessNodeLeftEvent event) {
+//				processEventList.add(event);
+			}
 
+			public void afterNodeTriggered(ProcessNodeTriggeredEvent event) {
+				processEventList.add(event);
+			}
+
+			public void afterProcessCompleted(ProcessCompletedEvent event) {
+//				processEventList.add(event);
+			}
+
+			public void afterProcessStarted(ProcessStartedEvent event) {
+//				processEventList.add(event);
+			}
+
+			public void beforeNodeLeft(ProcessNodeLeftEvent event) {
+//				processEventList.add(event);
+			}
+
+			public void beforeNodeTriggered(ProcessNodeTriggeredEvent event) {
+//				processEventList.add(event);
+			}
+
+			public void beforeProcessCompleted(ProcessCompletedEvent event) {
+//				processEventList.add(event);
+			}
+
+			public void beforeProcessStarted(ProcessStartedEvent event) {
+//				processEventList.add(event);
+			}
+
+			public void beforeVariableChanged(ProcessVariableChangedEvent event) {
+				processEventList.add(event);
+			}
+
+			public void afterVariableChanged(ProcessVariableChangedEvent event) {
+				processEventList.add(event);
+			}
+		};
+		swflMgr.getRuntime().addEventListener(processEventListener);
+		swflMgr.startProcess(procc);
+		
+		System.out.println("Process Events=" +processEventList);
 	}
 }

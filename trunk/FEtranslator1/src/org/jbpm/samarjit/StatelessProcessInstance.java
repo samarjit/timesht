@@ -123,7 +123,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	
 	public String getProcessId() {
 		// TODO Auto-generated method stub
-		return null;
+		return currentProcess.getId();
 	}
 
 
@@ -146,7 +146,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	
 	public String getProcessName() {
 		// TODO Auto-generated method stub
-		return null;
+		return currentProcess.getName();
 	}
 
 

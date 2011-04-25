@@ -10,7 +10,9 @@ public class StatelessWorkflowManager {
 	public void startProcess(WorkflowProcessImpl procc){
 		StatelessRuntime.eINSTANCE.startProcess(procc);
 	}
-	
+	public StatelessRuntime getRuntime(){
+		return StatelessRuntime.eINSTANCE;
+	}
 	public void signalEvent(){
 		
 	}
