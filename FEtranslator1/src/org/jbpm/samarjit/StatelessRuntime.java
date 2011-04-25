@@ -1,6 +1,7 @@
 package org.jbpm.samarjit;
 
 import org.drools.event.ProcessEventSupport;
+import org.drools.event.process.ProcessEventListener;
 import org.drools.time.impl.JDKTimerService;
 import org.jbpm.process.instance.ProcessInstanceManager;
 import org.jbpm.process.instance.impl.DefaultProcessInstanceManager;
@@ -36,7 +37,12 @@ public class StatelessRuntime {
 	public void setEventSupport(ProcessEventSupport eventSupport) {
 		this.eventSupport = eventSupport;
 	}
-
+	public void addEventListener(ProcessEventListener l){
+		eventSupport.addEventListener(l);
+	}
+	public void removeEventListener(ProcessEventListener l){
+		eventSupport.removeEventListener(l);
+	}
 	public TimerManager getTimerManager() {
 		return  timerManager;
 	}

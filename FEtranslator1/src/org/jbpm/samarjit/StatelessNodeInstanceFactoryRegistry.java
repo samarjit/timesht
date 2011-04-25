@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.drools.definition.process.Node;
+import org.jbpm.samarjit.mynodeinst.StatelessHumanTaskNodeInstance;
+import org.jbpm.samarjit.mynodeinst.StatelessStartNodeInstance;
 import org.jbpm.workflow.core.node.ActionNode;
 import org.jbpm.workflow.core.node.CompositeContextNode;
 import org.jbpm.workflow.core.node.CompositeNode;
