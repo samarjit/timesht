@@ -1,7 +1,11 @@
 package org.jbpm.samarjit;
 
+import java.util.Map;
+
+import org.drools.SessionConfiguration;
 import org.drools.event.ProcessEventSupport;
 import org.drools.event.process.ProcessEventListener;
+import org.drools.runtime.process.WorkItemHandler;
 import org.drools.time.impl.JDKTimerService;
 import org.jbpm.process.instance.ProcessInstanceManager;
 import org.jbpm.process.instance.impl.DefaultProcessInstanceManager;
@@ -18,7 +22,7 @@ public class StatelessRuntime {
 	
 	
 	private ProcessEventSupport eventSupport;
-	private StatelessWorkItemManager workItemMananger = new StatelessWorkItemManager();
+	private StatelessWorkItemManager workItemManager = new StatelessWorkItemManager();
 	private ProcessInstanceManager processInstanceManager  = null; // we are stateless
 	
 	private StatelessRuntime(){
@@ -52,7 +56,17 @@ public class StatelessRuntime {
 	}
 
 	public StatelessWorkItemManager getWorkItemManager(){
-		return this.workItemMananger ;
+//		if ( workItemManager == null ) {
+//            workItemManager = ((SessionConfiguration) sessionConfiguration).getWorkItemManagerFactory().createWorkItemManager(this);
+//            Map<String, WorkItemHandler> workItemHandlers = ((SessionConfiguration) sessionConfiguration).getWorkItemHandlers();
+//            if (workItemHandlers != null) {
+//                for (Map.Entry<String, WorkItemHandler> entry: workItemHandlers.entrySet()) {
+//                    workItemManager.registerWorkItemHandler(entry.getKey(), entry.getValue());
+//                }
+//            }
+//        }
+        return      workItemManager;
+//		return this.workItemMananger ;
 	}
 
 	public void setSignalManager(StatelessSignalManager signalManager) {
