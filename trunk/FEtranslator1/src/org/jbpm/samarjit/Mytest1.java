@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.drools.KnowledgeBase;
@@ -30,7 +32,10 @@ import org.drools.io.ResourceFactory;
 import org.drools.lang.descr.PackageDescr;
 import org.drools.rule.Package;
 import org.drools.runtime.StatefulKnowledgeSession;
+import org.drools.runtime.process.ProcessInstance;
+import org.drools.runtime.process.WorkItem;
 import org.drools.xml.SemanticModules;
+import org.jbpm.JbpmJUnitTestCase.TestWorkItemHandler;
 import org.jbpm.bpmn2.core.Definitions;
 import org.jbpm.bpmn2.xml.BPMNDISemanticModule;
 import org.jbpm.bpmn2.xml.BPMNExtensionsSemanticModule;
@@ -109,7 +114,7 @@ public class Mytest1 {
 		}
 		
 if (1 == 0 )return ;
-		StatefulKnowledgeSession session = kbase.newStatefulKnowledgeSession();
+		StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
 		final List<ProcessEvent> processEventList = new ArrayList<ProcessEvent>();
 		final ProcessEventListener processEventListener = new ProcessEventListener() {
 			public void afterNodeLeft(ProcessNodeLeftEvent event) {
@@ -152,11 +157,26 @@ if (1 == 0 )return ;
 				processEventList.add(event);
 			}
 		};
-		session.addEventListener(processEventListener);
+		ksession.addEventListener(processEventListener);
 		// execute the process
-		session.signalEvent("UserTask", null);
-		session.startProcess("UserTask");
-		System.out.println("Process Events=" + processEventList);
+		ksession.signalEvent("UserTask", null);
 
+		TestWorkItemHandler workItemHandler = new TestWorkItemHandler();
+		ksession.getWorkItemManager().registerWorkItemHandler("Human Task", workItemHandler);
+		ProcessInstance processInstance = ksession.startProcess("UserTask");
+		System.out.println("Process Events=" + processEventList);
+		
+		System.out.println(processInstance.getState() == ProcessInstance.STATE_ACTIVE);
+        HashMap<String, Object> results =new HashMap<String, Object>();
+        results.put("ActorId", "mary");
+        WorkItem workItem = workItemHandler.getWorkItem();
+        System.out.println(workItem.getParameter("ActorId")); //expect john
+		ksession.getWorkItemManager()
+		.completeWorkItem(workItem.getId(), null);
+		workItem = workItemHandler.getWorkItem();
+		System.out.println(workItem.getParameter("ActorId")); //expect mary
+		ksession.getWorkItemManager()
+		.completeWorkItem(workItem.getId(), null);
+		System.out.println(processInstance.getState() == ProcessInstance.STATE_ACTIVE);
 	}
 }

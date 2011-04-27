@@ -29,7 +29,9 @@ import org.drools.event.process.ProcessVariableChangedEvent;
 import org.drools.io.ResourceFactory;
 import org.drools.lang.descr.PackageDescr;
 import org.drools.rule.Package;
+import org.drools.runtime.process.WorkItem;
 import org.drools.xml.SemanticModules;
+import org.jbpm.JbpmJUnitTestCase.TestWorkItemHandler;
 import org.jbpm.bpmn2.core.Definitions;
 import org.jbpm.bpmn2.xml.BPMNDISemanticModule;
 import org.jbpm.bpmn2.xml.BPMNExtensionsSemanticModule;
@@ -152,7 +154,13 @@ public class Mytest2 {
 			}
 		};
 		swflMgr.getRuntime().addEventListener(processEventListener);
+		
+		TestWorkItemHandler workItemHandler = new TestWorkItemHandler();
+		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
 		swflMgr.startProcess(procc);
+		
+		WorkItem workItem = workItemHandler.getWorkItem();
+		swflMgr.completeWorkItem(workItem.getId(), null);
 		
 		System.out.println("Process Events=" +processEventList);
 	}
