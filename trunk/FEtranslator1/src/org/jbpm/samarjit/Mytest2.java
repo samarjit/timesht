@@ -29,6 +29,7 @@ import org.drools.event.process.ProcessVariableChangedEvent;
 import org.drools.io.ResourceFactory;
 import org.drools.lang.descr.PackageDescr;
 import org.drools.rule.Package;
+import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItem;
 import org.drools.xml.SemanticModules;
 import org.jbpm.JbpmJUnitTestCase.TestWorkItemHandler;
@@ -158,10 +159,20 @@ public class Mytest2 {
 		TestWorkItemHandler workItemHandler = new TestWorkItemHandler();
 		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
 		swflMgr.startProcess(procc);
-		
+		System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(1).getState() == ProcessInstance.STATE_ACTIVE));
 		WorkItem workItem = workItemHandler.getWorkItem();
 		swflMgr.completeWorkItem(workItem.getId(), null);
-		
+		System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(1).getState() == ProcessInstance.STATE_ACTIVE));
+		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
+		 workItem = workItemHandler.getWorkItem();
+			swflMgr.completeWorkItem(
+					workItem.getId(), 
+					null);
+			System.out.println("state:"+(StatelessRuntime.eINSTANCE
+					.getProcessInstanceManager()
+						.getProcessInstance(1)
+							.getState() == ProcessInstance.STATE_ACTIVE));
+			
 		System.out.println("Process Events=" +processEventList);
 	}
 }

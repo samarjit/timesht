@@ -73,7 +73,7 @@ public abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance
     }
 	
 	
-	private ProcessEventSupport getProcessEventSupport() {
+	protected ProcessEventSupport getProcessEventSupport() {
 		return StatelessRuntime.eINSTANCE.getEventSupport();
 	}
 

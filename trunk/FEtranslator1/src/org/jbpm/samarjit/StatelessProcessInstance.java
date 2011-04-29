@@ -22,7 +22,10 @@ import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.impl.ProcessInstanceImpl;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.workflow.core.Node;
+import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.core.impl.WorkflowProcessImpl;
+import org.jbpm.workflow.core.node.EventNode;
+import org.jbpm.workflow.core.node.EventNodeInterface;
 import org.jbpm.workflow.core.node.StartNode;
 import org.jbpm.workflow.instance.NodeInstance;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
@@ -30,6 +33,8 @@ import org.jbpm.workflow.instance.impl.NodeInstanceFactory;
 import org.jbpm.workflow.instance.impl.NodeInstanceFactoryRegistry;
 import org.jbpm.workflow.instance.impl.NodeInstanceImpl;
 import org.jbpm.workflow.instance.node.EndNodeInstance;
+import org.jbpm.workflow.instance.node.EventNodeInstance;
+import org.jbpm.workflow.instance.node.EventNodeInstanceInterface;
 
 
 public class StatelessProcessInstance  implements StatelessWorkflowEvent,WorkflowProcessInstance, org.drools.runtime.process.ProcessInstance, NodeInstanceContainer {
@@ -39,6 +44,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	private int state = STATE_PENDING;
 	private long nodeInstanceCounter = 0;
 	private final List<NodeInstance> nodeInstances = new ArrayList<NodeInstance>();
+	private long id = 0;
 	
 	public StatelessProcessInstance(Process p){
 		currentProcess = p;
@@ -105,8 +111,54 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 
 
 	
-	public void signalEvent(String paramString, Object paramObject) {
+	public void signalEvent(String type, Object event) {
 		// TODO Auto-generated method stub
+		System.out.println("Stateless Process Instance signalEvent empty()()()");
+		synchronized (this) {
+			if (getState() != ProcessInstance.STATE_ACTIVE) {
+				return;
+			}
+			List<EventListener> listeners = eventListeners.get(type);
+			if (listeners != null) {
+				for (EventListener listener : listeners) {
+					listener.signalEvent(type, event);
+				}
+			}
+			listeners = externalEventListeners.get(type);
+			if (listeners != null) {
+				for (EventListener listener : listeners) {
+					listener.signalEvent(type, event);
+				}
+			}
+			for (org.drools.definition.process.Node node : getWorkflowProcess().getNodes()) {
+				if (node instanceof EventNodeInterface) {
+					if (((EventNodeInterface) node).acceptsEvent(type, event)) {
+						if (node instanceof EventNode && ((EventNode) node).getFrom() == null) {
+							EventNodeInstance eventNodeInstance = (EventNodeInstance) getNodeInstance(node);
+							eventNodeInstance.signalEvent(type, event);
+						} else {
+							List<NodeInstance> nodeInstances = getNodeInstances(node
+									.getId());
+							if (nodeInstances != null && !nodeInstances.isEmpty()) {
+								for (NodeInstance nodeInstance : nodeInstances) {
+									((EventNodeInstanceInterface) nodeInstance)
+											.signalEvent(type, event);
+								}
+							}
+						}
+					}
+				}
+			}
+			if (((org.jbpm.workflow.core.WorkflowProcess) getWorkflowProcess()).isDynamic()) {
+				for (org.drools.definition.process.Node node : getWorkflowProcess().getNodes()) {
+					if (type.equals(node.getName()) && node.getIncomingConnections().isEmpty()) {
+		    			NodeInstance nodeInstance = getNodeInstance(node);
+		                ((org.jbpm.workflow.instance.NodeInstance) nodeInstance)
+		                	.trigger(null, NodeImpl.CONNECTION_DEFAULT_TYPE);
+		    		}
+				}
+			}
+		}
 		
 	}
 
@@ -138,10 +190,12 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	
 	public long getId() {
 		// TODO Auto-generated method stub
-		return 0;
+		return id;
 	}
 
-
+	public void setId(long id){
+		this.id  = id;
+	}
 
 	
 	public String getProcessName() {
@@ -281,7 +335,19 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 			}
 			return null;
 		}
-
+		
+		public List<NodeInstance> getNodeInstances(final long nodeId) {
+			List<NodeInstance> result = new ArrayList<NodeInstance>();
+			for (final Iterator<NodeInstance> iterator = this.nodeInstances
+					.iterator(); iterator.hasNext();) {
+				final NodeInstance nodeInstance = iterator.next();
+				if (nodeInstance.getNodeId() == nodeId) {
+					result.add(nodeInstance);
+				}
+			}
+			return result;
+		}
+		
 		public NodeInstance getNodeInstance(
 				org.drools.definition.process.Node node) {
 			  StatelessNodeInstanceFactory conf = StatelessNodeInstanceFactoryRegistry.INSTANCE.getProcessNodeInstanceFactory(node);

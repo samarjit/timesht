@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import org.drools.WorkItemHandlerNotFoundException;
 import org.drools.process.core.Work;
+import org.drools.process.instance.WorkItemManager;
 import org.drools.process.instance.impl.WorkItemImpl;
 import org.drools.runtime.KnowledgeRuntime;
 import org.drools.runtime.process.NodeInstance;
@@ -71,10 +72,65 @@ public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
 	    	getProcessInstance().addEventListener("workItemAborted", this, false);
 	    }
 	 
-	 //Extended Node instance trigger
+	 //WorkItemNodeInstance{ signalEvent()
+	 public void signalEvent(String type, Object event) {
+	    	if ("workItemCompleted".equals(type)) {
+	    		workItemCompleted((WorkItem) event);
+	    	} else if ("workItemAborted".equals(type)) {
+	    		workItemAborted((WorkItem) event);
+	    	} else {
+	    		super.signalEvent(type, event);
+	    	}
+	    }
+	 
+	 public void workItemCompleted(WorkItem workItem) {
+	        if ( workItemId == workItem.getId()
+	        		|| ( workItemId == -1 && getWorkItem().getId() == workItem.getId()) ) {
+	            removeEventListeners();
+	            triggerCompleted(workItem);
+	        }
+	    }
+	 public WorkItem getWorkItem() {
+	    	if (workItem == null && workItemId >= 0) {
+	    		workItem = (StatelessRuntime.eINSTANCE.getWorkItemManager()).getWorkItem(workItemId);
+	    	}
+	        return workItem;
+	    }
+	 public void workItemAborted(WorkItem workItem) {
+	        if ( workItemId == workItem.getId()
+	        		|| ( workItemId == -1 && getWorkItem().getId() == workItem.getId()) ) {
+	            removeEventListeners();
+	            triggerCompleted(workItem);
+	        }
+	    }
+	//WorkItemNodeInstance}
+	 //Extended Node instance trigger + WorkItemNodeInstance internalTrigger()
 	 @Override	
 	 public void internalTrigger(NodeInstance from, String type) {
 			super.internalTrigger(from, type);
+			
+			//WorkItemNodeInstance{
+			WorkItemNode workItemNode = getWorkItemNode();
+	        createWorkItem(workItemNode);
+			if (workItemNode.isWaitForCompletion()) {
+			    addWorkItemListener();
+	        }
+			
+			try {
+			    (StatelessRuntime.eINSTANCE.getWorkItemManager()).internalExecuteWorkItem(
+	    				(org.drools.process.instance.WorkItem) workItem);
+		    } catch (WorkItemHandlerNotFoundException wihnfe){
+		        getProcessInstance().setState( ProcessInstance.STATE_ABORTED );
+		        throw wihnfe;
+		    }
+		    //WorkItemNodeInstance}
+		    
+		    if (!workItemNode.isWaitForCompletion()) {
+	            triggerCompleted();
+	        }
+	    	this.workItemId = workItem.getId();
+	    	
+	    	
 			// activate timers
 			Map<Timer, DroolsAction> timers = getEventBasedNode().getTimers();
 			if (timers != null) {

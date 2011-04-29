@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.drools.definition.process.Node;
+import org.jbpm.samarjit.mynodeinst.StatelessEndNodeInstance;
 import org.jbpm.samarjit.mynodeinst.StatelessHumanTaskNodeInstance;
 import org.jbpm.samarjit.mynodeinst.StatelessStartNodeInstance;
 import org.jbpm.workflow.core.node.ActionNode;
@@ -61,7 +62,7 @@ public class StatelessNodeInstanceFactoryRegistry {
 	        register( StartNode.class,
 	                  new StatelessNodeInstanceFactory( StatelessStartNodeInstance.class ) );
 	        register( EndNode.class,
-	                  new StatelessNodeInstanceFactory( EndNodeInstance.class ) );
+	                  new StatelessNodeInstanceFactory( StatelessEndNodeInstance.class ) );
 	        register( MilestoneNode.class,
 	                  new StatelessNodeInstanceFactory( MilestoneNodeInstance.class ) );
 	        register( SubProcessNode.class,
