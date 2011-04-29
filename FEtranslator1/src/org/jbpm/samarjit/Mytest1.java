@@ -159,12 +159,12 @@ if (1 == 0 )return ;
 		};
 		ksession.addEventListener(processEventListener);
 		// execute the process
-		ksession.signalEvent("UserTask", null);
+		ksession.signalEvent("SamarjitMyTestWflId_UserTask", null);
 
 		TestWorkItemHandler workItemHandler = new TestWorkItemHandler();
 		ksession.getWorkItemManager().registerWorkItemHandler("Human Task", workItemHandler);
-		ProcessInstance processInstance = ksession.startProcess("UserTask");
-		System.out.println("Process Events=" + processEventList);
+		ProcessInstance processInstance = ksession.startProcess("SamarjitMyTestWflId_UserTask");
+		
 		
 		System.out.println(processInstance.getState() == ProcessInstance.STATE_ACTIVE);
         HashMap<String, Object> results =new HashMap<String, Object>();
@@ -172,11 +172,15 @@ if (1 == 0 )return ;
         WorkItem workItem = workItemHandler.getWorkItem();
         System.out.println(workItem.getParameter("ActorId")); //expect john
 		ksession.getWorkItemManager()
-		.completeWorkItem(workItem.getId(), null);
+			.completeWorkItem(workItem.getId(), null);
+		
 		workItem = workItemHandler.getWorkItem();
 		System.out.println(workItem.getParameter("ActorId")); //expect mary
-		ksession.getWorkItemManager()
-		.completeWorkItem(workItem.getId(), null);
 		System.out.println(processInstance.getState() == ProcessInstance.STATE_ACTIVE);
+
+		ksession.getWorkItemManager()
+			.completeWorkItem(workItem.getId(), null);
+		System.out.println(processInstance.getState() == ProcessInstance.STATE_ACTIVE);
+		System.out.println("Process Events=" + processEventList);
 	}
 }
