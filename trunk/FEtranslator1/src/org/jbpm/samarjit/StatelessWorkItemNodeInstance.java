@@ -10,9 +10,7 @@ import java.util.regex.Pattern;
 
 import org.drools.WorkItemHandlerNotFoundException;
 import org.drools.process.core.Work;
-import org.drools.process.instance.WorkItemManager;
 import org.drools.process.instance.impl.WorkItemImpl;
-import org.drools.runtime.KnowledgeRuntime;
 import org.drools.runtime.process.NodeInstance;
 import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItem;
@@ -172,7 +170,7 @@ public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
 	            if (parameterValue != null) {
 	            	((org.drools.process.instance.WorkItem) workItem).setParameter(mapping.getKey(), parameterValue);
 	            }
-	        }
+	        }/*
 	        for (Map.Entry<String, Object> entry: workItem.getParameters().entrySet()) {
 	        	if (entry.getValue() instanceof String) {
 	        		String s = (String) entry.getValue();
@@ -205,7 +203,7 @@ public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
 	                }
 	                ((org.drools.process.instance.WorkItem) workItem).setParameter(entry.getKey(), s);
 	        	}
-	        }
+	        }*/
 	        return workItem;
 		}
 

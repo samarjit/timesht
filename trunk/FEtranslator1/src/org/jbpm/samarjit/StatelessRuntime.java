@@ -27,45 +27,7 @@ public class StatelessRuntime {
 	
 	private ProcessEventSupport eventSupport;
 	private StatelessWorkItemManager workItemManager = null;
-	private ProcessInstanceManager processInstanceManager  = new ProcessInstanceManager() {
-		private Map<Long, ProcessInstance> processInstances = new HashMap<Long, ProcessInstance>();
-	    private int processCounter = 0;
-
-	    public void addProcessInstance(ProcessInstance processInstance) {
-	        ((StatelessProcessInstance) processInstance).setId(++processCounter);
-	        internalAddProcessInstance(processInstance);
-	    }
-	    
-	    public void internalAddProcessInstance(ProcessInstance processInstance) {
-	    	processInstances.put(((ProcessInstance)processInstance).getId(), processInstance);
-	    }
-
-	    public Collection<ProcessInstance> getProcessInstances() {
-	        return Collections.unmodifiableCollection(processInstances.values());
-	    }
-
-	    public ProcessInstance getProcessInstance(long id) {
-	    	if(processInstances.isEmpty()){
-	    		System.out.println("Accessing ProcessInstance after process ended!");
-	    		return processInstance;
-	    	}
-	    	return (ProcessInstance) processInstances.get(id);
-	    }
-
-	    public void removeProcessInstance(ProcessInstance processInstance) {
-	        internalRemoveProcessInstance(processInstance);
-	    }
-
-	    public void internalRemoveProcessInstance(ProcessInstance processInstance) {
-	        processInstances.remove(((ProcessInstance)processInstance).getId());
-	        System.out.println("ProcessInstance getting removed");
-	    }
-	    
-	    public void clearProcessInstances() {
-	    	processInstances.clear();
-	    	System.out.println("Clearing processInstance");
-	    }
-	}; // we are stateless but this class can have multiple processes.
+	private ProcessInstanceManager processInstanceManager  = new StatelessProcessInstanceManager();// we are stateless but this class can have multiple processes.
 	
 	private StatelessRuntime(){
 		eventSupport = new ProcessEventSupport();
@@ -133,9 +95,10 @@ public class StatelessRuntime {
 		processInstanceManager.addProcessInstance(processInstance);
 	}
 	
-	public void startProcess(Process process){
+	public ProcessInstance startProcess(Process process){
 		processInstance = new StatelessProcessInstance(process); //later on make it static to have only one instance
 		processInstanceManager.addProcessInstance(processInstance);
 		processInstance.start();
+		return processInstance;
 	}
 }
