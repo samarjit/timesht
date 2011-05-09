@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.drools.definition.process.Node;
+import org.jbpm.samarjit.mynodeinst.StatelessActionNodeInstance;
 import org.jbpm.samarjit.mynodeinst.StatelessEndNodeInstance;
 import org.jbpm.samarjit.mynodeinst.StatelessHumanTaskNodeInstance;
+import org.jbpm.samarjit.mynodeinst.StatelessJoinInstance;
+import org.jbpm.samarjit.mynodeinst.StatelessSplitInstance;
 import org.jbpm.samarjit.mynodeinst.StatelessStartNodeInstance;
 import org.jbpm.workflow.core.node.ActionNode;
 import org.jbpm.workflow.core.node.CompositeContextNode;
@@ -56,9 +59,9 @@ public class StatelessNodeInstanceFactoryRegistry {
 	        register( RuleSetNode.class,
 	                  new StatelessNodeInstanceFactory( RuleSetNodeInstance.class ) );
 	        register( Split.class,
-	                  new StatelessNodeInstanceFactory( SplitInstance.class ) );
+	                  new StatelessNodeInstanceFactory( StatelessSplitInstance.class ) );
 	        register( Join.class,
-	                  new StatelessNodeInstanceFactory( JoinInstance.class ) );
+	                  new StatelessNodeInstanceFactory( StatelessJoinInstance.class ) );
 	        register( StartNode.class,
 	                  new StatelessNodeInstanceFactory( StatelessStartNodeInstance.class ) );
 	        register( EndNode.class,
@@ -68,7 +71,7 @@ public class StatelessNodeInstanceFactoryRegistry {
 	        register( SubProcessNode.class,
 	                  new StatelessNodeInstanceFactory( SubProcessNodeInstance.class ) );
 	        register( ActionNode.class,
-	                  new StatelessNodeInstanceFactory( ActionNodeInstance.class ) );
+	                  new StatelessNodeInstanceFactory( StatelessActionNodeInstance.class ) );
 	        register( WorkItemNode.class,
 	                  new StatelessNodeInstanceFactory( WorkItemNodeInstance.class ) );
 	        register( TimerNode.class,

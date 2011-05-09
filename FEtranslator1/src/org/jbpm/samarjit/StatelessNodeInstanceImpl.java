@@ -54,8 +54,9 @@ public abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance
     private long nodeId;
     private StatelessProcessInstance processInstance;
     private org.jbpm.workflow.instance.NodeInstanceContainer nodeInstanceContainer;
-   
+    
     private List<Long> timerInstances;
+	private Map<String, Object> variables = new HashMap<String, Object>();
 	 
 	
 	public final void trigger(NodeInstance from, String type) {
@@ -293,14 +294,14 @@ public abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance
 	
 	
 	public Object getVariable(String paramString) {
-		return null;
+		return variables.get(paramString);
 	}
 
 
 	
 	public void setVariable(String paramString, Object paramObject) {
 		// TODO Auto-generated method stub
-		
+		variables.put(paramString,paramObject);
 	}
 
 
@@ -433,6 +434,8 @@ public abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance
 		}
 	}
 
-
+	public Map<String, Object> getVariableMap() {
+		return variables;
+	}
 	 
 }

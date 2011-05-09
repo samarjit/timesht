@@ -9,29 +9,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.drools.common.InternalKnowledgeRuntime;
 import org.drools.definition.process.NodeContainer;
 import org.drools.definition.process.Process;
 import org.drools.definition.process.WorkflowProcess;
 import org.drools.runtime.process.EventListener;
 import org.drools.runtime.process.WorkflowProcessInstance;
- 
-
-import org.jbpm.process.instance.InternalProcessRuntime;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.impl.ProcessInstanceImpl;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.impl.NodeImpl;
-import org.jbpm.workflow.core.impl.WorkflowProcessImpl;
 import org.jbpm.workflow.core.node.EventNode;
 import org.jbpm.workflow.core.node.EventNodeInterface;
 import org.jbpm.workflow.core.node.StartNode;
 import org.jbpm.workflow.instance.NodeInstance;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
-import org.jbpm.workflow.instance.impl.NodeInstanceFactory;
-import org.jbpm.workflow.instance.impl.NodeInstanceFactoryRegistry;
-import org.jbpm.workflow.instance.impl.NodeInstanceImpl;
 import org.jbpm.workflow.instance.node.EndNodeInstance;
 import org.jbpm.workflow.instance.node.EventNodeInstance;
 import org.jbpm.workflow.instance.node.EventNodeInstanceInterface;
@@ -45,6 +37,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	private long nodeInstanceCounter = 0;
 	private final List<NodeInstance> nodeInstances = new ArrayList<NodeInstance>();
 	private long id = 0;
+	private Map<String, Object> variables = new HashMap<String, Object>();
 	
 	public StatelessProcessInstance(Process p){
 		currentProcess = p;
@@ -226,13 +219,13 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	
 	public Object getVariable(String paramString) {
 		// TODO Auto-generated method stub
-		return null;
+		return variables.get(paramString);
 	}
 
 	
 	public void setVariable(String paramString, Object paramObject) {
 		// TODO Auto-generated method stub
-		
+		variables .put(paramString, paramObject);
 	}
 
 	//org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl
@@ -395,6 +388,10 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 
 		private  WorkflowProcess getWorkflowProcess() {
 			return (WorkflowProcess) getProcess();
+		}
+
+		public Map<String, Object> getVariableMap() {
+			return variables;
 		}
 	
 }

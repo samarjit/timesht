@@ -53,7 +53,7 @@ public class Mytest1 {
 	 * @throws SAXException
 	 */
 	public static void main(String[] args) throws SAXException, IOException {
-		PackageBuilder builder = new PackageBuilder();
+		/*PackageBuilder builder = new PackageBuilder();
 		// Set the system property so that automatic conversion can happen
 		System.setProperty("drools.ruleflow.port", "true");
 		InputStream in = new FileInputStream("src/test/resources/BPMN2-Lane.bpmn2");
@@ -74,10 +74,10 @@ public class Mytest1 {
 		System.out.println(pkg.getName());
 
 		List<KnowledgePackage> pkgs = new ArrayList<KnowledgePackage>();
-		pkgs.add(new KnowledgePackageImp(pkg));
+		pkgs.add(new KnowledgePackageImp(pkg));*/
 
 		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-		kbuilder.add(ResourceFactory.newFileResource("src/test/resources/BPMN2-Lane.bpmn2"), ResourceType.BPMN2);
+		kbuilder.add(ResourceFactory.newFileResource("C:/softwares/Workflow/jBPM500/jbpm-installer/sample/evaluation/src/main/resources/Evaluation.bpmn"), ResourceType.BPMN2);
 		// // KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
 		// kbase.addKnowledgePackages( pkgs );
 		KnowledgeBase kbase = kbuilder.newKnowledgeBase();
@@ -88,7 +88,7 @@ public class Mytest1 {
 		modules.addSemanticModule(new BPMNDISemanticModule());
 		modules.addSemanticModule(new BPMNExtensionsSemanticModule());
 		XmlProcessReader reader = new XmlProcessReader(modules);
-		reader.read(new FileReader("src/test/resources/BPMN2-Lane.bpmn2"));
+		reader.read(new FileReader("C:/softwares/Workflow/jBPM500/jbpm-installer/sample/evaluation/src/main/resources/Evaluation.bpmn"));
 		 List<Process> processes = reader.getProcess();
 //		Collection<Process> processes = kbase.getProcesses();
 		for (Process process : processes) {
@@ -163,7 +163,7 @@ if (1 == 0 )return ;
 
 		TestWorkItemHandler workItemHandler = new TestWorkItemHandler();
 		ksession.getWorkItemManager().registerWorkItemHandler("Human Task", workItemHandler);
-		ProcessInstance processInstance = ksession.startProcess("SamarjitMyTestWflId_UserTask");
+		ProcessInstance processInstance = ksession.startProcess("com.sample.evaluation");
 		
 		
 		System.out.println(processInstance.getState() == ProcessInstance.STATE_ACTIVE);

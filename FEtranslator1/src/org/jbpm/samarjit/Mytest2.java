@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.drools.KnowledgeBase;
 import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
@@ -26,6 +25,7 @@ import org.drools.event.process.ProcessNodeLeftEvent;
 import org.drools.event.process.ProcessNodeTriggeredEvent;
 import org.drools.event.process.ProcessStartedEvent;
 import org.drools.event.process.ProcessVariableChangedEvent;
+import org.drools.io.Resource;
 import org.drools.io.ResourceFactory;
 import org.drools.lang.descr.PackageDescr;
 import org.drools.rule.Package;
@@ -38,6 +38,7 @@ import org.jbpm.bpmn2.xml.BPMNDISemanticModule;
 import org.jbpm.bpmn2.xml.BPMNExtensionsSemanticModule;
 import org.jbpm.bpmn2.xml.BPMNSemanticModule;
 import org.jbpm.bpmn2.xml.XmlBPMNProcessDumper;
+import org.jbpm.compiler.ProcessBuilderImpl;
 import org.jbpm.compiler.xml.XmlProcessReader;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.workflow.core.impl.WorkflowProcessImpl;
@@ -50,34 +51,6 @@ public class Mytest2 {
 	 * @throws SAXException
 	 */
 	public static void main(String[] args) throws SAXException, IOException {
-		PackageBuilder builder = new PackageBuilder();
-		// Set the system property so that automatic conversion can happen
-		System.setProperty("drools.ruleflow.port", "true");
-		InputStream in = new FileInputStream("src/test/resources/BPMN2-Lane.bpmn2");
-		// InputStream in =
-		// Mytest.class.getResourceAsStream("/org/jbpm/integrationtests/test_ProcessMultithreadEvent.rf"
-		// );
-
-		builder.addPackage(new PackageDescr("com.sample"));
-		builder.addRuleFlow(new InputStreamReader(in));
-
-		if (!builder.getErrors().isEmpty()) {
-			for (DroolsError error : builder.getErrors().getErrors()) {
-				System.err.println(error);
-			}
-			System.out.println("Could not build process");
-		}
-		Package pkg = builder.getPackage();
-		System.out.println(pkg.getName());
-
-		List<KnowledgePackage> pkgs = new ArrayList<KnowledgePackage>();
-		pkgs.add(new KnowledgePackageImp(pkg));
-
-		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-		kbuilder.add(ResourceFactory.newFileResource("src/test/resources/BPMN2-Lane.bpmn2"), ResourceType.BPMN2);
-		// // KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-		// kbase.addKnowledgePackages( pkgs );
-		KnowledgeBase kbase = kbuilder.newKnowledgeBase();
 		SemanticModules modules = new SemanticModules();
 //		modules.addSemanticModule(new ProcessSemanticModule());
 		// modules.initSemanticModules();
@@ -85,7 +58,7 @@ public class Mytest2 {
 		modules.addSemanticModule(new BPMNDISemanticModule());
 		modules.addSemanticModule(new BPMNExtensionsSemanticModule());
 		XmlProcessReader reader = new XmlProcessReader(modules);
-		reader.read(new FileReader("src/test/resources/BPMN2-Lane.bpmn2"));
+		reader.read(new FileReader("C:/softwares/Workflow/jBPM500/jbpm-installer/sample/evaluation/src/main/resources/Evaluation.bpmn"));
 		 List<Process> processes = reader.getProcess();
 //		Collection<Process> processes = kbase.getProcesses();
 		 WorkflowProcessImpl procc=null;
@@ -109,9 +82,12 @@ public class Mytest2 {
 			
 			System.out.println(wflp.getNodes());
 			System.out.println(proc.getNodes());
+			
 		}
+		 
 //		procc
 		StatelessWorkflowManager swflMgr = new StatelessWorkflowManager();
+		swflMgr.readWorkflowFiles(new FileInputStream("C:/softwares/Workflow/jBPM500/jbpm-installer/sample/evaluation/src/main/resources/Evaluation.bpmn"));
 		final List<ProcessEvent> processEventList = new ArrayList<ProcessEvent>();
 		final ProcessEventListener processEventListener = new ProcessEventListener() {
 			public void afterNodeLeft(ProcessNodeLeftEvent event) {
@@ -158,7 +134,7 @@ public class Mytest2 {
 		
 		TestWorkItemHandler workItemHandler = new TestWorkItemHandler();
 		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
-		swflMgr.startProcess(procc);
+		swflMgr.startProcess("com.sample.evaluation");
 		System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(1).getState() == ProcessInstance.STATE_ACTIVE));
 		WorkItem workItem = workItemHandler.getWorkItem();
 		swflMgr.completeWorkItem(workItem.getId(), null);

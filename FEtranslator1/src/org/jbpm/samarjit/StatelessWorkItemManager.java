@@ -32,7 +32,7 @@ public class StatelessWorkItemManager implements WorkItemManager{
 		/*     */     else throw new WorkItemHandlerNotFoundException("Could not find work item handler for " + workItem.getName(), workItem.getName());
 		/*     */   }
 		/*     */ 
-		/*     */   public void internalAddWorkItem(WorkItem workItem)
+	 public void internalAddWorkItem(WorkItem workItem)
 		/*     */   {
 		/*  75 */     this.workItems.put(new Long(workItem.getId()), workItem);
 		/*     */ 
