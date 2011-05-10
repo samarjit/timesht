@@ -17,6 +17,7 @@ import org.drools.runtime.process.WorkflowProcessInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.impl.ProcessInstanceImpl;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
+import org.jbpm.samarjit.dao.WorkflowDAO;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.core.node.EventNode;
@@ -45,10 +46,12 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	
 	public void internalStart() {
     	StartNode startNode = getRuleFlowProcess().getStart();
+    	WorkflowDAO.createProcessInstance(getNodeInstance(startNode));
     	if (startNode != null) {
     		((NodeInstance) getNodeInstance(startNode))
     				.trigger(null, null);
     	}
+    	
     }
 	
 	public void start() {
@@ -66,7 +69,16 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 		return (RuleFlowProcess) getProcess();
 	}
 
-
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("WorkflowProcessInstance");
+		sb.append(getId());
+		sb.append(" [processId=");
+		sb.append(getProcessId());
+		sb.append(",state=");
+		sb.append(getState());
+		sb.append("]");
+		return sb.toString();
+	}
 
 	/*public StartNode getStart() {
         Node[] nodes = getNodes();
@@ -277,6 +289,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 			StatelessRuntime.eINSTANCE.getEventSupport().fireAfterProcessCompleted(this, null/*kruntime*/);
 
 			StatelessRuntime.eINSTANCE.getSignalManager().signalEvent("processInstanceCompleted:" + getId(), this);
+			WorkflowDAO.completeProcessInstance(getId());
 		}
 	}
 	
