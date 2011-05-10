@@ -3,54 +3,58 @@ package org.jbpm.samarjit;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.compiler.DroolsError;
-import org.drools.compiler.PackageBuilder;
-import org.drools.definition.KnowledgePackage;
 import org.drools.definition.process.Process;
 import org.drools.definition.process.WorkflowProcess;
-import org.drools.definitions.impl.KnowledgePackageImp;
 import org.drools.event.process.ProcessCompletedEvent;
-import org.drools.event.process.ProcessEvent;
 import org.drools.event.process.ProcessEventListener;
 import org.drools.event.process.ProcessNodeLeftEvent;
 import org.drools.event.process.ProcessNodeTriggeredEvent;
 import org.drools.event.process.ProcessStartedEvent;
 import org.drools.event.process.ProcessVariableChangedEvent;
-import org.drools.io.Resource;
-import org.drools.io.ResourceFactory;
-import org.drools.lang.descr.PackageDescr;
-import org.drools.rule.Package;
 import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItem;
 import org.drools.xml.SemanticModules;
+import org.h2.tools.Server;
 import org.jbpm.JbpmJUnitTestCase.TestWorkItemHandler;
 import org.jbpm.bpmn2.core.Definitions;
 import org.jbpm.bpmn2.xml.BPMNDISemanticModule;
 import org.jbpm.bpmn2.xml.BPMNExtensionsSemanticModule;
 import org.jbpm.bpmn2.xml.BPMNSemanticModule;
 import org.jbpm.bpmn2.xml.XmlBPMNProcessDumper;
-import org.jbpm.compiler.ProcessBuilderImpl;
 import org.jbpm.compiler.xml.XmlProcessReader;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.workflow.core.impl.WorkflowProcessImpl;
 import org.xml.sax.SAXException;
 
 public class Mytest2 {
+	private static Server tcpserver;
+	private static Server webserver;
+
+	public static void startH2(){
+		try {
+			tcpserver =  Server.createTcpServer().start();
+			webserver = Server.createWebServer().start();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void stopH2(){
+		tcpserver.stop();
+		webserver.stop();
+	}
 	/**
 	 * @param args
 	 * @throws IOException
 	 * @throws SAXException
 	 */
 	public static void main(String[] args) throws SAXException, IOException {
+//		startH2();
 		SemanticModules modules = new SemanticModules();
 //		modules.addSemanticModule(new ProcessSemanticModule());
 		// modules.initSemanticModules();
@@ -88,22 +92,22 @@ public class Mytest2 {
 //		procc
 		StatelessWorkflowManager swflMgr = new StatelessWorkflowManager();
 		swflMgr.readWorkflowFiles(new FileInputStream("C:/softwares/Workflow/jBPM500/jbpm-installer/sample/evaluation/src/main/resources/Evaluation.bpmn"));
-		final List<ProcessEvent> processEventList = new ArrayList<ProcessEvent>();
+		final List<String> processEventList = new ArrayList<String>();
 		final ProcessEventListener processEventListener = new ProcessEventListener() {
 			public void afterNodeLeft(ProcessNodeLeftEvent event) {
 //				processEventList.add(event);
 			}
 
 			public void afterNodeTriggered(ProcessNodeTriggeredEvent event) {
-				processEventList.add(event);
+				processEventList.add(event.toString()+" \n");
 			}
 
 			public void afterProcessCompleted(ProcessCompletedEvent event) {
-//				processEventList.add(event);
+				processEventList.add(event+" process completed!\n");
 			}
 
 			public void afterProcessStarted(ProcessStartedEvent event) {
-//				processEventList.add(event);
+				processEventList.add(event+" process started...\n");
 			}
 
 			public void beforeNodeLeft(ProcessNodeLeftEvent event) {
@@ -123,11 +127,11 @@ public class Mytest2 {
 			}
 
 			public void beforeVariableChanged(ProcessVariableChangedEvent event) {
-				processEventList.add(event);
+				processEventList.add(event+" \n");
 			}
 
 			public void afterVariableChanged(ProcessVariableChangedEvent event) {
-				processEventList.add(event);
+				processEventList.add(event+" \n");
 			}
 		};
 		swflMgr.getRuntime().addEventListener(processEventListener);
