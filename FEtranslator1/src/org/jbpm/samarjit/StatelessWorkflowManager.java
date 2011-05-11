@@ -73,7 +73,8 @@ public class StatelessWorkflowManager {
 	}
 
 	public void registerWorkItemHandler(String workItemName, TestWorkItemHandler workItemHandler) {
-		StatelessRuntime.eINSTANCE.getWorkItemManager().registerWorkItemHandler(workItemName, workItemHandler);
+		StatelessRuntime.eINSTANCE.getWorkItemManager()
+				.registerWorkItemHandler(workItemName, workItemHandler);
 	}
 	
 }

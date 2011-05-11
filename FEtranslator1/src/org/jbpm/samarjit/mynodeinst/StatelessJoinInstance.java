@@ -50,6 +50,7 @@ public class StatelessJoinInstance extends StatelessNodeInstanceImpl {
                 "An ActionNode only accepts default incoming connections!");
         }
         final Join join = getJoin();
+        System.err.println("Join instance getting triggered"+join.getType());
         switch ( join.getType() ) {
             case Join.TYPE_XOR :
                 triggerCompleted();
@@ -62,7 +63,7 @@ public class StatelessJoinInstance extends StatelessNodeInstanceImpl {
                 } else {
                     this.triggers.put( from.getNodeId(),
                                        count.intValue() + 1 );
-                }
+                }System.err.println("Join instance triggers:"+triggers);
                 if (checkAllActivated()) {
                     decreaseAllTriggers();
                     triggerCompleted();

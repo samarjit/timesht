@@ -171,15 +171,24 @@ if (1 == 0 )return ;
         results.put("ActorId", "mary");
         WorkItem workItem = workItemHandler.getWorkItem();
         System.out.println(workItem.getParameter("ActorId")); //expect john
-		ksession.getWorkItemManager()
+        	System.out.println("WorkItemID:"+workItem.getId()+" "+workItem.getParameters().get("Comment"));
+        ksession.getWorkItemManager()
 			.completeWorkItem(workItem.getId(), null);
 		
 		workItem = workItemHandler.getWorkItem();
 		System.out.println(workItem.getParameter("ActorId")); //expect mary
 		System.out.println(processInstance.getState() == ProcessInstance.STATE_ACTIVE);
-
+		 	System.out.println("WorkItemID:"+workItem.getId()+" "+workItem.getParameters().get("Comment"));
 		ksession.getWorkItemManager()
 			.completeWorkItem(workItem.getId(), null);
+		
+		 workItem = workItemHandler.getWorkItem();
+		 	System.out.println("WorkItemID:"+workItem.getId()+" "+workItem.getParameters().get("Comment"));
+		 ksession.getWorkItemManager()
+		 	.completeWorkItem(
+					workItem.getId(), 
+					null);	
+		 
 		System.out.println(processInstance.getState() == ProcessInstance.STATE_ACTIVE);
 		System.out.println("Process Events=" + processEventList);
 	}
