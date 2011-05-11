@@ -35,7 +35,7 @@ private static String DBUSER = "sa";
 private static String DBPASSWORD = "";
 private boolean isRuninServerContext;
 
-
+private final String SIMPLE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"; 
 
 
 
@@ -50,12 +50,12 @@ public DBConnector() {
 //	 DRIVERNAME = prop.getProperty("DRIVERNAME");
 }
 private void debug(int priority, String s){ 
-        if(priority>0){ 
+        if(priority>3){ 
                 System.out.println("DBConnecctor:"+s); 
         } 
 } 
 private void debug(int priority, String s, Throwable e){ 
-    if(priority>0){ 
+    if(priority>3){ 
             System.out.println("DBConnecctor:"+s); 
     } 
 }
@@ -233,11 +233,11 @@ public CachedRowSet executePreparedQuery(String qry,PrepstmtDTOArray arPrepstmt)
         while(itr.hasNext()){ 
                 PrepstmtDTO pd = (PrepstmtDTO)itr.next(); 
                 if(pd.getType() == PrepstmtDTO.DataType.TIMESTAMP){ 
-                    Timestamp newDate = new Timestamp(new SimpleDateFormat().parse(pd.getData()).getTime()); 
+                    Timestamp newDate = new Timestamp(new SimpleDateFormat(SIMPLE_DATE_FORMAT).parse(pd.getData()).getTime()); 
                     stmt.setTimestamp(count,  newDate); 
                 }else
             	if(pd.getType() == PrepstmtDTO.DataType.DATE_NS){ 
-                    Date newDate = new Date( ( new SimpleDateFormat()).parse(pd.getData()).getTime()); 
+                    Date newDate = new Date( ( new SimpleDateFormat(SIMPLE_DATE_FORMAT)).parse(pd.getData()).getTime()); 
                     stmt.setDate(count,  newDate); 
             	}else
                 if(pd.getType() == PrepstmtDTO.DataType.DATEDDMMYYYY){ 
@@ -322,11 +322,11 @@ public int executePreparedUpdate(String qry,PrepstmtDTOArray arPrepstmt) throws 
                 PrepstmtDTO pd = (PrepstmtDTO)itr.next(); 
                 
                 if(pd.getType() == PrepstmtDTO.DataType.TIMESTAMP){ 
-                    Timestamp newDate = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(pd.getData()).getTime()); 
+                    Timestamp newDate = new Timestamp(new SimpleDateFormat(SIMPLE_DATE_FORMAT).parse(pd.getData()).getTime()); 
                     stmt.setTimestamp(count,  newDate); 
                 }else
             	if(pd.getType() == PrepstmtDTO.DataType.DATE_NS){ 
-                    Date newDate = new Date( ( new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse(pd.getData()).getTime()); 
+                    Date newDate = new Date( ( new SimpleDateFormat(SIMPLE_DATE_FORMAT)).parse(pd.getData()).getTime()); 
                     stmt.setDate(count,  newDate); 
             	}else
                 if(pd.getType() == PrepstmtDTO.DataType.DATEDDMMYYYY){ 

@@ -8,6 +8,7 @@ import org.jbpm.samarjit.mynodeinst.StatelessActionNodeInstance;
 import org.jbpm.samarjit.mynodeinst.StatelessEndNodeInstance;
 import org.jbpm.samarjit.mynodeinst.StatelessHumanTaskNodeInstance;
 import org.jbpm.samarjit.mynodeinst.StatelessJoinInstance;
+import org.jbpm.samarjit.mynodeinst.StatelessReuseNodeInstanceFactory;
 import org.jbpm.samarjit.mynodeinst.StatelessSplitInstance;
 import org.jbpm.samarjit.mynodeinst.StatelessStartNodeInstance;
 import org.jbpm.workflow.core.node.ActionNode;
@@ -50,10 +51,10 @@ import org.jbpm.workflow.instance.node.WorkItemNodeInstance;
 public class StatelessNodeInstanceFactoryRegistry {
 	   public static final StatelessNodeInstanceFactoryRegistry INSTANCE = new StatelessNodeInstanceFactoryRegistry();
 
-	    private Map<Class< ? extends Node>, StatelessNodeInstanceFactory> registry;
+	    private Map<Class< ? extends Node>, INodeInstanceFactory> registry;
 
 	    private StatelessNodeInstanceFactoryRegistry() {
-	        this.registry = new HashMap<Class< ? extends Node>, StatelessNodeInstanceFactory>();
+	        this.registry = new HashMap<Class< ? extends Node>, INodeInstanceFactory>();
 	        System.out.println("StatelessNodeInstanceFactoryRegistry.class Samarjit Registering different NodeInstances");
 	        // hard wired nodes:
 	        register( RuleSetNode.class,
@@ -61,7 +62,7 @@ public class StatelessNodeInstanceFactoryRegistry {
 	        register( Split.class,
 	                  new StatelessNodeInstanceFactory( StatelessSplitInstance.class ) );
 	        register( Join.class,
-	                  new StatelessNodeInstanceFactory( StatelessJoinInstance.class ) );
+	                  new StatelessReuseNodeInstanceFactory( StatelessJoinInstance.class ) );
 	        register( StartNode.class,
 	                  new StatelessNodeInstanceFactory( StatelessStartNodeInstance.class ) );
 	        register( EndNode.class,
@@ -95,15 +96,15 @@ public class StatelessNodeInstanceFactoryRegistry {
 	    }
 
 	    public void register(Class< ? extends Node> cls,
-	                         StatelessNodeInstanceFactory factory) {
+	                         INodeInstanceFactory factory) {
 	        this.registry.put( cls,
 	                           factory );
 	    }
 
-	    public StatelessNodeInstanceFactory getProcessNodeInstanceFactory(Node node) {
+	    public INodeInstanceFactory getProcessNodeInstanceFactory(Node node) {
 	    	Class<?> clazz = node.getClass();
 	        while (clazz != null) {
-	        	StatelessNodeInstanceFactory result = this.registry.get( clazz );
+	        	INodeInstanceFactory result = this.registry.get( clazz );
 	        	if (result != null) {
 	        		return result;
 	        	}

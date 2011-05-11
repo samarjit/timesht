@@ -59,12 +59,12 @@ public abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance
     		hidden = true;
     	}
     	if (!hidden) {
+    		WorkflowDAO.createNodeInstance(this);
     		getProcessEventSupport().fireBeforeNodeTriggered(this, null /*kruntime*/);
     	}System.out.println("StatelessNodeInstance():trigger..."+from);
         internalTrigger(from, type);
         if (!hidden) {
         	getProcessEventSupport().fireAfterNodeTriggered(this,null /*kruntime*/);
-        	WorkflowDAO.createNodeInstance(this);
         }
     }
 	
@@ -181,7 +181,7 @@ public abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance
 	}
 	protected void triggerCompleted(String type, boolean remove) {
 		cancelTimers();
-		System.out.println("StatelessNodeInstance():Trigger completed:"+type+" "+this+" remove="+remove);
+		System.err.println("StatelessNodeInstance():Trigger completed:"+type+" "+this+" remove="+remove);
 		if (remove) {
             ((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer())
             	.removeNodeInstance(this);

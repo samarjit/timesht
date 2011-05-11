@@ -141,10 +141,12 @@ public class Mytest2 {
 		swflMgr.startProcess("com.sample.evaluation");
 		System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(1).getState() == ProcessInstance.STATE_ACTIVE));
 		WorkItem workItem = workItemHandler.getWorkItem();
+		System.out.println("WorkItemID:"+workItem.getId()+" "+workItem.getParameters().get("Comment"));
 		swflMgr.completeWorkItem(workItem.getId(), null);
 		System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(1).getState() == ProcessInstance.STATE_ACTIVE));
 		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
 		 workItem = workItemHandler.getWorkItem();
+		  System.out.println("WorkItemID:"+workItem.getId()+" "+workItem.getParameters().get("Comment"));
 			swflMgr.completeWorkItem(
 					workItem.getId(), 
 					null);
@@ -152,7 +154,14 @@ public class Mytest2 {
 					.getProcessInstanceManager()
 						.getProcessInstance(1)
 							.getState() == ProcessInstance.STATE_ACTIVE));
-			
+		
+		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
+			 workItem = workItemHandler.getWorkItem();
+			 System.out.println("WorkItemID:"+workItem.getId()+" "+workItem.getParameters().get("Comment"));
+			 swflMgr.completeWorkItem(
+						workItem.getId(), 
+						null);	
+			 System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(1).getState() == ProcessInstance.STATE_ACTIVE));	 
 		System.out.println("Process Events=" +processEventList);
 	}
 }

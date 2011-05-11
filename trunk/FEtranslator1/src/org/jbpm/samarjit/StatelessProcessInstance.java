@@ -18,6 +18,7 @@ import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.impl.ProcessInstanceImpl;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.samarjit.dao.WorkflowDAO;
+import org.jbpm.samarjit.mynodeinst.StatelessEndNodeInstance;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.core.node.EventNode;
@@ -46,10 +47,10 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	
 	public void internalStart() {
     	StartNode startNode = getRuleFlowProcess().getStart();
-    	WorkflowDAO.createProcessInstance(getNodeInstance(startNode));
     	if (startNode != null) {
-    		((NodeInstance) getNodeInstance(startNode))
-    				.trigger(null, null);
+    		NodeInstance  startNodeInst = ((NodeInstance) getNodeInstance(startNode));
+    		WorkflowDAO.createProcessInstance(startNodeInst);
+    		startNodeInst.trigger(null, null);
     	}
     	
     }
@@ -98,7 +99,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 
 
 	public NodeInstance getNodeInstance(final Node node) {
-		StatelessNodeInstanceFactory conf = StatelessNodeInstanceFactoryRegistry.INSTANCE.getProcessNodeInstanceFactory(node);
+		INodeInstanceFactory conf = StatelessNodeInstanceFactoryRegistry.INSTANCE.getProcessNodeInstanceFactory(node);
 		if (conf == null) {
 			throw new IllegalArgumentException("Illegal node type: "
 					+ node.getClass());
@@ -356,7 +357,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 		
 		public NodeInstance getNodeInstance(
 				org.drools.definition.process.Node node) {
-			  StatelessNodeInstanceFactory conf = StatelessNodeInstanceFactoryRegistry.INSTANCE.getProcessNodeInstanceFactory(node);
+			  INodeInstanceFactory conf = StatelessNodeInstanceFactoryRegistry.INSTANCE.getProcessNodeInstanceFactory(node);
 			if (conf == null) {
 				throw new IllegalArgumentException("Illegal node type: "
 						+ node.getClass());
@@ -386,7 +387,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 
 		public void nodeInstanceCompleted(NodeInstance nodeInstance,
 				String outType) {
-			if (nodeInstance instanceof EndNodeInstance || 
+			if (nodeInstance instanceof StatelessEndNodeInstance || 
 	        		((org.jbpm.workflow.core.WorkflowProcess) getWorkflowProcess()).isDynamic()) {
 	            if (((org.jbpm.workflow.core.WorkflowProcess) getProcess()).isAutoComplete()) {
 	                if (nodeInstances.isEmpty()) {

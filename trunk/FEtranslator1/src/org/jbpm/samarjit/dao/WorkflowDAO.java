@@ -13,7 +13,7 @@ import org.jbpm.workflow.instance.impl.NodeInstanceImpl;
 
 public class WorkflowDAO {
 	public static void log(String s){
-		System.out.println(s);
+		System.out.println("WorkflowDAO:"+s);
 	}
 	public static int getNextId(){
 		DBConnector db = new DBConnector();
@@ -49,6 +49,33 @@ public class WorkflowDAO {
 		DBConnector db = new DBConnector();
 		try {
 //			int id = getNextId();
+			String qrySelProcCompleted = "select ID_,PROC_INST_ID_, BUSINESS_KEY_, PROC_DEF_ID_, ACT_ID_, START_TIME_ from ACT_RU_EXECUTION where PROC_INST_ID_='"+Id+"'";
+			log(qrySelProcCompleted);
+			CachedRowSet crs  = db.executeQuery(qrySelProcCompleted);
+			while(crs.next()){
+				String id = crs.getString("ID_");
+				String processInstanceId = crs.getString("PROC_INST_ID_");
+				String businessKey = crs.getString("BUSINESS_KEY_");
+				String procDecId = crs.getString("PROC_DEF_ID_");
+				String startActId = crs.getString("ACT_ID_");
+				Timestamp startTime = crs.getTimestamp("START_TIME_");
+			String sqlProcInsertHistNode = "insert into ACT_HI_PROCINST (ID_,PROC_INST_ID_, BUSINESS_KEY_, PROC_DEF_ID_, START_ACT_ID_, START_TIME_, END_TIME_, DURATION_)" +
+				"values (?,?,?,?,?,?,?,?)";
+				PrepstmtDTOArray prepStmtAr1 = new PrepstmtDTOArray();
+				prepStmtAr1.add(DataType.STRING,id);
+				prepStmtAr1.add(DataType.STRING,processInstanceId);
+				prepStmtAr1.add(DataType.STRING,businessKey);
+				prepStmtAr1.add(DataType.STRING,procDecId);
+				prepStmtAr1.add(DataType.STRING,startActId);
+			if(startTime == null)startTime= new Timestamp(new Date().getTime());
+				prepStmtAr1.add(DataType.TIMESTAMP,startTime);
+				prepStmtAr1.add(DataType.TIMESTAMP,new Timestamp(new Date().getTime()));
+			Long duration = new Date().getTime() - startTime.getTime();
+				prepStmtAr1.add(DataType.LONG,duration.toString());
+				
+				log(prepStmtAr1.toString(sqlProcInsertHistNode));
+				db.executePreparedUpdate(sqlProcInsertHistNode, prepStmtAr1);
+			}
 			String qryCompleteProcInst = "delete from ACT_RU_EXECUTION where PROC_INST_ID_='"+Id+"'";
 			log(qryCompleteProcInst);
 			db.executeUpdate(qryCompleteProcInst);
@@ -60,11 +87,19 @@ public class WorkflowDAO {
 		DBConnector db = new DBConnector();
 		try {
 //			int id = getNextId();
+			String qryExistingNodeInst = "select ID_ from ACT_RU_TASK where ID_='"+nodeInstance.getId()+"'";
+			log(qryExistingNodeInst);
+			CachedRowSet crs = db.executeQuery(qryExistingNodeInst);
+			if(crs.next()){
+				return; //Do not create a node that already exisits .. like for Reused Join Nodes
+			}
+			
 			String qryCreateNodeInst = "insert into ACT_RU_TASK (ID_,REV_,EXECUTION_ID_,PROC_INST_ID_,PROC_DEF_ID_,NAME_," +
 					"PARENT_TASK_ID_,DESCRIPTION_,TASK_DEF_KEY_,OWNER_,ASSIGNEE_,DELEGATION_,PRIORITY_,CREATE_TIME_,DUE_DATE_" + 
 					") values\n("
 				+"'"+nodeInstance.getId()+"',0,'"+nodeInstance.getProcessInstance().getId()+"','"+nodeInstance.getProcessInstance().getId()+"','"+nodeInstance.getProcessInstance().getProcessId()+"','"+nodeInstance.getNodeName()+"'"
 				+",null,'"+nodeInstance+"',null,null,null,null,null,'"+new Timestamp(new Date().getTime())+"',null)";
+			System.err.println("Starting node instande "+nodeInstance);
 			log(qryCreateNodeInst);
 			db.executeUpdate(qryCreateNodeInst	
 			);
@@ -76,11 +111,13 @@ public class WorkflowDAO {
 		DBConnector db = new DBConnector();
 		try {
 //			int id = getNextId();
-			System.err.println("Completing node instande "+nodeInstance);if(1==1)return;
-			String qryCompleteNodeInst = "select ID_,EXECUTION_ID_,PROC_INST_ID_,PROC_DEF_ID_,NAME_,PARENT_TASK_ID_,DESCRIPTION_,TASK_DEF_KEY_ ,ASSIGNEE_,DUE_DATE_,PRIORITY_,OWNER_,CREATE_TIME_ as START_TIME_ from ACT_RU_TASK";
+//			System.err.println("Completing node instande "+nodeInstance);//if(1==1)return;
+			String qryCompleteNodeInst = "select ID_,EXECUTION_ID_,PROC_INST_ID_,PROC_DEF_ID_,NAME_,PARENT_TASK_ID_,DESCRIPTION_,TASK_DEF_KEY_ ,ASSIGNEE_,DUE_DATE_,PRIORITY_,OWNER_,CREATE_TIME_   from ACT_RU_TASK where ID_='"+nodeInstance.getId()+"'";
 			log(qryCompleteNodeInst);
 			CachedRowSet crs = db.executeQuery(qryCompleteNodeInst);
+			boolean saved = false;
 			while(crs.next()){
+				saved = true;
 				String id = crs.getString("ID_");
 				String executionId = crs.getString("EXECUTION_ID_");
 				String processInstanceId = crs.getString("PROC_INST_ID_");
@@ -119,7 +156,12 @@ public class WorkflowDAO {
 				
 				log(prepStmtAr.toString(sqlInsertHistNode));
 				db.executePreparedUpdate(sqlInsertHistNode, prepStmtAr);
+				
+				String qryDeleteCompletedNodeInst= "delete from ACT_RU_TASK where ID_='"+nodeInstance.getId()+"'";
+				db.executeUpdate(qryDeleteCompletedNodeInst);
 			}
+//			if(saved)System.out.println("The completing instane has been saved.."+nodeInstance);
+//			else System.out.println("The completing instane has failed to save.."+nodeInstance);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
