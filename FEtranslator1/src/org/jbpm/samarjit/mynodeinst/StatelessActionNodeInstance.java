@@ -39,7 +39,7 @@ public class StatelessActionNodeInstance extends StatelessNodeInstanceImpl {
 					 Map<String, Object> variables = pInst.getVariableMap();
 					 if(variables == null)variables = new HashMap<String, Object>();
 					 variables.putAll(this.getVariableMap());
-					System.out.println("dca.getConsequence():"+dca.getConsequence()+" variables:"+variables); 
+					System.out.println("StatelessActionNodeInstance: dca.getConsequence():"+dca.getConsequence()+" variables:"+variables); 
 					MVEL.eval(dca.getConsequence(), variables);
 				}
 			}

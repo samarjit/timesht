@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.drools.WorkItemHandlerNotFoundException;
@@ -26,6 +25,7 @@ import org.jbpm.workflow.instance.impl.WorkItemResolverFactory;
 import org.mvel2.MVEL;
 
 public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
+	@SuppressWarnings("unused")
 	private static final Pattern PARAMETER_MATCHER = Pattern.compile("#\\{(\\S+)\\}", Pattern.DOTALL);
 	private transient WorkItem workItem;
 	private long workItemId = -1;

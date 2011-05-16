@@ -139,6 +139,9 @@ public class Mytest2 {
 		TestWorkItemHandler workItemHandler = new TestWorkItemHandler();
 		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
 		swflMgr.startProcess("com.sample.evaluation");
+		
+		swflMgr.restoreWorkflowSession();
+		
 		System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(1).getState() == ProcessInstance.STATE_ACTIVE));
 		WorkItem workItem = workItemHandler.getWorkItem();
 		System.out.println("WorkItemID:"+workItem.getId()+" "+workItem.getParameters().get("Comment"));

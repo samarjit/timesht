@@ -46,7 +46,7 @@ public class StatelessWorkflowManager {
 	
 	/**
 	 * This adds latest process to processInstanceManager
-	 * @param processId
+	 * @param processId like com.sample.evaluation
 	 * @return
 	 */
 	public long startProcess(String processId){
@@ -75,6 +75,11 @@ public class StatelessWorkflowManager {
 	public void registerWorkItemHandler(String workItemName, TestWorkItemHandler workItemHandler) {
 		StatelessRuntime.eINSTANCE.getWorkItemManager()
 				.registerWorkItemHandler(workItemName, workItemHandler);
+	}
+
+	public void restoreWorkflowSession() {
+		 RestoreWorkflowSession rws = new RestoreWorkflowSession();
+		 rws.restoreWorkflowSession(processes);
 	}
 	
 }

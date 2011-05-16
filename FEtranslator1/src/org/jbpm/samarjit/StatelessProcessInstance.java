@@ -26,7 +26,6 @@ import org.jbpm.workflow.core.node.EventNodeInterface;
 import org.jbpm.workflow.core.node.StartNode;
 import org.jbpm.workflow.instance.NodeInstance;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
-import org.jbpm.workflow.instance.node.EndNodeInstance;
 import org.jbpm.workflow.instance.node.EventNodeInstance;
 import org.jbpm.workflow.instance.node.EventNodeInstanceInterface;
 
@@ -81,38 +80,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 		return sb.toString();
 	}
 
-	/*public StartNode getStart() {
-        Node[] nodes = getNodes();
-        for (int i = 0; i < nodes.length; i++) {
-            if (nodes[i] instanceof StartNode) {
-                return (StartNode) nodes[i];
-            }
-        }
-        return null;
-    }*/
 	
-	/*private Node[] getNodes() {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
-
-
-
-	public NodeInstance getNodeInstance(final Node node) {
-		INodeInstanceFactory conf = StatelessNodeInstanceFactoryRegistry.INSTANCE.getProcessNodeInstanceFactory(node);
-		if (conf == null) {
-			throw new IllegalArgumentException("Illegal node type: "
-					+ node.getClass());
-		}
-		StatelessNodeInstanceImpl nodeInstance = (StatelessNodeInstanceImpl) conf
-				.getNodeInstance(node, this, this);
-		if (nodeInstance == null) {
-			throw new IllegalArgumentException("Illegal node type: "
-					+ node.getClass());
-		}
-		 
-		return nodeInstance;
-	}
 
 
 
@@ -355,6 +323,47 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 			return result;
 		}
 		
+		/*public StartNode getStart() {
+	        Node[] nodes = getNodes();
+	        for (int i = 0; i < nodes.length; i++) {
+	            if (nodes[i] instanceof StartNode) {
+	                return (StartNode) nodes[i];
+	            }
+	        }
+	        return null;
+	    }*/
+		
+		/*private Node[] getNodes() {
+			// TODO Auto-generated method stub
+			return null;
+		}*/
+	
+	
+	
+		/**
+		 * Creates new node Instance based on node type
+		 * @see org.jbpm.workflow.instance.NodeInstanceContainer#getNodeInstance(org.jbpm.workflow.core.Node)
+		 */
+		/*public NodeInstance getNodeInstance(final Node node) {
+			INodeInstanceFactory conf = StatelessNodeInstanceFactoryRegistry.INSTANCE.getProcessNodeInstanceFactory(node);
+			if (conf == null) {
+				throw new IllegalArgumentException("Illegal node type: "
+						+ node.getClass());
+			}
+			StatelessNodeInstanceImpl nodeInstance = (StatelessNodeInstanceImpl) conf
+					.getNodeInstance(node, this, this);
+			if (nodeInstance == null) {
+				throw new IllegalArgumentException("Illegal node type: "
+						+ node.getClass());
+			}
+			 
+			return nodeInstance;
+		}*/
+	
+		/**
+		 * Creates new node instance based on node type
+		 * @see org.jbpm.workflow.instance.NodeInstanceContainer#getNodeInstance(org.drools.definition.process.Node)
+		 */
 		public NodeInstance getNodeInstance(
 				org.drools.definition.process.Node node) {
 			  INodeInstanceFactory conf = StatelessNodeInstanceFactoryRegistry.INSTANCE.getProcessNodeInstanceFactory(node);
