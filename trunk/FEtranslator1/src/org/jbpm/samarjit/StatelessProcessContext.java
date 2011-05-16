@@ -41,7 +41,7 @@ public class StatelessProcessContext implements ProcessContext{
         }
     }
 
-	public void setNodeInstance(StatelessNodeInstanceImpl statelessActionNodeInstance) {
+	public void setNodeInstance(StatelessNodeInstanceImpl nodeInstance) {
 		this.nodeInstance = nodeInstance;
 	}
 

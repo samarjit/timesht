@@ -1,20 +1,16 @@
 package org.jbpm.samarjit;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.drools.SessionConfiguration;
+import org.drools.definition.process.Process;
 import org.drools.event.ProcessEventSupport;
 import org.drools.event.process.ProcessEventListener;
 import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItemHandler;
 import org.drools.time.impl.JDKTimerService;
 import org.jbpm.process.instance.ProcessInstanceManager;
-import org.jbpm.process.instance.impl.DefaultProcessInstanceManager;
 import org.jbpm.process.instance.timer.TimerManager;
-import org.drools.definition.process.Process;
 
 
 public class StatelessRuntime {

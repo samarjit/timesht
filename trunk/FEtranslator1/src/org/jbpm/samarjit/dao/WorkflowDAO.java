@@ -9,7 +9,6 @@ import javax.sql.rowset.CachedRowSet;
 import org.jbpm.samarjit.StatelessNodeInstance;
 import org.jbpm.samarjit.dao.PrepstmtDTO.DataType;
 import org.jbpm.workflow.instance.NodeInstance;
-import org.jbpm.workflow.instance.impl.NodeInstanceImpl;
 
 public class WorkflowDAO {
 	public static void log(String s){
@@ -95,10 +94,10 @@ public class WorkflowDAO {
 			}
 			
 			String qryCreateNodeInst = "insert into ACT_RU_TASK (ID_,REV_,EXECUTION_ID_,PROC_INST_ID_,PROC_DEF_ID_,NAME_," +
-					"PARENT_TASK_ID_,DESCRIPTION_,TASK_DEF_KEY_,OWNER_,ASSIGNEE_,DELEGATION_,PRIORITY_,CREATE_TIME_,DUE_DATE_" + 
+					"PARENT_TASK_ID_,DESCRIPTION_,TASK_DEF_KEY_,OWNER_,ASSIGNEE_,DELEGATION_,PRIORITY_,CREATE_TIME_,DUE_DATE_, CLASS_NAME_" + 
 					") values\n("
 				+"'"+nodeInstance.getId()+"',0,'"+nodeInstance.getProcessInstance().getId()+"','"+nodeInstance.getProcessInstance().getId()+"','"+nodeInstance.getProcessInstance().getProcessId()+"','"+nodeInstance.getNodeName()+"'"
-				+",null,'"+nodeInstance+"',null,null,null,null,null,'"+new Timestamp(new Date().getTime())+"',null)";
+				+",null,'"+nodeInstance+"','"+nodeInstance.getNodeId()+"',null,null,null,null,'"+new Timestamp(new Date().getTime())+"',null, '"+nodeInstance.getClass().getCanonicalName()+"')";
 			System.err.println("Starting node instande "+nodeInstance);
 			log(qryCreateNodeInst);
 			db.executeUpdate(qryCreateNodeInst	
@@ -115,9 +114,7 @@ public class WorkflowDAO {
 			String qryCompleteNodeInst = "select ID_,EXECUTION_ID_,PROC_INST_ID_,PROC_DEF_ID_,NAME_,PARENT_TASK_ID_,DESCRIPTION_,TASK_DEF_KEY_ ,ASSIGNEE_,DUE_DATE_,PRIORITY_,OWNER_,CREATE_TIME_   from ACT_RU_TASK where ID_='"+nodeInstance.getId()+"'";
 			log(qryCompleteNodeInst);
 			CachedRowSet crs = db.executeQuery(qryCompleteNodeInst);
-			boolean saved = false;
 			while(crs.next()){
-				saved = true;
 				String id = crs.getString("ID_");
 				String executionId = crs.getString("EXECUTION_ID_");
 				String processInstanceId = crs.getString("PROC_INST_ID_");
