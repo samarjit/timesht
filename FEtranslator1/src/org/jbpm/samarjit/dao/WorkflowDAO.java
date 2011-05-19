@@ -36,8 +36,9 @@ public class WorkflowDAO {
 		DBConnector db = new DBConnector();
 		try {
 //			int id = getNextId();
-			String qryCreateProcInst = "insert into ACT_RU_EXECUTION (ID_,REV_,PROC_INST_ID_,PARENT_ID_,PROC_DEF_ID_) values("
-				+"'"+nodeInstance.getProcessInstance().getId()+"',0,'"+nodeInstance.getProcessInstance().getId()+"',null,'"+nodeInstance.getProcessInstance().getProcessId()+"')";
+			String qryCreateProcInst = "insert into ACT_RU_EXECUTION (ID_,REV_,PROC_INST_ID_,PARENT_ID_,PROC_DEF_ID_ ,IS_ACTIVE_ ) values("
+				+"'"+nodeInstance.getProcessInstance().getId()+"',0,'"+nodeInstance.getProcessInstance().getId()+"',null,'"+nodeInstance.getProcessInstance().getProcessId()+"'" +
+						", "+nodeInstance.getProcessInstance().getState()+")";
 			log(qryCreateProcInst);
 			db.executeUpdate(qryCreateProcInst);
 		} catch (SQLException e) {

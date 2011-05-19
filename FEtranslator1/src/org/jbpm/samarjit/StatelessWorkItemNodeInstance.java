@@ -58,6 +58,14 @@ public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
 	    	this.workItemId = workItem.getId();
 	    }
 	
+	public void restartWorkItemInst(){
+		 WorkItemNode workItemNode = getWorkItemNode();
+	        createWorkItem(workItemNode);
+			if (workItemNode.isWaitForCompletion()) {
+			    addWorkItemListener();
+	        }
+			this.workItemId = workItem.getId();	
+	}
 	 public void triggerCompleted() {
 	        triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, true);
 	    }
@@ -148,6 +156,8 @@ public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
 		protected WorkItem createWorkItem(WorkItemNode workItemNode) {
 			Work work = workItemNode.getWork();
 	        workItem = new WorkItemImpl();
+	        
+//	        ((WorkItemImpl) workItem) .setId(workItemNode.getId());
 	        ((org.drools.process.instance.WorkItem) workItem).setName(work.getName());
 	        ((org.drools.process.instance.WorkItem) workItem).setProcessInstanceId(getProcessInstance().getId());
 	        ((org.drools.process.instance.WorkItem) workItem).setParameters(new HashMap<String, Object>(work.getParameters()));

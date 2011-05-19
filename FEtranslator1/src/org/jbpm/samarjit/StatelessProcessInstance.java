@@ -70,7 +70,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	}
 
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("WorkflowProcessInstance");
+		final StringBuilder sb = new StringBuilder("WorkflowProcessInstance:");
 		sb.append(getId());
 		sb.append(" [processId=");
 		sb.append(getProcessId());
@@ -163,7 +163,6 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 
 	
 	public long getId() {
-		// TODO Auto-generated method stub
 		return id;
 	}
 
@@ -381,10 +380,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 			return nodeInstance;
 		}
 
-		public void addNodeInstance(NodeInstance nodeInstance) {
-			((StatelessNodeInstanceImpl) nodeInstance).setId(nodeInstanceCounter++);
-			this.nodeInstances.add(nodeInstance);
-		}
+		
 
 		public void removeNodeInstance(NodeInstance nodeInstance) {
 			this.nodeInstances.remove(nodeInstance);
@@ -415,6 +411,25 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 
 		public Map<String, Object> getVariableMap() {
 			return variables;
+		}
+		
+		/** 
+		 * This defines the strategy for setting node instance Id
+		 * @see org.jbpm.workflow.instance.NodeInstanceContainer#addNodeInstance(org.jbpm.workflow.instance.NodeInstance)
+		 */
+		public void addNodeInstance(NodeInstance nodeInstance) {
+			((StatelessNodeInstanceImpl) nodeInstance).setId(id*1000 + nodeInstanceCounter++);
+			this.nodeInstances.add(nodeInstance);
+		}
+		
+		/**
+		 * This is an override to the inbuild id creation. This is to be used only during reload of half executed workflows, so that 
+		 * there will be continuation of Ids.
+		 * @param id
+		 * @since 18 May, 2011
+		 */
+		public void setNodeInstanceCounter(long id){
+			nodeInstanceCounter = id;
 		}
 	
 }
