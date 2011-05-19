@@ -40,13 +40,14 @@ import org.jbpm.workflow.instance.impl.NodeInstanceResolverFactory;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.mvel2.MVEL;
  
-public abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBasedNodeInstanceInterface, EventListener  {
+public  abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance, EventBasedNodeInstanceInterface, EventListener, Comparable<NodeInstance>  {
 
 	private static final long serialVersionUID = 511l;
 	private static final Pattern PARAMETER_MATCHER = Pattern.compile("#\\{(\\S+)\\}", Pattern.DOTALL);
 	private long id;
     private long nodeId;
     private StatelessProcessInstance processInstance;
+    //StatelessProcessInstance is also containing nodesInstances
     private org.jbpm.workflow.instance.NodeInstanceContainer nodeInstanceContainer;
     
     private List<Long> timerInstances;
@@ -75,6 +76,14 @@ public abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance
 
 //	public abstract void internalTrigger(NodeInstance from, String type);
 	//internalTrigger implementation is required to be done
+	
+	/**
+	 * This internalTrigger does not call to triggerCompleted() because by default every node is not self completing. A subclass's
+	 * internalTrigger() method is to be called in case of self completing nodes. For example an action node is self completing node
+	 * but a workItem node is not self completing node.
+	 * @param from
+	 * @param type
+	 */
 	public void internalTrigger(NodeInstance from, String type){
 		triggerEvent(ExtendedNodeImpl.EVENT_NODE_ENTER);
 		//StateBasedNodeInstance // activate timers
@@ -435,5 +444,14 @@ public abstract class StatelessNodeInstanceImpl implements StatelessNodeInstance
 	public Map<String, Object> getVariableMap() {
 		return variables;
 	}
+
+
+	@Override
+	public int compareTo(NodeInstance o) {
+		return (int) ( o.getId() - this.id);
+	}
+
+
+	 
 	 
 }

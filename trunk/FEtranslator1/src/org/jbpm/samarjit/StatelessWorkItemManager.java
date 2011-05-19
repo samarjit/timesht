@@ -101,4 +101,8 @@ public class StatelessWorkItemManager implements WorkItemManager{
 		public void clear() {
 			/* 140 */     this.workItems.clear();
 		}	
+		
+		public void restoreWorkItems(){
+			
+		}
 }

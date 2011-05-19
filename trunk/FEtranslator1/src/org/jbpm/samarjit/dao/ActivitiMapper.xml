@@ -27,7 +27,7 @@
 		where   PROC_INST_ID_ = #{procInstId}
 		order by id_ 
 	</select>
-	<select id="selectRunningActivities"    
+	<select id="selectRunningWorkflows"    
 		resultMap="selectTask">
 		select ID_ id,REV_ rev ,PROC_INST_ID_ procInstId,BUSINESS_KEY_ businessKey,PARENT_ID_ parentId,PROC_DEF_ID_ procDefId,
 		SUPER_EXEC_ superExec,ACT_ID_ actId,IS_ACTIVE_ isActive ,IS_CONCURRENT_ isConcurrent,IS_SCOPE_ isScope,

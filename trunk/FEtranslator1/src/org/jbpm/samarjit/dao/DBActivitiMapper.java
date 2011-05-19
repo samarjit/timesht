@@ -5,5 +5,5 @@ import java.util.List;
 import org.jbpm.samarjit.dto.ActRuExecution;
 
 public interface DBActivitiMapper {
-	List<ActRuExecution> selectRunningActivities();
+	List<ActRuExecution> selectRunningWorkflows();
 }
