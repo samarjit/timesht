@@ -14,7 +14,7 @@ import org.drools.event.process.ProcessStartedEvent;
 import org.drools.event.process.ProcessVariableChangedEvent;
 import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItem;
-import org.jbpm.JbpmJUnitTestCase.TestWorkItemHandler;
+import org.jbpm.samarjit.mynodeinst.TestWorkItemHandler;
 import org.xml.sax.SAXException;
 
 public class Mytest3 {
