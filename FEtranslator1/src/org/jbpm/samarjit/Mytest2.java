@@ -2,7 +2,6 @@ package org.jbpm.samarjit;
 
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import org.drools.runtime.process.ProcessInstance;
 import org.drools.runtime.process.WorkItem;
 import org.drools.xml.SemanticModules;
 import org.h2.tools.Server;
-import org.jbpm.JbpmJUnitTestCase.TestWorkItemHandler;
 import org.jbpm.bpmn2.core.Definitions;
 import org.jbpm.bpmn2.xml.BPMNDISemanticModule;
 import org.jbpm.bpmn2.xml.BPMNExtensionsSemanticModule;
@@ -28,8 +26,8 @@ import org.jbpm.bpmn2.xml.BPMNSemanticModule;
 import org.jbpm.bpmn2.xml.XmlBPMNProcessDumper;
 import org.jbpm.compiler.xml.XmlProcessReader;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
+import org.jbpm.samarjit.mynodeinst.TestWorkItemHandler;
 import org.jbpm.workflow.core.impl.WorkflowProcessImpl;
-import org.xml.sax.SAXException;
 
 public class Mytest2 {
 	private static Server tcpserver;
