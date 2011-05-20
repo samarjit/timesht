@@ -3,11 +3,16 @@ package org.jbpm.samarjit.dao;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import javax.sql.rowset.CachedRowSet;
 
+import org.apache.ibatis.session.SqlSession;
 import org.jbpm.samarjit.StatelessNodeInstance;
+import org.jbpm.samarjit.StatelessWorkItemNodeInstance;
 import org.jbpm.samarjit.dao.PrepstmtDTO.DataType;
+import org.jbpm.samarjit.dto.ActRuExecution;
+import org.jbpm.workflow.core.node.WorkItemNode;
 import org.jbpm.workflow.instance.NodeInstance;
 
 public class WorkflowDAO {
@@ -101,8 +106,25 @@ public class WorkflowDAO {
 				+",null,'"+nodeInstance+"','"+nodeInstance.getNodeId()+"',null,null,null,null,'"+new Timestamp(new Date().getTime())+"',null, '"+nodeInstance.getClass().getCanonicalName()+"')";
 			System.err.println("Starting node instande "+nodeInstance);
 			log(qryCreateNodeInst);
-			db.executeUpdate(qryCreateNodeInst	
-			);
+			db.executeUpdate(qryCreateNodeInst);
+			
+//			SqlSession sqlSession = MybatisSessionHelper.eINSTANCE.openSession();
+//			DBActivitiMapper dbActivitiMapper = sqlSession.getMapper(DBActivitiMapper.class);
+//			String queryUserTask = "insert into ACT_RU_IDENTITYLINK  (ID_ ,REV_ ,GROUP_ID_ ,TYPE_ ,USER_ID_ ,TASK_ID_ ,SCREEN_URL_ )" +
+//					"values ( (select NVL(max(ID_)+1,0) from ACT_RU_IDENTITYLINK),?,?,?,?,?,?)" ; 
+//			PrepstmtDTOArray prepStmtAr = new PrepstmtDTOArray();
+//			if(nodeInstance instanceof StatelessWorkItemNodeInstance){
+//				StatelessWorkItemNodeInstance workItemNodeInst = (StatelessWorkItemNodeInstance)nodeInstance;
+//				WorkItemNode workItemNode = (WorkItemNode) workItemNodeInst.getNode();
+//				prepStmtAr.add(DataType.INT, "0"); //rev
+//				prepStmtAr.add(DataType.STRING, "TODOSYSTEM"); //group_id_
+//				prepStmtAr.add(DataType.STRING, "NA"); //type_
+//				prepStmtAr.add(DataType.STRING, ""); //user_id_
+//				prepStmtAr.add(DataType.LONG, Long.toString(workItemNodeInst.getId())); //task_id_ instance
+//				prepStmtAr.add(DataType.STRING, "TODO"); //task_id_
+//				//loop later based on user
+//				db.executePreparedUpdate(queryUserTask, prepStmtAr);
+//			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -155,14 +177,23 @@ public class WorkflowDAO {
 				log(prepStmtAr.toString(sqlInsertHistNode));
 				db.executePreparedUpdate(sqlInsertHistNode, prepStmtAr);
 				
+//				String qryDeleteIdentityLink= "delete from ACT_RU_IDENTITYLINK where TASK_ID_ = '"+nodeInstance.getId()+"'";
+//				db.executeUpdate(qryDeleteIdentityLink);
+				
 				String qryDeleteCompletedNodeInst= "delete from ACT_RU_TASK where ID_='"+nodeInstance.getId()+"'";
 				db.executeUpdate(qryDeleteCompletedNodeInst);
+				
 			}
 //			if(saved)System.out.println("The completing instane has been saved.."+nodeInstance);
 //			else System.out.println("The completing instane has failed to save.."+nodeInstance);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	public static List<ActRuExecution> selectRunningWorkflows() {
+		SqlSession sqlSession = MybatisSessionHelper.eINSTANCE.openSession();
+		DBActivitiMapper dbActivitiMapper = sqlSession.getMapper(DBActivitiMapper.class);
+		return dbActivitiMapper.selectRunningWorkflows();
 	}
 
 }

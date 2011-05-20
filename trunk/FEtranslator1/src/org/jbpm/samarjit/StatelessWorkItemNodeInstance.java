@@ -31,6 +31,10 @@ public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
 	private long workItemId = -1;
 	private List<Long> timerInstances;
 	
+	public String toString(){
+		return "["+getClass().getSimpleName()+"("+getNodeName()+"):_"+getNodeId()+":inst:"+getId()+", workItemId:"+workItemId+"]";
+	}
+	
 	public void internalTrigger(final StatelessNodeInstance from, String type) {
 	    	super.internalTrigger(from, type);
 	        // TODO this should be included for ruleflow only, not for BPEL
@@ -157,7 +161,7 @@ public class StatelessWorkItemNodeInstance extends StatelessNodeInstanceImpl{
 			Work work = workItemNode.getWork();
 	        workItem = new WorkItemImpl();
 	        
-//	        ((WorkItemImpl) workItem) .setId(workItemNode.getId());
+	        ((WorkItemImpl) workItem) .setId(this.getId());
 	        ((org.drools.process.instance.WorkItem) workItem).setName(work.getName());
 	        ((org.drools.process.instance.WorkItem) workItem).setProcessInstanceId(getProcessInstance().getId());
 	        ((org.drools.process.instance.WorkItem) workItem).setParameters(new HashMap<String, Object>(work.getParameters()));

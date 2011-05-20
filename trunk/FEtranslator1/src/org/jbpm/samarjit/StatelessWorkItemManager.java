@@ -20,10 +20,17 @@ public class StatelessWorkItemManager implements WorkItemManager{
 	/*     */  // private InternalKnowledgeRuntime kruntime;
 	/*  43 */   private Map<String, WorkItemHandler> workItemHandlers = new HashMap<String, WorkItemHandler>();
 	
+	/**
+	 * Queue workItems so. workItemCounter is still starting from 0 since restart of workflow instance. These will become instance id
+	 * and must be available in eventListener to be executed later on. Event listeners is added in 
+	 * StatelessWorkItemNodeInstance.internalTrigger().addWokItemListener(thisInstance) and in the internalTrigger last line 
+	 * workItemId is being set for that instance.
+	 * @see org.drools.process.instance.WorkItemManager#internalExecuteWorkItem(org.drools.process.instance.WorkItem)
+	 */
 	//DefaultWorkItemManager
 	
 	public void internalExecuteWorkItem(WorkItem workItem) {
-		/*  65 */     ((WorkItemImpl)workItem).setId(++this.workItemCounter);
+		/*  65 */     //TODO check ((WorkItemImpl)workItem).setId(++this.workItemCounter);
 		/*  66 */     internalAddWorkItem(workItem);
 		/*  67 */     WorkItemHandler handler = (WorkItemHandler)this.workItemHandlers.get(workItem.getName());
 		/*  68 */     if (handler != null)

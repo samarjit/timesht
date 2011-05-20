@@ -87,7 +87,7 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 	
 	public void signalEvent(String type, Object event) {
 		// TODO Auto-generated method stub
-		System.out.println("Stateless Process Instance signalEvent empty()()()");
+		System.out.println("Stateless Process Instance signalEvent empty()()()"+event);
 		synchronized (this) {
 			if (getState() != ProcessInstance.STATE_ACTIVE) {
 				return;
@@ -418,8 +418,16 @@ public class StatelessProcessInstance  implements StatelessWorkflowEvent,Workflo
 		 * @see org.jbpm.workflow.instance.NodeInstanceContainer#addNodeInstance(org.jbpm.workflow.instance.NodeInstance)
 		 */
 		public void addNodeInstance(NodeInstance nodeInstance) {
-			((StatelessNodeInstanceImpl) nodeInstance).setId(id*1000 + nodeInstanceCounter++);
+			System.err.println("addNodeInstance:"+id+"   "  + nodeInstanceCounter);
+				((StatelessNodeInstanceImpl) nodeInstance).setId(id*1000 + nodeInstanceCounter++);
 			this.nodeInstances.add(nodeInstance);
+		}
+		//does not work as while restart after sometime there will be fresh tasks starting
+		@Deprecated 
+		public void addNodeInstanceFromDB(NodeInstance nodeInstance) {
+			System.err.println("addNodeInstancefromDB:"+id+"   "  + nodeInstanceCounter);
+				((StatelessNodeInstanceImpl) nodeInstance).setId(  nodeInstanceCounter++);
+				this.nodeInstances.add(nodeInstance);
 		}
 		
 		/**
