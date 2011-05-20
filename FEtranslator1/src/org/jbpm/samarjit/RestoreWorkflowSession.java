@@ -11,6 +11,7 @@ import org.drools.definition.process.Process;
 import org.drools.runtime.process.ProcessInstance;
 import org.jbpm.samarjit.dao.DBActivitiMapper;
 import org.jbpm.samarjit.dao.MybatisSessionHelper;
+import org.jbpm.samarjit.dao.WorkflowDAO;
 import org.jbpm.samarjit.dto.ActRuExecution;
 import org.jbpm.samarjit.dto.ActRuTask;
 import org.jbpm.workflow.core.impl.WorkflowProcessImpl;
@@ -20,9 +21,8 @@ public class RestoreWorkflowSession {
 	private static Logger logger = Logger.getLogger(RestoreWorkflowSession.class);
 	public void restoreWorkflowSession(List<Process> processes){
 		logger.debug(" workflow restoring from session, started..");
-		SqlSession sqlSession = MybatisSessionHelper.eINSTANCE.openSession();
-		DBActivitiMapper dbActivitiMapper = sqlSession.getMapper(DBActivitiMapper.class);
-		List<ActRuExecution> runningActivities = dbActivitiMapper.selectRunningWorkflows();
+		
+		List<ActRuExecution> runningActivities = WorkflowDAO.selectRunningWorkflows();
 //		logger.debug(runningActivities.get(0).getActRuTasksForProcInstId().get(0).getName());
 		for (ActRuExecution actRuExecution : runningActivities) {
 			String processId = actRuExecution.getProcDefId();
@@ -70,11 +70,12 @@ public class RestoreWorkflowSession {
 							e.printStackTrace();
 						}
 					} 
-					restartWorkflows();
+					
 					
 				}
 			}
 		}
+		restartWorkflows();
 //		logger.debug(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstances());
 //		throw new RuntimeException("Not implemented yet");
 	}

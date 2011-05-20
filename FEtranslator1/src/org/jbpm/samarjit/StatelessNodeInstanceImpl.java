@@ -298,7 +298,14 @@ public  abstract class StatelessNodeInstanceImpl implements StatelessNodeInstanc
             this.nodeInstanceContainer.addNodeInstance(this);
         }
     }
-	
+	//does not work as while restart after sometime there will be fresh tasks starting
+	@Deprecated
+	public void setNodeInstanceContainerFromDB(StatelessProcessInstance nodeInstanceContainer) {
+		 this.nodeInstanceContainer = (org.jbpm.workflow.instance.NodeInstanceContainer) nodeInstanceContainer;
+        if (nodeInstanceContainer != null) {
+            ((StatelessProcessInstance) this.nodeInstanceContainer).addNodeInstanceFromDB(this);
+        }
+	}
 	
 	public Object getVariable(String paramString) {
 		return variables.get(paramString);
@@ -450,6 +457,9 @@ public  abstract class StatelessNodeInstanceImpl implements StatelessNodeInstanc
 	public int compareTo(NodeInstance o) {
 		return (int) ( o.getId() - this.id);
 	}
+
+
+	
 
 
 	 

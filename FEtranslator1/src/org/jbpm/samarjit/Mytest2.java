@@ -136,7 +136,7 @@ public class Mytest2 {
 		TestWorkItemHandler workItemHandler = new TestWorkItemHandler();
 		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
 		long currentProcessInst = swflMgr.startProcess("com.sample.evaluation");
-//		if(1==1)throw new Exception("Break out before completion for testing"); 
+		if(1==1)throw new Exception("Break out before completion for testing"); 
 //		swflMgr.restoreWorkflowSession();
 		 
 		System.out.println("Process instance length="+currentProcessInst);
@@ -168,6 +168,6 @@ public class Mytest2 {
 			 System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(currentProcessInst).getState() == ProcessInstance.STATE_ACTIVE));	 
 		System.out.println("Process Events=" +processEventList);
 		
-		swflMgr.startProcess("com.sample.evaluation");
+//		swflMgr.startProcess("com.sample.evaluation");
 	}
 }
