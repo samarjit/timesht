@@ -2,6 +2,7 @@ package org.jbpm.samarjit.dao;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,10 +10,9 @@ import javax.sql.rowset.CachedRowSet;
 
 import org.apache.ibatis.session.SqlSession;
 import org.jbpm.samarjit.StatelessNodeInstance;
-import org.jbpm.samarjit.StatelessWorkItemNodeInstance;
 import org.jbpm.samarjit.dao.PrepstmtDTO.DataType;
 import org.jbpm.samarjit.dto.ActRuExecution;
-import org.jbpm.workflow.core.node.WorkItemNode;
+import org.jbpm.samarjit.mynodeinst.MockStatelessNodeInstance;
 import org.jbpm.workflow.instance.NodeInstance;
 
 public class WorkflowDAO {
@@ -194,6 +194,50 @@ public class WorkflowDAO {
 		SqlSession sqlSession = MybatisSessionHelper.eINSTANCE.openSession();
 		DBActivitiMapper dbActivitiMapper = sqlSession.getMapper(DBActivitiMapper.class);
 		return dbActivitiMapper.selectRunningWorkflows();
+	}
+	
+	
+	public static ArrayList<MockStatelessNodeInstance> getCompletedInstances(
+			ArrayList<Long> idList, long  processId) {
+		DBConnector db = new DBConnector();
+		ArrayList<MockStatelessNodeInstance> mockList = null;
+		String qryHist = "select ID_, TASK_DEF_KEY_ from ACT_HI_TASKINST where proc_inst_id_ = ?";
+		PrepstmtDTOArray prepStmtAr = new PrepstmtDTOArray();
+		prepStmtAr.add(DataType.STRING,Long.toString(processId));
+		if(idList.size() >0)qryHist +=" AND TASK_DEF_KEY_ in (";
+		for (Long nodeId : idList) {
+			prepStmtAr.add(DataType.STRING,nodeId.toString());
+			qryHist += "?,";
+		}
+		if(idList.size() >0){
+			qryHist  = qryHist.substring(0,qryHist.length() - 1);
+			qryHist +=")";
+		}
+		log(prepStmtAr.toString(qryHist));
+		CachedRowSet crs = null;
+		try{
+			crs = db.executePreparedQuery(qryHist, prepStmtAr);
+			mockList = new ArrayList<MockStatelessNodeInstance>();
+			while(crs.next()){
+				String idStr = crs.getString("ID_");
+				String taskdef = crs.getString("TASK_DEF_KEY_");
+				MockStatelessNodeInstance mockNode = new MockStatelessNodeInstance();
+				mockNode.setId(Long.parseLong(idStr));
+				mockNode.setNodeId(Long.parseLong(taskdef));
+				mockList.add(mockNode);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			if(crs != null){
+				try {
+					crs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return mockList;
 	}
 
 }

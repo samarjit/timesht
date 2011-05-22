@@ -20,7 +20,7 @@ import org.xml.sax.SAXException;
 public class Mytest3 {
 	public static void main(String args[]) throws FileNotFoundException, SAXException, IOException{
 		StatelessWorkflowManager swflMgr = new StatelessWorkflowManager();
-		swflMgr.readWorkflowFiles(new FileInputStream("C:/softwares/Workflow/jBPM500/jbpm-installer/sample/evaluation/src/main/resources/Evaluation.bpmn"));
+		swflMgr.readWorkflowFiles(Mytest3.class.getResourceAsStream("/Evaluation.bpmn"));
 		final List<String> processEventList = new ArrayList<String>();
 		final ProcessEventListener processEventListener = new ProcessEventListener() {
 			public void afterNodeLeft(ProcessNodeLeftEvent event) {
@@ -88,12 +88,12 @@ public class Mytest3 {
 						.getProcessInstance(currentProcessInst)
 							.getState() == ProcessInstance.STATE_ACTIVE));
 		
-		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
-			 workItem = workItemHandler.getWorkItem();
-			 System.out.println("WorkItemID:"+workItem.getId()+" "+workItem.getParameters().get("Comment"));
-			 swflMgr.completeWorkItem(
-						workItem.getId(), 
-						null);	
+//		swflMgr.registerWorkItemHandler("Human Task", workItemHandler);
+//			 workItem = workItemHandler.getWorkItem();
+//			 System.out.println("WorkItemID:"+workItem.getId()+" "+workItem.getParameters().get("Comment"));
+//			 swflMgr.completeWorkItem(
+//						workItem.getId(), 
+//						null);	
 			 System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(currentProcessInst).getState() == ProcessInstance.STATE_ACTIVE));	 
 		System.out.println("Process Events=" +processEventList);
 	}

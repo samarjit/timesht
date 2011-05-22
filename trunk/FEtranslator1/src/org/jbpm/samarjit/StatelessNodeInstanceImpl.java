@@ -52,14 +52,21 @@ public  abstract class StatelessNodeInstanceImpl implements StatelessNodeInstanc
     
     private List<Long> timerInstances;
 	private Map<String, Object> variables = new HashMap<String, Object>();
-	 
+	private int state = 0; 
 	
+	public int getState(){
+		return state;
+	}
+	public void setState(int statenew){
+		this.state = statenew;
+	}
 	public final void trigger(NodeInstance from, String type) {
     	boolean hidden = false;
     	if (getNode().getMetaData().get("hidden") != null) {
     		hidden = true;
     	}
     	if (!hidden) {
+    		setState(0);
     		WorkflowDAO.createNodeInstance(this);
     		getProcessEventSupport().fireBeforeNodeTriggered(this, null /*kruntime*/);
     	}System.out.println("StatelessNodeInstance():trigger..."+from);
@@ -194,6 +201,7 @@ public  abstract class StatelessNodeInstanceImpl implements StatelessNodeInstanc
 		if (remove) {
             ((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer())
             	.removeNodeInstance(this);
+            setState(2);//completed
             WorkflowDAO.completeNodeInstance(this);
         }
         Node node = getNode();

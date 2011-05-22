@@ -3,18 +3,21 @@ package org.jbpm.samarjit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
+import org.drools.definition.process.Connection;
 import org.drools.definition.process.Process;
 import org.drools.runtime.process.ProcessInstance;
-import org.jbpm.samarjit.dao.DBActivitiMapper;
-import org.jbpm.samarjit.dao.MybatisSessionHelper;
 import org.jbpm.samarjit.dao.WorkflowDAO;
 import org.jbpm.samarjit.dto.ActRuExecution;
 import org.jbpm.samarjit.dto.ActRuTask;
+import org.jbpm.samarjit.mynodeinst.MockStatelessNodeInstance;
+import org.jbpm.samarjit.mynodeinst.StatelessJoinInstance;
 import org.jbpm.workflow.core.impl.WorkflowProcessImpl;
+import org.jbpm.workflow.core.node.Join;
 import org.jbpm.workflow.instance.NodeInstance;
 
 public class RestoreWorkflowSession {
@@ -125,9 +128,48 @@ public class RestoreWorkflowSession {
 		 
 			Collections.sort(sortedList);
 			logger.debug("Sorted restartworkflows"+sortedList);
-			if(!sortedList.isEmpty()) 
-				sortedList.get(0)
-					.triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, true);
+			if(!sortedList.isEmpty()) {
+				StatelessNodeInstanceImpl nodeInst = sortedList.get(0);
+				if(nodeInst instanceof StatelessJoinInstance){
+					
+					MockStatelessNodeInstance from = new MockStatelessNodeInstance();
+					ArrayList<Long>idList = new ArrayList<Long>();
+					for (final Connection connection: ((Join)nodeInst.getNode()).getDefaultIncomingConnections()) {
+						 idList.add(connection.getFrom().getId());
+					 }
+					ArrayList<MockStatelessNodeInstance> mockNodeList = WorkflowDAO.getCompletedInstances(idList, processInstance.getId());
+					StatelessJoinInstance joinInst = (StatelessJoinInstance)nodeInst; 
+					Map<Long, Integer> triggers = new HashMap<Long, Integer>();
+					boolean firstRun = true;
+					for (MockStatelessNodeInstance mockNode : mockNodeList) {
+						Integer count = (Integer) triggers.get( mockNode.getNodeId());
+						if ( count == null ) {
+							if(firstRun){
+								triggers.put( mockNode.getNodeId(),0 );
+							}else{
+								triggers.put( mockNode.getNodeId(),1 );
+							}
+		                } else {
+		                	if(firstRun){
+		                		triggers.put( mockNode.getNodeId(),count.intValue());
+		                	}else{
+								 triggers.put( mockNode.getNodeId(),
+		                                       count.intValue() + 1 );
+		                	}
+		                }
+						if(firstRun){
+							from = mockNode;
+							firstRun = false;
+						}
+						joinInst.internalSetTriggers(triggers );
+					}
+					System.err.println("RestoreWorkflowSession:: JoinNode state:"+nodeInst.getState()+" node="+nodeInst);
+					if(nodeInst.getState()!=2)nodeInst.internalTrigger(from , org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE);
+				}else{
+				System.err.println("RestoreWorkflowSession:: Node state:"+nodeInst.getState()+" node="+nodeInst);
+				if(nodeInst.getState()!=2) nodeInst.triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, true);
+				}
+			}
 		}
 	}
 }
