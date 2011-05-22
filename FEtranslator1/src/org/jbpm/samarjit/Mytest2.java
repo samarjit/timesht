@@ -59,7 +59,7 @@ public class Mytest2 {
 		modules.addSemanticModule(new BPMNDISemanticModule());
 		modules.addSemanticModule(new BPMNExtensionsSemanticModule());
 		XmlProcessReader reader = new XmlProcessReader(modules);
-		reader.read(new FileReader("C:/softwares/Workflow/jBPM500/jbpm-installer/sample/evaluation/src/main/resources/Evaluation.bpmn"));
+		reader.read(Mytest2.class.getResourceAsStream("/Evaluation.bpmn"));
 		 List<Process> processes = reader.getProcess();
 //		Collection<Process> processes = kbase.getProcesses();
 		 WorkflowProcessImpl procc=null;
@@ -88,7 +88,7 @@ public class Mytest2 {
 		 
 //		procc
 		StatelessWorkflowManager swflMgr = new StatelessWorkflowManager();
-		swflMgr.readWorkflowFiles(new FileInputStream("C:/softwares/Workflow/jBPM500/jbpm-installer/sample/evaluation/src/main/resources/Evaluation.bpmn"));
+		swflMgr.readWorkflowFiles(Mytest2.class.getResourceAsStream("/Evaluation.bpmn"));
 		final List<String> processEventList = new ArrayList<String>();
 		final ProcessEventListener processEventListener = new ProcessEventListener() {
 			public void afterNodeLeft(ProcessNodeLeftEvent event) {
@@ -167,7 +167,6 @@ public class Mytest2 {
 						null);	
 			 System.out.println("state:"+(StatelessRuntime.eINSTANCE.getProcessInstanceManager().getProcessInstance(currentProcessInst).getState() == ProcessInstance.STATE_ACTIVE));	 
 		System.out.println("Process Events=" +processEventList);
-		
 //		swflMgr.startProcess("com.sample.evaluation");
 	}
 }
