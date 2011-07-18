@@ -30,7 +30,7 @@ public class LwWorkflowManager {
 		modules.addSemanticModule(new BPMNSemanticModule());
 		modules.addSemanticModule(new BPMNDISemanticModule());
 		modules.addSemanticModule(new BPMNExtensionsSemanticModule());
-		XmlProcessReader reader = new XmlProcessReader(modules);
+		XmlProcessReader reader = new XmlProcessReader(modules, this.getClass().getClassLoader());
 		reader.read(fileInputStream);
 		processes = reader.getProcess();
 		return processes;
