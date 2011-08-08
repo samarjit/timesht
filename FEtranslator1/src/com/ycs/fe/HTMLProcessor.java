@@ -56,11 +56,11 @@ public abstract class HTMLProcessor {
 
 	 
 	public void populateValueStack(ActionInvocation invocation, String resultCode) {
-		ResultConfig resultConfig = invocation.getProxy().getConfig().getResults().get(resultCode);
-		logger.debug("Result classname = "+resultConfig.getClassName()); 
+//		ResultConfig resultConfig = invocation.getProxy().getConfig().getResults().get(resultCode);
+//		logger.debug("Result classname = "+resultConfig.getClassName()); 
 		
-		String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
-		String xmlFileName = resultConfig.getParams().get("resultxml");
+//		String tplpath = ServletActionContext.getServletContext().getRealPath("WEB-INF/classes/map");
+//		String xmlFileName = resultConfig.getParams().get("resultxml");
 	 
 		String screenName1 = (String) invocation.getInvocationContext().getValueStack().findValue("screenName",String.class);
 		JSONObject jsonsubmitdata = (JSONObject) invocation.getInvocationContext().getValueStack().findValue("submitdata",JSONObject.class);

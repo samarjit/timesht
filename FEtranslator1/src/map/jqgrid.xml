@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<root xsi:noNamespaceSchemaLocation="config.xsd" 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<screen name="JqGrid">
+		<htmltemplate>
+		/html/jqgridtest.html
+		</htmltemplate>
+		<includedjsp></includedjsp>
+		<callbackclass></callbackclass>
+		<scripts>
+			<scriptinclude></scriptinclude>
+			<text>
+			 <![CDATA[<@s.head />
+			 <@sj.head />
+			 ]]>
+			</text>
+		</scripts>
+		<stylesheets>
+
+		</stylesheets>
+		<crud>
+		 <jsonrpc outstack="outstack1" id="jsrpc1">SELECT BIN_GROUP_CODE|STRING,   BIN_GROUP_NAME|STRING,   BIN_GROUP_DESC|STRING, SETTLEMENT_CURRENCY|STRING,   ISSUER_NAME|STRING    FROM BIN_GROUP_DETAILS  </jsonrpc>
+		</crud>
+		<dm>
+			<txnproc></txnproc>
+		</dm>
+		<bl>
+			<buslogic></buslogic>
+		</bl>
+		<anyprocs>
+			<proc></proc>
+		</anyprocs>
+		<commands>
+		 <cmd result="ajax" instack="instack1" name="jsonrpc" opt="jsonrpc:jsrpc1" processor="crud" />
+		</commands>
+
+	</screen>
+	<panels>
+		<panel>
+			<fields>
+				<field>
+					<customfield forid="testgrid" replace="append">
+						<text>
+					   <![CDATA[ 
+					   ${outstack1}
+					    ]]>
+					 </text>
+					</customfield>
+				</field>
+			</fields>
+			<button replace="modify" type="button" forid="submit1">submit</button> 
+		</panel>
+	</panels>
+</root>
