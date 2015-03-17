@@ -1,0 +1,1 @@
+dynamic screen generation with XML configuration of screen templates as well as database screen metadata option
